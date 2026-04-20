@@ -11,6 +11,7 @@ import resetRoute from './routes/reset.js';
 import fuelRoute from './routes/fuel.js';
 import authRoute from './routes/auth.js';
 import usersRoute from './routes/users.js';
+import treasuryRoute from './routes/treasury.js';
 
 const app = new Hono();
 
@@ -42,6 +43,7 @@ app.get('/', (c) => {
 });
 
 app.route('/api/auth', authRoute);
+app.route('/api/treasury', treasuryRoute);
 app.route('/api/users', usersRoute);
 app.route('/api/stations', stationsRoute);
 app.route('/api/employees', employeesRoute);

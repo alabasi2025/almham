@@ -8,6 +8,15 @@ export const taskStatusEnum = pgEnum('task_status', ['pending', 'in-progress', '
 export const tankRoleEnum = pgEnum('tank_role', ['receiving', 'main', 'pre_pump', 'generator']);
 export const tankMaterialEnum = pgEnum('tank_material', ['plastic', 'steel', 'rocket', 'other']);
 export const userRoleEnum = pgEnum('user_role', ['admin', 'accountant', 'station_manager', 'technician', 'cashier']);
+export const cashboxTypeEnum = pgEnum('cashbox_type', ['station', 'exchange', 'wallet', 'bank']);
+export const walletProviderEnum = pgEnum('wallet_provider', ['jawali', 'kuraimi', 'mfloos', 'jeeb', 'other']);
+export const currencyEnum = pgEnum('currency', ['YER', 'SAR', 'USD']);
+export const movementDirectionEnum = pgEnum('movement_direction', ['in', 'out']);
+export const movementRefTypeEnum = pgEnum('movement_ref_type', [
+  'opening', 'collection', 'transfer_in', 'transfer_out', 'expense', 'adjustment',
+]);
+export const paymentMethodEnum = pgEnum('payment_method', ['cash', 'wallet', 'hexcell', 'other']);
+export const closureStatusEnum = pgEnum('closure_status', ['draft', 'closed', 'approved']);
 
 export const stations = pgTable('stations', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -212,4 +221,126 @@ export const auditLog = pgTable('audit_log', {
   actionIdx: index('audit_action_idx').on(t.action),
   userIdx: index('audit_user_idx').on(t.userId),
   createdAtIdx: index('audit_created_at_idx').on(t.createdAt),
+}));
+
+// ============ TREASURY & COLLECTIONS ============
+
+export const cashboxes = pgTable('cashboxes', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  name: varchar('name', { length: 255 }).notNull(),
+  type: cashboxTypeEnum('type').notNull(),
+  stationId: uuid('station_id').references(() => stations.id, { onDelete: 'set null' }),
+  walletProvider: walletProviderEnum('wallet_provider'),
+  accountNumber: varchar('account_number', { length: 64 }),
+  accountHolder: varchar('account_holder', { length: 255 }),
+  currency: currencyEnum('currency').notNull().default('YER'),
+  openingBalance: numeric('opening_balance', { precision: 18, scale: 2 }).notNull().default('0'),
+  isActive: boolean('is_active').notNull().default(true),
+  notes: text('notes'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (t) => ({
+  typeIdx: index('cashboxes_type_idx').on(t.type),
+  stationIdx: index('cashboxes_station_idx').on(t.stationId),
+}));
+
+export const cashMovements = pgTable('cash_movements', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  cashboxId: uuid('cashbox_id').notNull().references(() => cashboxes.id, { onDelete: 'cascade' }),
+  direction: movementDirectionEnum('direction').notNull(),
+  amount: numeric('amount', { precision: 18, scale: 2 }).notNull(),
+  currency: currencyEnum('currency').notNull().default('YER'),
+  refType: movementRefTypeEnum('ref_type').notNull(),
+  refId: uuid('ref_id'),
+  userId: uuid('user_id').references(() => users.id, { onDelete: 'set null' }),
+  occurredAt: timestamp('occurred_at').defaultNow().notNull(),
+  notes: text('notes'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (t) => ({
+  cashboxIdx: index('movements_cashbox_idx').on(t.cashboxId),
+  refIdx: index('movements_ref_idx').on(t.refType, t.refId),
+  occurredAtIdx: index('movements_occurred_at_idx').on(t.occurredAt),
+}));
+
+export const collections = pgTable('collections', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  stationId: uuid('station_id').notNull().references(() => stations.id),
+  cashboxId: uuid('cashbox_id').notNull().references(() => cashboxes.id),
+  collectorUserId: uuid('collector_user_id').references(() => users.id, { onDelete: 'set null' }),
+  subscriberName: varchar('subscriber_name', { length: 255 }),
+  meterNumber: varchar('meter_number', { length: 64 }),
+  amount: numeric('amount', { precision: 18, scale: 2 }).notNull(),
+  currency: currencyEnum('currency').notNull().default('YER'),
+  paymentMethod: paymentMethodEnum('payment_method').notNull(),
+  walletRef: varchar('wallet_ref', { length: 128 }),
+  receiptCode: varchar('receipt_code', { length: 128 }),
+  notes: text('notes'),
+  occurredAt: timestamp('occurred_at').defaultNow().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (t) => ({
+  stationIdx: index('collections_station_idx').on(t.stationId),
+  collectorIdx: index('collections_collector_idx').on(t.collectorUserId),
+  occurredAtIdx: index('collections_occurred_at_idx').on(t.occurredAt),
+}));
+
+export const cashTransfers = pgTable('cash_transfers', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  fromCashboxId: uuid('from_cashbox_id').notNull().references(() => cashboxes.id),
+  toCashboxId: uuid('to_cashbox_id').notNull().references(() => cashboxes.id),
+  amount: numeric('amount', { precision: 18, scale: 2 }).notNull(),
+  currency: currencyEnum('currency').notNull().default('YER'),
+  transferredByUserId: uuid('transferred_by_user_id').references(() => users.id, { onDelete: 'set null' }),
+  receiptPhotoUrl: text('receipt_photo_url'),
+  notes: text('notes'),
+  occurredAt: timestamp('occurred_at').defaultNow().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (t) => ({
+  fromIdx: index('transfers_from_idx').on(t.fromCashboxId),
+  toIdx: index('transfers_to_idx').on(t.toCashboxId),
+  occurredAtIdx: index('transfers_occurred_at_idx').on(t.occurredAt),
+}));
+
+export const expenseCategories = pgTable('expense_categories', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  name: varchar('name', { length: 128 }).notNull().unique(),
+  icon: varchar('icon', { length: 64 }),
+  color: varchar('color', { length: 16 }),
+  isActive: boolean('is_active').notNull().default(true),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const expenses = pgTable('expenses', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  stationId: uuid('station_id').references(() => stations.id, { onDelete: 'set null' }),
+  categoryId: uuid('category_id').references(() => expenseCategories.id, { onDelete: 'set null' }),
+  cashboxId: uuid('cashbox_id').notNull().references(() => cashboxes.id),
+  userId: uuid('user_id').references(() => users.id, { onDelete: 'set null' }),
+  amount: numeric('amount', { precision: 18, scale: 2 }).notNull(),
+  currency: currencyEnum('currency').notNull().default('YER'),
+  description: text('description').notNull(),
+  receiptPhotoUrl: text('receipt_photo_url'),
+  occurredAt: timestamp('occurred_at').defaultNow().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (t) => ({
+  stationIdx: index('expenses_station_idx').on(t.stationId),
+  categoryIdx: index('expenses_category_idx').on(t.categoryId),
+  cashboxIdx: index('expenses_cashbox_idx').on(t.cashboxId),
+  occurredAtIdx: index('expenses_occurred_at_idx').on(t.occurredAt),
+}));
+
+export const dailyClosures = pgTable('daily_closures', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  stationId: uuid('station_id').notNull().references(() => stations.id),
+  managerUserId: uuid('manager_user_id').references(() => users.id, { onDelete: 'set null' }),
+  closureDate: timestamp('closure_date').notNull(),
+  totalCash: numeric('total_cash', { precision: 18, scale: 2 }).notNull().default('0'),
+  totalWallet: numeric('total_wallet', { precision: 18, scale: 2 }).notNull().default('0'),
+  totalHexcell: numeric('total_hexcell', { precision: 18, scale: 2 }).notNull().default('0'),
+  expectedTotal: numeric('expected_total', { precision: 18, scale: 2 }).notNull().default('0'),
+  actualTotal: numeric('actual_total', { precision: 18, scale: 2 }).notNull().default('0'),
+  variance: numeric('variance', { precision: 18, scale: 2 }).notNull().default('0'),
+  status: closureStatusEnum('status').notNull().default('draft'),
+  notes: text('notes'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (t) => ({
+  stationDateIdx: index('closures_station_date_idx').on(t.stationId, t.closureDate),
 }));
