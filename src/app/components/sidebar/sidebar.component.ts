@@ -7,6 +7,7 @@ import { filter, map, startWith } from 'rxjs/operators';
 import { StationService } from '../../services/station.service';
 import { EmployeeService } from '../../services/employee.service';
 import { TaskService } from '../../services/task.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -36,8 +37,8 @@ import { TaskService } from '../../services/task.service';
           </div>
         </div>
         <div class="brand-text">
-          <h3>العباسي</h3>
-          <span>إدارة المحطات الكهربائية</span>
+          <h3>أنظمة العباسي</h3>
+          <span>المتخصصة</span>
         </div>
       </div>
 
@@ -168,22 +169,39 @@ import { TaskService } from '../../services/task.service';
             </a>
           </div>
         </div>
+
+        <!-- Users management (admin/accountant only) -->
+        @if (authService.canManageUsers()) {
+          <a routerLink="/users" routerLinkActive="active" class="nav-item">
+            <div class="nav-icon users-nav">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" fill="currentColor" fill-opacity="0.15"/>
+                <circle cx="9" cy="7" r="4" fill="currentColor" fill-opacity="0.15"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+            <span>المستخدمون</span>
+          </a>
+        }
       </nav>
 
       <!-- User Profile -->
       <div class="user-profile">
         <div class="profile-card">
           <div class="profile-avatar">
-            <div class="avatar-bg">م</div>
+            <div class="avatar-bg">{{ userInitial() }}</div>
             <div class="status-dot"></div>
           </div>
           <div class="profile-info">
-            <span class="profile-name">مدير النظام</span>
-            <span class="profile-status">• متصل الآن</span>
+            <span class="profile-name">{{ userDisplayName() }}</span>
+            <span class="profile-status">{{ userRoleLabel() }}</span>
           </div>
-          <button class="profile-menu">
-            <svg viewBox="0 0 20 20" fill="currentColor">
-              <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
+          <button class="profile-menu" (click)="logout()" title="تسجيل خروج">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
             </svg>
           </button>
         </div>
@@ -1002,11 +1020,39 @@ export class SidebarComponent {
   stationService = inject(StationService);
   employeeService = inject(EmployeeService);
   taskService = inject(TaskService);
+  authService = inject(AuthService);
   private router = inject(Router);
 
   isSidebarOpen = signal(false);
   isSuppliersOpen = signal(false);
   isStationsOpen = signal(false);
+
+  userDisplayName = computed(() => {
+    const user = this.authService.user();
+    if (!user) return 'مستخدم';
+    const emp = this.employeeService.employees().find((e) => e.id === user.employeeId);
+    return emp?.name || user.username;
+  });
+
+  userInitial = computed(() => {
+    const name = this.userDisplayName();
+    return name.charAt(0) || 'م';
+  });
+
+  userRoleLabel = computed(() => {
+    const role = this.authService.user()?.role;
+    return this.authService.roleLabel(role);
+  });
+
+  async logout() {
+    if (!confirm('هل تريد تسجيل الخروج؟')) return;
+    try {
+      await this.authService.logout();
+    } catch {
+      // backend may return 401 if session already revoked; ignore
+    }
+    this.router.navigate(['/login']);
+  }
 
   // Track current URL as a signal to compute active group state
   private currentUrl = toSignal(

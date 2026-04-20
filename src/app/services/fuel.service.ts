@@ -18,7 +18,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class FuelService {
   private http = inject(HttpClient);
-  private api = 'http://localhost:3000/api/fuel';
+  private api = '/api/fuel';
 
   suppliers = signal<FuelSupplier[]>([]);
   supplierSites = signal<SupplierSite[]>([]);

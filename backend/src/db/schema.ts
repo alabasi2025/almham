@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, integer, timestamp, pgEnum, boolean, numeric, jsonb, text } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, varchar, integer, timestamp, pgEnum, boolean, numeric, jsonb, text, index } from 'drizzle-orm/pg-core';
 
 export const stationStatusEnum = pgEnum('station_status', ['active', 'inactive', 'maintenance']);
 export const employeeStatusEnum = pgEnum('employee_status', ['active', 'inactive']);
@@ -7,6 +7,7 @@ export const taskPriorityEnum = pgEnum('task_priority', ['high', 'medium', 'low'
 export const taskStatusEnum = pgEnum('task_status', ['pending', 'in-progress', 'completed', 'cancelled']);
 export const tankRoleEnum = pgEnum('tank_role', ['receiving', 'main', 'pre_pump', 'generator']);
 export const tankMaterialEnum = pgEnum('tank_material', ['plastic', 'steel', 'rocket', 'other']);
+export const userRoleEnum = pgEnum('user_role', ['admin', 'accountant', 'station_manager', 'technician', 'cashier']);
 
 export const stations = pgTable('stations', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -165,3 +166,50 @@ export const generatorConsumption = pgTable('generator_consumption', {
   notes: text('notes'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
+
+// ============ AUTHENTICATION & AUDIT ============
+
+export const users = pgTable('users', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  employeeId: uuid('employee_id').references(() => employees.id, { onDelete: 'set null' }),
+  username: varchar('username', { length: 64 }).notNull().unique(),
+  passwordHash: varchar('password_hash', { length: 255 }).notNull(),
+  role: userRoleEnum('role').notNull(),
+  stationId: uuid('station_id').references(() => stations.id, { onDelete: 'set null' }),
+  isActive: boolean('is_active').notNull().default(true),
+  mustChangePassword: boolean('must_change_password').notNull().default(true),
+  lastLoginAt: timestamp('last_login_at'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (t) => ({
+  usernameIdx: index('users_username_idx').on(t.username),
+  employeeIdx: index('users_employee_idx').on(t.employeeId),
+}));
+
+export const sessions = pgTable('sessions', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  tokenId: varchar('token_id', { length: 64 }).notNull().unique(),
+  userAgent: text('user_agent'),
+  ipAddress: varchar('ip_address', { length: 64 }),
+  expiresAt: timestamp('expires_at').notNull(),
+  revokedAt: timestamp('revoked_at'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (t) => ({
+  tokenIdIdx: index('sessions_token_id_idx').on(t.tokenId),
+  userIdx: index('sessions_user_idx').on(t.userId),
+}));
+
+export const auditLog = pgTable('audit_log', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').references(() => users.id, { onDelete: 'set null' }),
+  action: varchar('action', { length: 128 }).notNull(),
+  entityType: varchar('entity_type', { length: 64 }),
+  entityId: uuid('entity_id'),
+  metadata: jsonb('metadata').$type<Record<string, unknown>>(),
+  ipAddress: varchar('ip_address', { length: 64 }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (t) => ({
+  actionIdx: index('audit_action_idx').on(t.action),
+  userIdx: index('audit_user_idx').on(t.userId),
+  createdAtIdx: index('audit_created_at_idx').on(t.createdAt),
+}));

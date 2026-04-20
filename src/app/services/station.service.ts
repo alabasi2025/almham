@@ -5,7 +5,7 @@ import { Station } from '../models/station.model';
 @Injectable({ providedIn: 'root' })
 export class StationService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api/stations';
+  private apiUrl = '/api/stations';
 
   stations = signal<Station[]>([]);
 

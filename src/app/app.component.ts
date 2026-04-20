@@ -1,18 +1,26 @@
-import { Component, HostListener } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, HostListener, OnInit, computed, inject } from '@angular/core';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { filter, map, startWith } from 'rxjs/operators';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, SidebarComponent],
+  imports: [CommonModule, RouterOutlet, SidebarComponent],
   template: `
-    <div class="app-layout">
-      <app-sidebar />
-      <main class="main-content">
-        <router-outlet />
-      </main>
-    </div>
+    @if (showShell()) {
+      <div class="app-layout">
+        <app-sidebar />
+        <main class="main-content">
+          <router-outlet />
+        </main>
+      </div>
+    } @else {
+      <router-outlet />
+    }
   `,
   styles: [`
     .app-layout {
@@ -66,7 +74,28 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
     }
   `],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
+  private router = inject(Router);
+  private auth = inject(AuthService);
+
+  private currentUrl = toSignal(
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      map((e) => e.urlAfterRedirects),
+      startWith(this.router.url),
+    ),
+    { initialValue: this.router.url },
+  );
+
+  showShell = computed(() => {
+    const url = this.currentUrl() ?? '';
+    return !url.startsWith('/login') && this.auth.isAuthenticated();
+  });
+
+  async ngOnInit() {
+    await this.auth.loadCurrentUser();
+  }
+
   @HostListener('document:wheel', ['$event'])
   preventNumberInputWheelChange(event: WheelEvent): void {
     if (!this.isNumberInput(event.target)) {

@@ -5,7 +5,7 @@ import { Task } from '../models/task.model';
 @Injectable({ providedIn: 'root' })
 export class TaskService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api/tasks';
+  private apiUrl = '/api/tasks';
 
   tasks = signal<Task[]>([]);
 

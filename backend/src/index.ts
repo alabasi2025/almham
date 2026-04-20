@@ -9,6 +9,8 @@ import employeesRoute from './routes/employees.js';
 import tasksRoute from './routes/tasks.js';
 import resetRoute from './routes/reset.js';
 import fuelRoute from './routes/fuel.js';
+import authRoute from './routes/auth.js';
+import usersRoute from './routes/users.js';
 
 const app = new Hono();
 
@@ -22,20 +24,25 @@ app.use('*', cors({
   },
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowHeaders: ['Content-Type'],
+  credentials: true,
 }));
 
 app.get('/', (c) => {
   return c.json({
-    message: 'مرحباً بك في API العباسي للأنظمة الذكية - نظام إدارة محطات الكهرباء',
+    message: 'أنظمة العباسي المتخصصة — API',
     version: '1.0.0',
     endpoints: {
+      auth: '/api/auth',
       stations: '/api/stations',
       employees: '/api/employees',
       tasks: '/api/tasks',
+      fuel: '/api/fuel',
     },
   });
 });
 
+app.route('/api/auth', authRoute);
+app.route('/api/users', usersRoute);
 app.route('/api/stations', stationsRoute);
 app.route('/api/employees', employeesRoute);
 app.route('/api/tasks', tasksRoute);

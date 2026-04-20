@@ -1,0 +1,68 @@
+<div class="login-layout" dir="rtl">
+  <div class="login-card">
+    <div class="brand">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h1>أنظمة العباسي المتخصصة</h1>
+      <p>منصّة إدارة متكاملة</p>
+    </div>
+
+    <form (ngSubmit)="submit()" #f="ngForm" autocomplete="on">
+      <label>
+        <span>اسم المستخدم</span>
+        <input
+          type="text"
+          name="username"
+          [ngModel]="username()"
+          (ngModelChange)="username.set($event)"
+          autocomplete="username"
+          dir="ltr"
+          placeholder="admin"
+          [disabled]="loading()"
+        />
+      </label>
+
+      <label>
+        <span>كلمة السر</span>
+        <div class="password-wrap">
+          <input
+            [type]="showPassword() ? 'text' : 'password'"
+            name="password"
+            [ngModel]="password()"
+            (ngModelChange)="password.set($event)"
+            autocomplete="current-password"
+            dir="ltr"
+            [disabled]="loading()"
+          />
+          <button
+            type="button"
+            class="toggle-pw"
+            (click)="showPassword.set(!showPassword())"
+            [attr.aria-label]="showPassword() ? 'إخفاء' : 'إظهار'"
+          >
+            {{ showPassword() ? '🙈' : '👁️' }}
+          </button>
+        </div>
+      </label>
+
+      @if (error()) {
+        <div class="error-box">{{ error() }}</div>
+      }
+
+      <button type="submit" class="submit-btn" [disabled]="loading()">
+        @if (loading()) {
+          <span>جاري الدخول...</span>
+        } @else {
+          <span>تسجيل الدخول</span>
+        }
+      </button>
+    </form>
+
+    <div class="footer-note">
+      <small>كلمة السر الافتراضية للحسابات الجديدة: <code>almham2026</code></small>
+    </div>
+  </div>
+</div>

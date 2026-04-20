@@ -236,7 +236,7 @@ export class StationsSimpleComponent implements OnInit {
     this.loading = true;
     console.log('🔄 جاري تحميل المحطات من API...');
     
-    this.http.get<any[]>('http://localhost:3000/api/stations').subscribe({
+    this.http.get<any[]>('/api/stations').subscribe({
       next: (data) => {
         console.log('✅ تم استلام المحطات:', data);
         this.stations = data;

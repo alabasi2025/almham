@@ -1,0 +1,422 @@
+<div class="users-page">
+
+  <!-- ============ HERO HEADER ============ -->
+  <header class="users-hero">
+    <div class="hero-bg-grid"></div>
+    <div class="hero-bg-orb orb-1"></div>
+    <div class="hero-bg-orb orb-2"></div>
+
+    <div class="hero-top">
+      <div class="hero-title">
+        <div class="hero-icon">
+          <mat-icon>admin_panel_settings</mat-icon>
+        </div>
+        <div class="hero-text">
+          <h1>إدارة المستخدمين</h1>
+          <p>حسابات الموظفين والصلاحيات والتحكّم بالوصول</p>
+        </div>
+      </div>
+
+      <div class="hero-actions">
+        <button class="btn-ghost" (click)="refresh()" title="تحديث">
+          <mat-icon>refresh</mat-icon>
+          <span>تحديث</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Hero KPIs -->
+    <div class="hero-kpis">
+      <div class="k-card total">
+        <div class="k-icon"><mat-icon>people</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ totalCount() }}</span>
+          <span class="k-label">إجمالي الحسابات</span>
+        </div>
+      </div>
+
+      <div class="k-card active">
+        <div class="k-icon"><mat-icon>verified_user</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ activeCount() }}</span>
+          <span class="k-label">حساب مفعّل</span>
+        </div>
+      </div>
+
+      <div class="k-card inactive">
+        <div class="k-icon"><mat-icon>person_off</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ inactiveCount() }}</span>
+          <span class="k-label">معطّل</span>
+        </div>
+      </div>
+
+      <div class="k-card pending">
+        <div class="k-icon"><mat-icon>lock_reset</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ pendingPasswordCount() }}</span>
+          <span class="k-label">يتطلّبون تغيير كلمة السر</span>
+        </div>
+      </div>
+
+      <div class="k-card admins">
+        <div class="k-icon"><mat-icon>shield_person</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ adminCount() + managerCount() }}</span>
+          <span class="k-label">مدراء</span>
+        </div>
+      </div>
+
+      <div class="k-card techs">
+        <div class="k-icon"><mat-icon>engineering</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ techCount() }}</span>
+          <span class="k-label">فنّيون</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ TOOLBAR ============ -->
+  <div class="toolbar">
+    <div class="search-box">
+      <mat-icon>search</mat-icon>
+      <input
+        type="text"
+        placeholder="ابحث باسم المستخدم أو الموظف أو المحطة..."
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)"
+      />
+      @if (searchQuery()) {
+        <button class="search-clear" (click)="searchQuery.set('')" title="مسح">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+
+    <div class="filter-chips">
+      <button
+        class="chip"
+        [class.active]="roleFilter() === 'all'"
+        (click)="roleFilter.set('all')">
+        <mat-icon>apps</mat-icon> الكل
+        <span class="count">{{ totalCount() }}</span>
+      </button>
+      <button
+        class="chip chip-admin"
+        [class.active]="roleFilter() === 'admin'"
+        (click)="roleFilter.set('admin')">
+        <mat-icon>shield_person</mat-icon> مدير عام
+        <span class="count">{{ countByRole('admin') }}</span>
+      </button>
+      <button
+        class="chip chip-accountant"
+        [class.active]="roleFilter() === 'accountant'"
+        (click)="roleFilter.set('accountant')">
+        <mat-icon>calculate</mat-icon> محاسب
+        <span class="count">{{ countByRole('accountant') }}</span>
+      </button>
+      <button
+        class="chip chip-manager"
+        [class.active]="roleFilter() === 'station_manager'"
+        (click)="roleFilter.set('station_manager')">
+        <mat-icon>supervisor_account</mat-icon> مدير محطة
+        <span class="count">{{ countByRole('station_manager') }}</span>
+      </button>
+      <button
+        class="chip chip-tech"
+        [class.active]="roleFilter() === 'technician'"
+        (click)="roleFilter.set('technician')">
+        <mat-icon>engineering</mat-icon> فنّي
+        <span class="count">{{ countByRole('technician') }}</span>
+      </button>
+      @if (pendingPasswordCount() > 0) {
+        <button
+          class="chip chip-pending"
+          [class.active]="roleFilter() === 'pending_pw'"
+          (click)="roleFilter.set('pending_pw')">
+          <mat-icon>lock_reset</mat-icon> بحاجة تغيير
+          <span class="count">{{ pendingPasswordCount() }}</span>
+        </button>
+      }
+    </div>
+
+    <div class="view-toggle">
+      <button class="view-btn" [class.active]="viewMode() === 'cards'" (click)="viewMode.set('cards')" title="بطاقات">
+        <mat-icon>grid_view</mat-icon>
+      </button>
+      <button class="view-btn" [class.active]="viewMode() === 'table'" (click)="viewMode.set('table')" title="جدول">
+        <mat-icon>table_rows</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- ============ CARDS VIEW ============ -->
+  @if (viewMode() === 'cards' && filtered().length > 0) {
+    <div class="cards-grid">
+      @for (u of filtered(); track u.id) {
+        <article class="user-card" [class.is-inactive]="!u.isActive">
+          <header class="card-head">
+            <div class="avatar" [style.background]="avatarColor(u.role)">
+              {{ initials(u.employeeName ?? u.username) }}
+            </div>
+            <div class="user-info">
+              <h3>{{ u.employeeName ?? u.username }}</h3>
+              <span class="username mono">{{ '@' + u.username }}</span>
+            </div>
+            @if (u.isActive) {
+              <span class="status-chip active">
+                <span class="pulse-dot"></span>
+                مفعّل
+              </span>
+            } @else {
+              <span class="status-chip inactive">
+                <span class="pulse-dot"></span>
+                معطّل
+              </span>
+            }
+          </header>
+
+          <div class="card-body">
+            <div class="info-row">
+              <mat-icon>badge</mat-icon>
+              <div>
+                <span class="info-label">الدور</span>
+                <span class="role-badge" [attr.data-role]="u.role">
+                  {{ roleLabel(u.role) }}
+                </span>
+              </div>
+            </div>
+
+            @if (u.stationName) {
+              <div class="info-row">
+                <mat-icon>electric_bolt</mat-icon>
+                <div>
+                  <span class="info-label">المحطة</span>
+                  <span class="info-value">{{ shortStation(u.stationName) }}</span>
+                </div>
+              </div>
+            }
+
+            <div class="info-row">
+              <mat-icon>login</mat-icon>
+              <div>
+                <span class="info-label">آخر دخول</span>
+                <span class="info-value mini">{{ formatDate(u.lastLoginAt) }}</span>
+              </div>
+            </div>
+
+            @if (u.mustChangePassword && u.isActive) {
+              <div class="warn-pill">
+                <mat-icon>lock_reset</mat-icon>
+                <span>يجب تغيير كلمة السر عند أول دخول</span>
+              </div>
+            }
+          </div>
+
+          @if (auth.isAdmin()) {
+            <footer class="card-footer">
+              <button class="action-btn reset" (click)="openReset(u)" title="إعادة تعيين كلمة السر">
+                <mat-icon>key</mat-icon>
+                <span>كلمة سر</span>
+              </button>
+              <div class="footer-divider"></div>
+              <button
+                class="action-btn"
+                [class.danger]="u.isActive"
+                [class.success]="!u.isActive"
+                (click)="toggle(u)"
+                [title]="u.isActive ? 'تعطيل الحساب' : 'تفعيل الحساب'">
+                <mat-icon>{{ u.isActive ? 'block' : 'check_circle' }}</mat-icon>
+                <span>{{ u.isActive ? 'تعطيل' : 'تفعيل' }}</span>
+              </button>
+            </footer>
+          }
+        </article>
+      }
+    </div>
+  }
+
+  <!-- ============ TABLE VIEW ============ -->
+  @if (viewMode() === 'table' && filtered().length > 0) {
+    <div class="table-wrap">
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>المستخدم</th>
+            <th>اسم الدخول</th>
+            <th>الدور</th>
+            <th>المحطة</th>
+            <th>الحالة</th>
+            <th>آخر دخول</th>
+            <th>إجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (u of filtered(); track u.id; let i = $index) {
+            <tr [class.is-inactive]="!u.isActive">
+              <td class="row-num">{{ i + 1 }}</td>
+              <td>
+                <div class="name-cell">
+                  <div class="avatar-sm" [style.background]="avatarColor(u.role)">
+                    {{ initials(u.employeeName ?? u.username) }}
+                  </div>
+                  <div>
+                    <div class="emp-name">{{ u.employeeName ?? '—' }}</div>
+                    @if (u.employeeRole) {
+                      <small>{{ u.employeeRole }}</small>
+                    }
+                  </div>
+                </div>
+              </td>
+              <td class="mono">{{ '@' + u.username }}</td>
+              <td>
+                <span class="role-badge" [attr.data-role]="u.role">
+                  {{ roleLabel(u.role) }}
+                </span>
+              </td>
+              <td>{{ shortStation(u.stationName) }}</td>
+              <td>
+                @if (u.isActive) {
+                  <span class="status-chip compact active">
+                    <span class="pulse-dot"></span>
+                    مفعّل
+                  </span>
+                } @else {
+                  <span class="status-chip compact inactive">
+                    <span class="pulse-dot"></span>
+                    معطّل
+                  </span>
+                }
+                @if (u.mustChangePassword && u.isActive) {
+                  <span class="pw-flag" title="بحاجة لتغيير كلمة السر">
+                    <mat-icon>lock_reset</mat-icon>
+                  </span>
+                }
+              </td>
+              <td class="mini">{{ formatDate(u.lastLoginAt) }}</td>
+              <td>
+                @if (auth.isAdmin()) {
+                  <div class="table-actions">
+                    <button class="t-btn reset" (click)="openReset(u)" title="إعادة تعيين كلمة السر">
+                      <mat-icon>key</mat-icon>
+                    </button>
+                    <button
+                      class="t-btn"
+                      [class.danger]="u.isActive"
+                      [class.success]="!u.isActive"
+                      (click)="toggle(u)"
+                      [title]="u.isActive ? 'تعطيل' : 'تفعيل'">
+                      <mat-icon>{{ u.isActive ? 'block' : 'check_circle' }}</mat-icon>
+                    </button>
+                  </div>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <!-- ============ EMPTY STATE ============ -->
+  @if (filtered().length === 0 && !users.loading()) {
+    <div class="empty-state">
+      <div class="empty-icon"><mat-icon>manage_accounts</mat-icon></div>
+      @if (users.users().length === 0) {
+        <h3>لا يوجد حسابات بعد</h3>
+        <p>شغّل <code>npm run db:seed:users</code> في الـ backend لإنشاء الحسابات</p>
+      } @else {
+        <h3>لا توجد نتائج مطابقة</h3>
+        <p>جرّب تعديل البحث أو اختر دوراً مختلفاً</p>
+        <button class="btn-ghost" (click)="clearFilters()">
+          <mat-icon>clear</mat-icon> مسح الفلاتر
+        </button>
+      }
+    </div>
+  }
+
+  <!-- ============ LOADING STATE ============ -->
+  @if (users.loading()) {
+    <div class="empty-state">
+      <div class="empty-icon loading"><mat-icon>hourglass_empty</mat-icon></div>
+      <h3>جاري التحميل...</h3>
+    </div>
+  }
+</div>
+
+<!-- ============ RESET PASSWORD MODAL ============ -->
+@if (resetUser(); as u) {
+  <div class="modal-overlay" (click)="closeReset()"></div>
+  <div class="form-panel">
+    <header class="form-header">
+      <div class="form-title">
+        <mat-icon>key</mat-icon>
+        <h3>إعادة تعيين كلمة السر</h3>
+      </div>
+      <button class="close-btn" (click)="closeReset()" title="إغلاق">
+        <mat-icon>close</mat-icon>
+      </button>
+    </header>
+
+    <div class="form-body">
+      @if (resetSuccess()) {
+        <div class="success-box">
+          <mat-icon>check_circle</mat-icon>
+          <div>
+            <strong>تمّت إعادة التعيين بنجاح</strong>
+            <p>سيُطلب من <b>{{ u.username }}</b> تغيير كلمة السر عند أول دخول.</p>
+          </div>
+        </div>
+      } @else {
+        <div class="user-preview">
+          <div class="avatar" [style.background]="avatarColor(u.role)">
+            {{ initials(u.employeeName ?? u.username) }}
+          </div>
+          <div>
+            <strong>{{ u.employeeName ?? u.username }}</strong>
+            <span class="mono">{{ '@' + u.username }}</span>
+          </div>
+        </div>
+
+        <label>
+          <span>كلمة السر الجديدة</span>
+          <input
+            type="text"
+            [ngModel]="newPassword()"
+            (ngModelChange)="newPassword.set($event)"
+            dir="ltr"
+            placeholder="8 أحرف على الأقل"
+            [disabled]="resetBusy()"
+            autocomplete="new-password"
+          />
+          <small class="field-hint">سيُطلب من المستخدم تغييرها عند أول دخول</small>
+        </label>
+
+        @if (resetError()) {
+          <div class="error-box">
+            <mat-icon>error_outline</mat-icon>
+            <span>{{ resetError() }}</span>
+          </div>
+        }
+      }
+    </div>
+
+    <footer class="form-footer">
+      @if (resetSuccess()) {
+        <button class="btn-primary" (click)="closeReset()">إغلاق</button>
+      } @else {
+        <button class="btn-ghost" (click)="closeReset()" [disabled]="resetBusy()">إلغاء</button>
+        <button class="btn-primary" (click)="confirmReset()" [disabled]="resetBusy()">
+          @if (resetBusy()) {
+            <span>جاري الحفظ...</span>
+          } @else {
+            <mat-icon>save</mat-icon>
+            <span>حفظ</span>
+          }
+        </button>
+      }
+    </footer>
+  </div>
+}
