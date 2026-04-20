@@ -1,0 +1,367 @@
+<div class="employees-page">
+
+  <!-- ============ HERO HEADER ============ -->
+  <header class="emp-hero">
+    <div class="hero-bg-grid"></div>
+    <div class="hero-bg-orb orb-1"></div>
+    <div class="hero-bg-orb orb-2"></div>
+
+    <div class="hero-top">
+      <div class="hero-title">
+        <div class="hero-icon">
+          <mat-icon>badge</mat-icon>
+        </div>
+        <div class="hero-text">
+          <h1>إدارة الموظفين</h1>
+          <p>الكوادر البشرية للمحطات والإدارة العامة</p>
+        </div>
+      </div>
+
+      <div class="hero-actions">
+        <button class="btn-ghost" (click)="refresh()" title="تحديث">
+          <mat-icon>refresh</mat-icon>
+        </button>
+        <button class="btn-primary" (click)="openForm()">
+          <mat-icon>person_add</mat-icon>
+          <span>إضافة موظف</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Hero KPIs -->
+    <div class="hero-kpis">
+      <div class="k-card total">
+        <div class="k-icon"><mat-icon>groups</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ employeeService.employees().length }}</span>
+          <span class="k-label">إجمالي الموظفين</span>
+        </div>
+      </div>
+
+      <div class="k-card active">
+        <div class="k-icon"><mat-icon>how_to_reg</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ employeeService.activeCount() }}</span>
+          <span class="k-label">موظف نشط</span>
+        </div>
+        <div class="k-trend"><span class="pct">{{ activePercent() }}%</span></div>
+      </div>
+
+      <div class="k-card inactive">
+        <div class="k-icon"><mat-icon>person_off</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ inactiveCount() }}</span>
+          <span class="k-label">غير نشط</span>
+        </div>
+      </div>
+
+      <div class="k-card managers">
+        <div class="k-icon"><mat-icon>supervisor_account</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ managersCount() }}</span>
+          <span class="k-label">مدير / مشرف</span>
+        </div>
+      </div>
+
+      <div class="k-card techs">
+        <div class="k-icon"><mat-icon>engineering</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ techsCount() }}</span>
+          <span class="k-label">مهندس / فني</span>
+        </div>
+      </div>
+
+      <div class="k-card stations">
+        <div class="k-icon"><mat-icon>electric_bolt</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ stationService.stations().length }}</span>
+          <span class="k-label">محطة مرتبطة</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ TOOLBAR ============ -->
+  <div class="toolbar">
+    <div class="search-box">
+      <mat-icon>search</mat-icon>
+      <input
+        type="text"
+        placeholder="ابحث بالاسم، الوظيفة، الهاتف..."
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)"
+      />
+      @if (searchQuery()) {
+        <button class="search-clear" (click)="searchQuery.set('')">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+
+    <div class="filter-chips">
+      <button
+        class="chip"
+        [class.active]="stationFilter() === 'all'"
+        (click)="stationFilter.set('all')">
+        <mat-icon>apps</mat-icon> الكل
+        <span class="count">{{ employeeService.employees().length }}</span>
+      </button>
+      <button
+        class="chip chip-admin"
+        [class.active]="stationFilter() === 'hq'"
+        (click)="stationFilter.set('hq')">
+        <mat-icon>domain</mat-icon> الإدارة
+        <span class="count">{{ hqCount() }}</span>
+      </button>
+      @for (s of stationService.stations(); track s.id) {
+        <button
+          class="chip chip-station"
+          [class.active]="stationFilter() === s.id"
+          (click)="stationFilter.set(s.id)">
+          <span class="dot"></span> {{ shortName(s.name) }}
+          <span class="count">{{ countByStation(s.id) }}</span>
+        </button>
+      }
+    </div>
+
+    <div class="view-toggle">
+      <button class="view-btn" [class.active]="viewMode() === 'cards'" (click)="viewMode.set('cards')" title="بطاقات">
+        <mat-icon>grid_view</mat-icon>
+      </button>
+      <button class="view-btn" [class.active]="viewMode() === 'table'" (click)="viewMode.set('table')" title="جدول">
+        <mat-icon>table_rows</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- ============ CARDS VIEW ============ -->
+  @if (viewMode() === 'cards') {
+    <div class="cards-grid">
+      @for (e of filteredEmployees(); track e.id) {
+        <article class="emp-card" [class]="'status-' + e.status">
+          <header class="emp-head">
+            <div class="avatar" [style.background]="avatarColor(e.name)">
+              {{ initials(e.name) }}
+            </div>
+            <div class="emp-info">
+              <h3>{{ e.name }}</h3>
+              <span class="emp-role">{{ e.role }}</span>
+            </div>
+            <div class="status-chip" [class]="e.status">
+              <span class="pulse-dot"></span>
+              {{ e.status === 'active' ? 'نشط' : 'غير نشط' }}
+            </div>
+          </header>
+
+          <div class="emp-body">
+            <div class="info-row">
+              <mat-icon>{{ e.stationId ? 'electric_bolt' : 'domain' }}</mat-icon>
+              <div>
+                <span class="info-label">{{ e.stationId ? 'المحطة' : 'المقر' }}</span>
+                <span class="info-value">{{ getStationName(e.stationId) }}</span>
+              </div>
+            </div>
+
+            @if (e.phone) {
+              <div class="info-row">
+                <mat-icon>phone</mat-icon>
+                <div>
+                  <span class="info-label">الجوال</span>
+                  <a class="info-value link" [href]="'tel:' + e.phone" dir="ltr">{{ e.phone }}</a>
+                </div>
+              </div>
+            }
+
+            @if (e.email) {
+              <div class="info-row">
+                <mat-icon>email</mat-icon>
+                <div>
+                  <span class="info-label">البريد</span>
+                  <a class="info-value link ellipsis" [href]="'mailto:' + e.email" dir="ltr">{{ e.email }}</a>
+                </div>
+              </div>
+            }
+          </div>
+
+          <footer class="emp-footer">
+            @if (e.phone) {
+              <a class="action-btn call" [href]="'tel:' + e.phone" title="اتصال">
+                <mat-icon>call</mat-icon>
+                <span>اتصال</span>
+              </a>
+            }
+            @if (e.email) {
+              <a class="action-btn email" [href]="'mailto:' + e.email" title="بريد">
+                <mat-icon>mail</mat-icon>
+              </a>
+            }
+            <div class="footer-divider"></div>
+            <button class="action-btn edit" (click)="edit(e)" title="تعديل">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button class="action-btn del" (click)="delete(e.id)" title="حذف">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </footer>
+        </article>
+      }
+    </div>
+  }
+
+  <!-- ============ TABLE VIEW ============ -->
+  @if (viewMode() === 'table') {
+    <div class="table-wrap">
+      <table class="emp-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>الموظف</th>
+            <th>الوظيفة</th>
+            <th>المحطة / الإدارة</th>
+            <th>الجوال</th>
+            <th>البريد</th>
+            <th>الحالة</th>
+            <th>إجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (e of filteredEmployees(); track e.id; let i = $index) {
+            <tr>
+              <td class="row-num">{{ i + 1 }}</td>
+              <td>
+                <div class="name-cell">
+                  <div class="avatar-sm" [style.background]="avatarColor(e.name)">{{ initials(e.name) }}</div>
+                  <span>{{ e.name }}</span>
+                </div>
+              </td>
+              <td>{{ e.role }}</td>
+              <td>{{ getStationName(e.stationId) }}</td>
+              <td dir="ltr" class="num">{{ e.phone || '-' }}</td>
+              <td dir="ltr" class="email-cell">{{ e.email || '-' }}</td>
+              <td>
+                <span class="status-chip compact" [class]="e.status">
+                  <span class="pulse-dot"></span>
+                  {{ e.status === 'active' ? 'نشط' : 'غير نشط' }}
+                </span>
+              </td>
+              <td>
+                <div class="table-actions">
+                  @if (e.phone) {
+                    <a class="t-btn call" [href]="'tel:' + e.phone" title="اتصال">
+                      <mat-icon>call</mat-icon>
+                    </a>
+                  }
+                  <button class="t-btn edit" (click)="edit(e)" title="تعديل">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button class="t-btn del" (click)="delete(e.id)" title="حذف">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <!-- ============ EMPTY STATE ============ -->
+  @if (filteredEmployees().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon"><mat-icon>groups</mat-icon></div>
+      @if (employeeService.employees().length === 0) {
+        <h3>لا يوجد موظفين بعد</h3>
+        <p>ابدأ بإضافة الموظفين والكوادر التشغيلية</p>
+        <button class="btn-primary" (click)="openForm()">
+          <mat-icon>person_add</mat-icon> إضافة موظف
+        </button>
+      } @else {
+        <h3>لا توجد نتائج مطابقة</h3>
+        <p>جرّب تعديل البحث أو الفلاتر</p>
+        <button class="btn-ghost" (click)="clearFilters()">
+          <mat-icon>clear</mat-icon> مسح الفلاتر
+        </button>
+      }
+    </div>
+  }
+
+  <!-- ============ FORM PANEL ============ -->
+  @if (showForm()) {
+    <div class="modal-overlay" (click)="cancelForm()"></div>
+    <div class="form-panel">
+      <header class="form-header">
+        <div class="form-title">
+          <mat-icon>{{ editingId() ? 'edit' : 'person_add' }}</mat-icon>
+          <h3>{{ editingId() ? 'تعديل بيانات الموظف' : 'إضافة موظف جديد' }}</h3>
+        </div>
+        <button class="close-btn" (click)="cancelForm()" title="إغلاق">
+          <mat-icon>close</mat-icon>
+        </button>
+      </header>
+
+      <form class="emp-form" (ngSubmit)="save()">
+        <div class="field-group full">
+          <label>الاسم الكامل *</label>
+          <input type="text" [(ngModel)]="form.name" name="name" required placeholder="مثال: محمد أحمد العباسي" />
+        </div>
+
+        <div class="field-group">
+          <label>الوظيفة</label>
+          <select [(ngModel)]="form.role" name="role" title="الوظيفة">
+            <option value="المدير التنفيذي">المدير التنفيذي</option>
+            <option value="مدير محطة">مدير محطة</option>
+            <option value="مدير عام">مدير عام</option>
+            <option value="محاسب">محاسب</option>
+            <option value="مشرف محطة">مشرف محطة</option>
+            <option value="مهندس كهرباء">مهندس كهرباء</option>
+            <option value="مهندس شبكات">مهندس شبكات</option>
+            <option value="فني كهرباء">فني كهرباء</option>
+            <option value="فني مولدات">فني مولدات</option>
+            <option value="فني صيانة">فني صيانة</option>
+            <option value="سائق">سائق</option>
+            <option value="حارس">حارس</option>
+            <option value="عامل">عامل</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label>الحالة</label>
+          <select [(ngModel)]="form.status" name="status" title="الحالة">
+            <option value="active">نشط</option>
+            <option value="inactive">غير نشط</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label>رقم الجوال *</label>
+          <input type="tel" [(ngModel)]="form.phone" name="phone" required placeholder="77x xxx xxx" dir="ltr" />
+        </div>
+
+        <div class="field-group">
+          <label>البريد الإلكتروني</label>
+          <input type="email" [(ngModel)]="form.email" name="email" placeholder="email@example.com" dir="ltr" />
+        </div>
+
+        <div class="field-group full">
+          <label>المحطة / الإدارة</label>
+          <select [(ngModel)]="form.stationId" name="stationId" title="المحطة">
+            <option [ngValue]="null">الإدارة العامة</option>
+            @for (s of stationService.stations(); track s.id) {
+              <option [ngValue]="s.id">{{ s.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-ghost" (click)="cancelForm()">إلغاء</button>
+          <button type="submit" class="btn-primary">
+            <mat-icon>save</mat-icon>
+            {{ editingId() ? 'حفظ التعديلات' : 'إضافة الموظف' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+</div>

@@ -1,0 +1,1069 @@
+<div class="fuel-page">
+
+  <!-- ============ HERO HEADER ============ -->
+  <header class="fuel-hero">
+    <div class="hero-top">
+      <div class="hero-title">
+        <div class="hero-icon">
+          <mat-icon>local_gas_station</mat-icon>
+        </div>
+        <div>
+          <h1>إدارة الديزل</h1>
+          <p>تتبع سلسلة الديزل من المورد إلى المولد</p>
+        </div>
+      </div>
+      <div class="hero-stations">
+        @for (s of stationService.stations(); track s.id) {
+          <button
+            class="station-chip"
+            [class.active]="selectedStationId() === s.id"
+            (click)="selectStation(s.id)">
+            <span class="chip-dot"></span>
+            {{ shortStationName(s.name) }}
+          </button>
+        }
+      </div>
+    </div>
+
+    @if (selectedStation()) {
+      <div class="hero-station-info">
+        <div class="hsi-main">
+          <span class="hsi-label">المحطة الحالية</span>
+          <h2>محطة {{ stationShortName() }}</h2>
+          <div class="hsi-meta">
+            <span><mat-icon>place</mat-icon> {{ selectedStation()?.location }}</span>
+            <span><mat-icon>bolt</mat-icon> {{ selectedStation()?.capacity | number }} ك.و</span>
+            <span class="badge active">نشطة</span>
+          </div>
+        </div>
+        <div class="hsi-people">
+          @if (stationManager()) {
+            <div class="person">
+              <span class="person-role">مدير المحطة</span>
+              <span class="person-name">{{ stationManager()?.name }}</span>
+            </div>
+          }
+          @if (stationFuelTech()) {
+            <div class="person">
+              <span class="person-role">فني المولدات</span>
+              <span class="person-name">{{ stationFuelTech()?.name }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </header>
+
+  <!-- ============ KPIs ============ -->
+  @if (selectedStationId()) {
+    <div class="kpi-grid">
+      <div class="kpi-card stock">
+        <mat-icon>local_gas_station</mat-icon>
+        <div>
+          <span class="kpi-value">{{ totalStock() | number }}</span>
+          <span class="kpi-label">الرصيد الحالي (لتر)</span>
+        </div>
+        <span class="kpi-sub">{{ overallPercent() }}% من السعة</span>
+      </div>
+      <div class="kpi-card capacity">
+        <mat-icon>storage</mat-icon>
+        <div>
+          <span class="kpi-value">{{ totalCapacity() | number }}</span>
+          <span class="kpi-label">إجمالي السعة (لتر)</span>
+        </div>
+        <span class="kpi-sub">{{ stationTanks().length }} خزان</span>
+      </div>
+      <div class="kpi-card in">
+        <mat-icon>download</mat-icon>
+        <div>
+          <span class="kpi-value">{{ totalReceivedToday() | number }}</span>
+          <span class="kpi-label">استلامات اليوم</span>
+        </div>
+        <span class="kpi-sub">{{ stationReceipts().length }} سند إجمالي</span>
+      </div>
+      <div class="kpi-card out">
+        <mat-icon>bolt</mat-icon>
+        <div>
+          <span class="kpi-value">{{ totalConsumedToday() | number }}</span>
+          <span class="kpi-label">استهلاك اليوم</span>
+        </div>
+        <span class="kpi-sub">{{ stationGenerators().length }} مولد</span>
+      </div>
+    </div>
+  }
+
+  @if (selectedStationId()) {
+    <!-- ============ CUSTOM TAB BAR ============ -->
+    <nav class="fuel-tabs" role="tablist">
+      @for (tab of tabs; track tab.id) {
+        <button
+          class="tab-btn"
+          role="tab"
+          [class.active]="activeTab() === tab.id"
+          [attr.aria-selected]="activeTab() === tab.id"
+          (click)="activeTab.set(tab.id)">
+          <mat-icon>{{ tab.icon }}</mat-icon>
+          <span class="tab-label">{{ tab.label }}</span>
+          @if (tabBadge(tab.id) > 0) {
+            <span class="tab-badge">{{ tabBadge(tab.id) }}</span>
+          }
+        </button>
+      }
+    </nav>
+
+    <div class="fuel-tab-content">
+
+      <!-- ================ TAB 1: OVERVIEW ================ -->
+      @if (activeTab() === 'overview') {
+        <div class="tab-content">
+
+          @if (flowStages().length > 0) {
+            <section class="section">
+              <h3 class="section-title">
+                <mat-icon>timeline</mat-icon>
+                سلسلة تدفق الديزل
+              </h3>
+              <div class="flow-diagram">
+                @for (stage of flowStages(); track stage.role; let isLast = $last) {
+                  <div class="flow-stage">
+                    <div class="stage-label">{{ stage.label }}</div>
+                    <div class="stage-tanks">
+                      @for (t of stage.tanks; track t.id) {
+                        @let lv = levelFor(t.id);
+                        @let pct = lv ? fillPercent(lv.currentLiters, lv.capacityL) : 0;
+                        <div class="mini-tank" [attr.data-status]="fillStatus(pct)" [title]="t.name + ' - ' + pct + '%'">
+                          <div class="mini-fill" [style.height.%]="pct"></div>
+                          <span class="mini-label">{{ t.name }}</span>
+                          <span class="mini-pct">{{ pct }}%</span>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                  @if (!isLast) {
+                    <mat-icon class="flow-arrow">chevron_left</mat-icon>
+                  }
+                }
+              </div>
+            </section>
+          }
+
+          <section class="section">
+            <h3 class="section-title">
+              <mat-icon>storage</mat-icon>
+              مستويات الخزانات التفصيلية
+            </h3>
+            <div class="tanks-grid">
+              @for (lv of fuel.levels(); track lv.tankId) {
+                @let pct = fillPercent(lv.currentLiters, lv.capacityL);
+                <div class="tank-card" [attr.data-status]="fillStatus(pct)">
+                  <div class="tank-head">
+                    <span class="tank-name">{{ lv.name }}</span>
+                    <span class="tank-role">{{ roleLabel(lv.role) }}</span>
+                  </div>
+                  <div class="tank-big">
+                    <span class="tank-main">{{ lv.currentLiters | number }}</span>
+                    <span class="tank-unit">لتر</span>
+                  </div>
+                  <div class="tank-meter">
+                    <div class="fill" [style.width.%]="pct"></div>
+                  </div>
+                  <div class="tank-numbers">
+                    <span>{{ lv.capacityL | number }} لتر سعة</span>
+                    <span class="percent">{{ pct }}%</span>
+                  </div>
+                  <div class="tank-meta">
+                    <span title="استلامات"><mat-icon>download</mat-icon> {{ lv.receiptsIn | number }}</span>
+                    <span title="وارد"><mat-icon>south_west</mat-icon> {{ lv.transfersIn | number }}</span>
+                    <span title="صادر"><mat-icon>north_east</mat-icon> {{ lv.transfersOut | number }}</span>
+                    <span title="استهلاك"><mat-icon>local_fire_department</mat-icon> {{ lv.consumed | number }}</span>
+                  </div>
+                </div>
+              } @empty {
+                <div class="empty-inline">
+                  <mat-icon>info</mat-icon>
+                  <p>لا توجد خزانات — أضف من تبويب "الخزانات".</p>
+                </div>
+              }
+            </div>
+          </section>
+
+          @if (receiptsSorted().length > 0 || transfersSorted().length > 0 || consumptionSorted().length > 0) {
+            <section class="section">
+              <h3 class="section-title">
+                <mat-icon>history</mat-icon>
+                آخر النشاطات
+              </h3>
+              <div class="activity-list">
+                @for (r of receiptsSorted().slice(0, 5); track r.id) {
+                  <div class="activity-item receipt">
+                    <mat-icon>download</mat-icon>
+                    <div class="act-main">
+                      <strong>استلام ديزل</strong>
+                      <span class="muted">{{ supplierName_(r.supplierId) }} · {{ tankerLabel(r.tankerId) }}</span>
+                    </div>
+                    <span class="act-value">+{{ r.totalLiters | number }} لتر</span>
+                    <span class="muted act-date">{{ r.receivedAt | date:'yyyy-MM-dd HH:mm' }}</span>
+                  </div>
+                }
+                @for (t of transfersSorted().slice(0, 3); track t.id) {
+                  <div class="activity-item transfer">
+                    <mat-icon>swap_horiz</mat-icon>
+                    <div class="act-main">
+                      <strong>تحويل داخلي</strong>
+                      <span class="muted">{{ tankName(t.sourceTankId) }} ← {{ tankName(t.destinationTankId) }}</span>
+                    </div>
+                    <span class="act-value">{{ t.liters | number }} لتر</span>
+                    <span class="muted act-date">{{ t.transferredAt | date:'yyyy-MM-dd HH:mm' }}</span>
+                  </div>
+                }
+                @for (c of consumptionSorted().slice(0, 3); track c.id) {
+                  <div class="activity-item consumption">
+                    <mat-icon>bolt</mat-icon>
+                    <div class="act-main">
+                      <strong>استهلاك مولد</strong>
+                      <span class="muted">{{ generatorName(c.generatorId) }}</span>
+                    </div>
+                    <span class="act-value danger">-{{ c.liters | number }} لتر</span>
+                    <span class="muted act-date">{{ c.readingDate | date:'yyyy-MM-dd HH:mm' }}</span>
+                  </div>
+                }
+              </div>
+            </section>
+          }
+        </div>
+      }
+
+      <!-- ================ TAB 2: TANKS ================ -->
+      @if (activeTab() === 'tanks') {
+        <div class="tab-content">
+          <div class="section-toolbar">
+            <div class="section-info">
+              <h3>خزانات المحطة</h3>
+              <span class="muted">{{ stationTanks().length }} خزان</span>
+            </div>
+            <button class="btn-primary" (click)="openTankForm()">
+              <mat-icon>add_circle</mat-icon>
+              خزان جديد
+            </button>
+          </div>
+
+          @if (stationTanks().length === 0) {
+            <div class="empty-inline">
+              <mat-icon>storage</mat-icon>
+              <p>لا توجد خزانات — اضغط "خزان جديد" للبدء.</p>
+            </div>
+          } @else {
+            <div class="custom-table-wrap">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>الاسم</th>
+                    <th>الدور</th>
+                    <th>المادة</th>
+                    <th>السعة</th>
+                    <th>الرصيد الحالي</th>
+                    <th>إجراءات</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (t of stationTanks(); track t.id) {
+                    @let lv = levelFor(t.id);
+                    @let pct = lv ? fillPercent(lv.currentLiters, lv.capacityL) : 0;
+                    <tr>
+                      <td>
+                        <div class="cell-icon">
+                          <mat-icon [attr.data-role]="t.role">storage</mat-icon>
+                          <strong>{{ t.name }}</strong>
+                        </div>
+                      </td>
+                      <td><span class="role-pill" [attr.data-role]="t.role">{{ roleLabel(t.role) }}</span></td>
+                      <td>{{ materialLabel(t.material) }}</td>
+                      <td>{{ t.capacityL | number }} <small>لتر</small></td>
+                      <td>
+                        <div class="level-cell" [attr.data-status]="fillStatus(pct)">
+                          <div class="lv-bar"><div class="lv-fill" [style.width.%]="pct"></div></div>
+                          <span class="lv-text">{{ (lv?.currentLiters || 0) | number }} · {{ pct }}%</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="row-actions">
+                          <button class="t-btn edit" (click)="editTank(t)" title="تعديل"><mat-icon>edit</mat-icon></button>
+                          <button class="t-btn del" (click)="deleteTank(t.id)" title="حذف"><mat-icon>delete</mat-icon></button>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- ================ TAB 3: PUMPS ================ -->
+      @if (activeTab() === 'pumps') {
+        <div class="tab-content">
+          <div class="section-toolbar">
+            <div class="section-info">
+              <h3>الطرمبات والقنوات</h3>
+              <span class="muted">{{ stationPumps().length }} طرمبة</span>
+            </div>
+            <button class="btn-primary" (click)="openPumpForm()">
+              <mat-icon>add_circle</mat-icon>
+              طرمبة جديدة
+            </button>
+          </div>
+
+          @if (stationPumps().length === 0) {
+            <div class="empty-inline">
+              <mat-icon>settings_input_component</mat-icon>
+              <p>لا توجد طرمبات — اضغط "طرمبة جديدة" للبدء.</p>
+            </div>
+          } @else {
+            <div class="pumps-grid">
+              @for (p of stationPumps(); track p.id) {
+                <div class="card pump-card">
+                  <div class="pump-head">
+                    <div class="pump-info">
+                      <div class="pump-icon"><mat-icon>settings_input_component</mat-icon></div>
+                      <div>
+                        <h4>{{ p.name }}</h4>
+                        <div class="pump-badges">
+                          <span class="p-chip"><mat-icon>input</mat-icon> {{ p.inletsCount }} مداخل</span>
+                          <span class="p-chip"><mat-icon>output</mat-icon> {{ p.outletsCount }} مخارج</span>
+                          <span class="p-chip"><mat-icon>speed</mat-icon> {{ p.metersCount }} عداد</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="pump-actions">
+                      <button class="t-btn add-ch" (click)="openChannelForm(p.id)" title="إضافة قناة">
+                        <mat-icon>add</mat-icon>
+                        <span>قناة</span>
+                      </button>
+                      <button class="t-btn edit" (click)="editPump(p)" title="تعديل"><mat-icon>edit</mat-icon></button>
+                      <button class="t-btn del" (click)="deletePump(p.id)" title="حذف"><mat-icon>delete</mat-icon></button>
+                    </div>
+                  </div>
+
+                  @if (pumpChannelsFor(p.id).length > 0) {
+                    <div class="channels">
+                      @for (c of pumpChannelsFor(p.id); track c.id) {
+                        <div class="channel-row">
+                          <span class="ch-idx">قناة {{ c.channelIndex }}</span>
+                          <div class="ch-flow">
+                            <span class="ch-from">{{ tankName(c.sourceTankId) }}</span>
+                            <mat-icon>arrow_back</mat-icon>
+                            <span class="ch-to">{{ tankName(c.destinationTankId) }}</span>
+                          </div>
+                          @if (c.meterLabel) {
+                            <span class="ch-meter">{{ c.meterLabel }}</span>
+                          }
+                          <button class="t-btn del sm" (click)="deleteChannel(c.id)" title="حذف"><mat-icon>delete</mat-icon></button>
+                        </div>
+                      }
+                    </div>
+                  } @else {
+                    <div class="channels-empty">
+                      <mat-icon>info</mat-icon>
+                      <span>لا توجد قنوات — أضف قناة لربط الخزانات</span>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- ================ TAB 4: TANKERS ================ -->
+      @if (activeTab() === 'tankers') {
+        <div class="tab-content">
+          <div class="info-banners">
+            <div class="info-banner">
+              <mat-icon>info</mat-icon>
+              <span>
+                لإدارة الموردين ومواقع التزويد، انتقل إلى
+                <a routerLink="/suppliers/fuel">قسم موردي الديزل</a>.
+              </span>
+            </div>
+            <div class="info-banner generators">
+              <mat-icon>bolt</mat-icon>
+              <span>
+                لإدارة المولدات، انتقل إلى
+                <a routerLink="/stations/generators">قسم المولدات</a>.
+              </span>
+            </div>
+          </div>
+
+          <div class="section-toolbar">
+            <div class="section-info">
+              <h3>أسطول الوايتات</h3>
+              <span class="muted">{{ fuel.tankers().length }} وايت</span>
+            </div>
+            <button class="btn-primary" (click)="openTankerForm()">
+              <mat-icon>add_circle</mat-icon>
+              إضافة وايت
+            </button>
+          </div>
+
+          <div class="tankers-grid">
+            @for (t of fuel.tankers(); track t.id) {
+              <div class="tanker-card">
+                <div class="tanker-head">
+                  <mat-icon class="truck-icon">local_shipping</mat-icon>
+                  <div class="tanker-info">
+                    <h4>{{ t.plate }}</h4>
+                    <span class="muted">
+                      <mat-icon>person</mat-icon>
+                      {{ t.driverName || 'بدون سائق' }}
+                    </span>
+                  </div>
+                  <button class="t-btn del" (click)="deleteTanker(t.id)" title="حذف">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+                <div class="tanker-capacity">
+                  <span class="cap-label">السعة الإجمالية</span>
+                  <span class="cap-value">{{ sumCompartments(t.compartments) | number }} <small>لتر</small></span>
+                </div>
+                <div class="tanker-compartments">
+                  @for (c of t.compartments; track $index) {
+                    <div class="comp-chip">
+                      <span class="comp-idx">{{ $index + 1 }}</span>
+                      <span>{{ c | number }} لتر</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            } @empty {
+              <div class="empty-inline">
+                <mat-icon>local_shipping</mat-icon>
+                <p>لا يوجد وايتات مسجلة.</p>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- ================ TAB 5: RECEIPTS ================ -->
+      @if (activeTab() === 'receipts') {
+        <div class="tab-content">
+          <div class="section-toolbar">
+            <div class="section-info">
+              <h3>سندات استلام الديزل</h3>
+              <span class="muted">{{ stationReceipts().length }} سند</span>
+            </div>
+            <button class="btn-primary" (click)="openReceiptForm()">
+              <mat-icon>receipt_long</mat-icon>
+              سند استلام جديد
+            </button>
+          </div>
+
+          @if (receiptsSorted().length === 0) {
+            <div class="empty-inline">
+              <mat-icon>receipt_long</mat-icon>
+              <p>لا توجد سندات استلام — سجّل أول سند.</p>
+            </div>
+          } @else {
+            <div class="custom-table-wrap">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>التاريخ</th>
+                    <th>المورد / الموقع</th>
+                    <th>الوايت</th>
+                    <th>الكمية</th>
+                    <th>المستلم</th>
+                    <th>رقم السند</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (r of receiptsSorted(); track r.id) {
+                    <tr>
+                      <td class="mono">{{ r.receivedAt | date:'yyyy-MM-dd HH:mm' }}</td>
+                      <td>
+                        <div class="two-line">
+                          <strong>{{ supplierName_(r.supplierId) }}</strong>
+                          <span class="muted">{{ siteName(r.supplierSiteId) }}</span>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="tanker-pill">
+                          <mat-icon>local_shipping</mat-icon>
+                          {{ tankerLabel(r.tankerId) }}
+                        </span>
+                      </td>
+                      <td><strong class="pos">+{{ r.totalLiters | number }}</strong> <small>لتر</small></td>
+                      <td>{{ employeeName(r.receiverEmployeeId) }}</td>
+                      <td>{{ r.voucherNumber || '—' }}</td>
+                      <td>
+                        <button class="t-btn del" (click)="deleteReceipt(r.id)" title="حذف"><mat-icon>delete</mat-icon></button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- ================ TAB 6: TRANSFERS ================ -->
+      @if (activeTab() === 'transfers') {
+        <div class="tab-content">
+          <div class="section-toolbar">
+            <div class="section-info">
+              <h3>التحويلات الداخلية بين الخزانات</h3>
+              <span class="muted">{{ transfersSorted().length }} تحويل</span>
+            </div>
+            <button class="btn-primary" (click)="openTransferForm()">
+              <mat-icon>swap_horiz</mat-icon>
+              تحويل جديد
+            </button>
+          </div>
+
+          @if (transfersSorted().length === 0) {
+            <div class="empty-inline">
+              <mat-icon>swap_horiz</mat-icon>
+              <p>لا توجد تحويلات مسجّلة.</p>
+            </div>
+          } @else {
+            <div class="custom-table-wrap">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>التاريخ</th>
+                    <th>من / إلى</th>
+                    <th>اللترات</th>
+                    <th>العدادات (قبل / بعد)</th>
+                    <th>بواسطة</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (t of transfersSorted(); track t.id) {
+                    <tr>
+                      <td class="mono">{{ t.transferredAt | date:'yyyy-MM-dd HH:mm' }}</td>
+                      <td>
+                        <div class="flow-cell">
+                          <span>{{ tankName(t.sourceTankId) }}</span>
+                          <mat-icon>arrow_back</mat-icon>
+                          <span>{{ tankName(t.destinationTankId) }}</span>
+                        </div>
+                      </td>
+                      <td><strong>{{ t.liters | number }}</strong> <small>لتر</small></td>
+                      <td class="mono">{{ t.meterReadingBefore ?? '—' }} / {{ t.meterReadingAfter ?? '—' }}</td>
+                      <td>{{ employeeName(t.operatorEmployeeId) }}</td>
+                      <td>
+                        <button class="t-btn del" (click)="deleteTransfer(t.id)" title="حذف"><mat-icon>delete</mat-icon></button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- ================ TAB 7: CONSUMPTION ================ -->
+      @if (activeTab() === 'consumption') {
+        <div class="tab-content">
+          <div class="section-toolbar">
+            <div class="section-info">
+              <h3>استهلاك المولدات</h3>
+              <span class="muted">{{ consumptionSorted().length }} قراءة</span>
+            </div>
+            <button class="btn-primary" (click)="openConsumptionForm()">
+              <mat-icon>local_gas_station</mat-icon>
+              تسجيل استهلاك
+            </button>
+          </div>
+
+          @if (consumptionSorted().length === 0) {
+            <div class="empty-inline">
+              <mat-icon>whatshot</mat-icon>
+              <p>لا توجد قراءات استهلاك.</p>
+            </div>
+          } @else {
+            <div class="custom-table-wrap">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>التاريخ</th>
+                    <th>المولد</th>
+                    <th>اللترات</th>
+                    <th>ساعات التشغيل</th>
+                    <th>بواسطة</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (c of consumptionSorted(); track c.id) {
+                    <tr>
+                      <td class="mono">{{ c.readingDate | date:'yyyy-MM-dd HH:mm' }}</td>
+                      <td>
+                        <div class="cell-icon">
+                          <mat-icon class="gen-icon">bolt</mat-icon>
+                          <strong>{{ generatorName(c.generatorId) }}</strong>
+                        </div>
+                      </td>
+                      <td><strong class="neg">-{{ c.liters | number }}</strong> <small>لتر</small></td>
+                      <td class="mono">{{ c.hoursRun ?? '—' }}</td>
+                      <td>{{ employeeName(c.operatorEmployeeId) }}</td>
+                      <td>
+                        <button class="t-btn del" (click)="deleteConsumption(c.id)" title="حذف"><mat-icon>delete</mat-icon></button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+      }
+
+    </div>
+  } @else {
+    <div class="empty-state">
+      <mat-icon>local_gas_station</mat-icon>
+      <h3>اختر محطة للبدء</h3>
+    </div>
+  }
+
+  <!-- ============================================================ -->
+  <!-- =================== SLIDE-IN MODAL FORMS =================== -->
+  <!-- ============================================================ -->
+
+  <!-- TANK FORM -->
+  @if (showTankForm()) {
+    <div class="modal-overlay" (click)="showTankForm.set(false)"></div>
+    <div class="form-panel">
+      <header class="form-header">
+        <div class="form-title">
+          <mat-icon>{{ editingTankId() ? 'edit' : 'storage' }}</mat-icon>
+          <h3>{{ editingTankId() ? 'تعديل خزان' : 'إضافة خزان جديد' }}</h3>
+        </div>
+        <button class="close-btn" (click)="showTankForm.set(false)" title="إغلاق">
+          <mat-icon>close</mat-icon>
+        </button>
+      </header>
+      <form class="entity-form" (ngSubmit)="saveTank()">
+        <div class="field-group full">
+          <label>اسم الخزان *</label>
+          <input type="text" [(ngModel)]="tankForm.name" name="name" required placeholder="مثال: خزان الاستلام الرئيسي" />
+        </div>
+        <div class="field-group">
+          <label>الدور</label>
+          <select [(ngModel)]="tankForm.role" name="role" title="دور الخزان">
+            <option value="receiving">خزان استلام</option>
+            <option value="main">خزان رئيسي</option>
+            <option value="pre_pump">خزان قبل الطرمبة</option>
+            <option value="generator">خزان مولد</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>المادة</label>
+          <select [(ngModel)]="tankForm.material" name="material" title="مادة الخزان">
+            <option value="plastic">بلاستيك</option>
+            <option value="steel">حديد</option>
+            <option value="rocket">صاروخ</option>
+            <option value="other">أخرى</option>
+          </select>
+        </div>
+        <div class="field-group full">
+          <label>السعة (لتر) *</label>
+          <input type="number" [(ngModel)]="tankForm.capacityL" name="capacityL" min="0" placeholder="0" required />
+        </div>
+        <div class="field-group full">
+          <label>ملاحظات</label>
+          <textarea [(ngModel)]="tankForm.notes" name="notes" rows="3" placeholder="ملاحظات إضافية..."></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-ghost" (click)="showTankForm.set(false)">إلغاء</button>
+          <button type="submit" class="btn-primary">
+            <mat-icon>save</mat-icon>
+            {{ editingTankId() ? 'حفظ التعديلات' : 'إنشاء الخزان' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <!-- PUMP FORM -->
+  @if (showPumpForm()) {
+    <div class="modal-overlay" (click)="showPumpForm.set(false)"></div>
+    <div class="form-panel">
+      <header class="form-header">
+        <div class="form-title">
+          <mat-icon>{{ editingPumpId() ? 'edit' : 'settings_input_component' }}</mat-icon>
+          <h3>{{ editingPumpId() ? 'تعديل طرمبة' : 'إضافة طرمبة جديدة' }}</h3>
+        </div>
+        <button class="close-btn" (click)="showPumpForm.set(false)" title="إغلاق">
+          <mat-icon>close</mat-icon>
+        </button>
+      </header>
+      <form class="entity-form" (ngSubmit)="savePump()">
+        <div class="field-group full">
+          <label>اسم الطرمبة *</label>
+          <input type="text" [(ngModel)]="pumpForm.name" name="name" required placeholder="مثال: طرمبة رئيسية" />
+        </div>
+        <div class="field-group">
+          <label>عدد المداخل</label>
+          <input type="number" [(ngModel)]="pumpForm.inletsCount" name="inletsCount" min="0" placeholder="0" title="عدد المداخل" />
+        </div>
+        <div class="field-group">
+          <label>عدد المخارج</label>
+          <input type="number" [(ngModel)]="pumpForm.outletsCount" name="outletsCount" min="0" placeholder="0" title="عدد المخارج" />
+        </div>
+        <div class="field-group full">
+          <label>عدد العدادات</label>
+          <input type="number" [(ngModel)]="pumpForm.metersCount" name="metersCount" min="0" placeholder="0" title="عدد العدادات" />
+        </div>
+        <div class="field-group full">
+          <label>ملاحظات</label>
+          <textarea [(ngModel)]="pumpForm.notes" name="notes" rows="3" placeholder="ملاحظات إضافية..."></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-ghost" (click)="showPumpForm.set(false)">إلغاء</button>
+          <button type="submit" class="btn-primary">
+            <mat-icon>save</mat-icon>
+            {{ editingPumpId() ? 'حفظ التعديلات' : 'إنشاء الطرمبة' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <!-- CHANNEL FORM -->
+  @if (showChannelForm()) {
+    <div class="modal-overlay" (click)="showChannelForm.set(false)"></div>
+    <div class="form-panel">
+      <header class="form-header">
+        <div class="form-title">
+          <mat-icon>alt_route</mat-icon>
+          <h3>إضافة قناة طرمبة</h3>
+        </div>
+        <button class="close-btn" (click)="showChannelForm.set(false)" title="إغلاق">
+          <mat-icon>close</mat-icon>
+        </button>
+      </header>
+      <form class="entity-form" (ngSubmit)="saveChannel()">
+        <div class="field-group full">
+          <label>رقم القناة *</label>
+          <input type="number" [(ngModel)]="channelForm.channelIndex" name="channelIndex" min="1" required placeholder="1" title="رقم القناة" />
+        </div>
+        <div class="field-group full">
+          <label>الخزان المصدر</label>
+          <select [(ngModel)]="channelForm.sourceTankId" name="sourceTankId" title="الخزان المصدر">
+            <option [ngValue]="null">— بدون —</option>
+            @for (t of stationTanks(); track t.id) {
+              <option [ngValue]="t.id">{{ t.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="field-group full">
+          <label>الخزان الهدف</label>
+          <select [(ngModel)]="channelForm.destinationTankId" name="destinationTankId" title="الخزان الهدف">
+            <option [ngValue]="null">— بدون —</option>
+            @for (t of stationTanks(); track t.id) {
+              <option [ngValue]="t.id">{{ t.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="field-group full">
+          <label>رقم/اسم العداد (اختياري)</label>
+          <input type="text" [(ngModel)]="channelForm.meterLabel" name="meterLabel" placeholder="مثال: عداد 1" />
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-ghost" (click)="showChannelForm.set(false)">إلغاء</button>
+          <button type="submit" class="btn-primary">
+            <mat-icon>save</mat-icon> حفظ القناة
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <!-- TANKER FORM -->
+  @if (showTankerForm()) {
+    <div class="modal-overlay" (click)="showTankerForm.set(false)"></div>
+    <div class="form-panel">
+      <header class="form-header">
+        <div class="form-title">
+          <mat-icon>local_shipping</mat-icon>
+          <h3>إضافة وايت جديد</h3>
+        </div>
+        <button class="close-btn" (click)="showTankerForm.set(false)" title="إغلاق">
+          <mat-icon>close</mat-icon>
+        </button>
+      </header>
+      <form class="entity-form" (ngSubmit)="saveTanker()">
+        <div class="field-group">
+          <label>لوحة الوايت *</label>
+          <input type="text" [ngModel]="tankerPlate()" (ngModelChange)="tankerPlate.set($event)" name="plate" required placeholder="مثال: 1 / 12345" />
+        </div>
+        <div class="field-group">
+          <label>اسم السائق</label>
+          <input type="text" [ngModel]="tankerDriver()" (ngModelChange)="tankerDriver.set($event)" name="driver" placeholder="اسم السائق" />
+        </div>
+        <div class="field-group full">
+          <label>سعات العيون (لتر، مفصولة بفاصلة)</label>
+          <input type="text" [ngModel]="tankerCompartments()" (ngModelChange)="tankerCompartments.set($event)" name="comps" placeholder="مثال: 2970, 3070, 3000" dir="ltr" />
+          <small class="field-hint">اكتب سعة كل عين مفصولة بفاصلة (,)</small>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-ghost" (click)="showTankerForm.set(false)">إلغاء</button>
+          <button type="submit" class="btn-primary">
+            <mat-icon>save</mat-icon> إضافة الوايت
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <!-- RECEIPT FORM (wide panel) -->
+  @if (showReceiptForm()) {
+    <div class="modal-overlay" (click)="showReceiptForm.set(false)"></div>
+    <div class="form-panel wide">
+      <header class="form-header">
+        <div class="form-title">
+          <mat-icon>receipt_long</mat-icon>
+          <h3>سند استلام ديزل</h3>
+        </div>
+        <button class="close-btn" (click)="showReceiptForm.set(false)" title="إغلاق">
+          <mat-icon>close</mat-icon>
+        </button>
+      </header>
+      <form class="entity-form" (ngSubmit)="saveReceipt()">
+        <div class="field-group">
+          <label>المورد</label>
+          <select [(ngModel)]="receiptForm.supplierId" name="supplierId" title="المورد">
+            <option [ngValue]="null">— اختر مورداً —</option>
+            @for (s of fuel.suppliers(); track s.id) {
+              <option [ngValue]="s.id">{{ s.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="field-group">
+          <label>موقع المورد</label>
+          <select [(ngModel)]="receiptForm.supplierSiteId" name="supplierSiteId" title="موقع المورد">
+            <option [ngValue]="null">— اختر موقعاً —</option>
+            @for (s of sitesFor(receiptForm.supplierId || ''); track s.id) {
+              <option [ngValue]="s.id">{{ s.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="field-group">
+          <label>مندوب المورد</label>
+          <input type="text" [(ngModel)]="receiptForm.supplierRepName" name="supplierRepName" placeholder="اسم المندوب" />
+        </div>
+        <div class="field-group">
+          <label>الوايت</label>
+          <select [(ngModel)]="receiptForm.tankerId" name="tankerId" (ngModelChange)="onTankerSelected()" title="الوايت">
+            <option [ngValue]="null">— اختر الوايت —</option>
+            @for (t of fuel.tankers(); track t.id) {
+              <option [ngValue]="t.id">{{ t.plate }}</option>
+            }
+          </select>
+        </div>
+        <div class="field-group">
+          <label>المستلم من الشركة</label>
+          <select [(ngModel)]="receiptForm.receiverEmployeeId" name="receiverEmployeeId" title="المستلم">
+            <option [ngValue]="null">— اختر المستلم —</option>
+            @for (e of stationEmployees(); track e.id) {
+              <option [ngValue]="e.id">{{ e.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="field-group">
+          <label>خزان الاستلام</label>
+          <select [(ngModel)]="receiptForm.receivingTankId" name="receivingTankId" title="خزان الاستلام">
+            <option [ngValue]="null">— اختر الخزان —</option>
+            @for (t of stationTanks(); track t.id) {
+              <option [ngValue]="t.id">{{ t.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="field-group">
+          <label>عداد المورد (قبل)</label>
+          <input type="number" [(ngModel)]="receiptForm.meterBefore" name="meterBefore" min="0" placeholder="0" title="عداد المورد قبل التحميل" />
+        </div>
+        <div class="field-group">
+          <label>عداد المورد (بعد)</label>
+          <input type="number" [(ngModel)]="receiptForm.meterAfter" name="meterAfter" min="0" placeholder="0" title="عداد المورد بعد التحميل" />
+        </div>
+
+        @if (receiptForm.compartmentsFilled.length > 0) {
+          <div class="field-group full">
+            <label>عيون الوايت (اللترات لكل عين)</label>
+            <div class="compartments-row">
+              @for (c of receiptForm.compartmentsFilled; track $index) {
+                <div class="comp-input">
+                  <span class="comp-num">{{ $index + 1 }}</span>
+                  <input type="number" [ngModel]="c" (ngModelChange)="updateCompartment($index, $event)" [name]="'comp-' + $index" min="0" placeholder="0" />
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <div class="field-group">
+          <label>الكمية الإجمالية (لتر) *</label>
+          <input type="number" [(ngModel)]="receiptForm.totalLiters" name="totalLiters" min="0" required placeholder="0" title="الكمية الإجمالية باللتر" />
+        </div>
+        <div class="field-group">
+          <label>رقم السند</label>
+          <input type="text" [(ngModel)]="receiptForm.voucherNumber" name="voucherNumber" placeholder="رقم السند" />
+        </div>
+        <div class="field-group full">
+          <label>الأصل مع</label>
+          <input type="text" [(ngModel)]="receiptForm.voucherOriginalHolder" name="voucherOriginalHolder" placeholder="الشخص الذي يحتفظ بالسند الأصلي" />
+        </div>
+        <div class="field-group full">
+          <label>ملاحظات</label>
+          <textarea [(ngModel)]="receiptForm.notes" name="notes" rows="3" placeholder="ملاحظات..."></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-ghost" (click)="showReceiptForm.set(false)">إلغاء</button>
+          <button type="submit" class="btn-primary">
+            <mat-icon>save</mat-icon> حفظ السند
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <!-- TRANSFER FORM -->
+  @if (showTransferForm()) {
+    <div class="modal-overlay" (click)="showTransferForm.set(false)"></div>
+    <div class="form-panel">
+      <header class="form-header">
+        <div class="form-title">
+          <mat-icon>swap_horiz</mat-icon>
+          <h3>تحويل داخلي بين الخزانات</h3>
+        </div>
+        <button class="close-btn" (click)="showTransferForm.set(false)" title="إغلاق">
+          <mat-icon>close</mat-icon>
+        </button>
+      </header>
+      <form class="entity-form" (ngSubmit)="saveTransfer()">
+        <div class="field-group full">
+          <label>قناة الطرمبة (اختياري)</label>
+          <select [(ngModel)]="transferForm.pumpChannelId" name="pumpChannelId" (ngModelChange)="onChannelSelected()" title="قناة الطرمبة">
+            <option [ngValue]="null">— يدوي (بدون قناة) —</option>
+            @for (c of channelsForStation(); track c.id) {
+              <option [ngValue]="c.id">قناة {{ c.channelIndex }} — {{ tankName(c.sourceTankId) }} → {{ tankName(c.destinationTankId) }}</option>
+            }
+          </select>
+        </div>
+        <div class="field-group">
+          <label>الخزان المصدر *</label>
+          <select [(ngModel)]="transferForm.sourceTankId" name="sourceTankId" required title="الخزان المصدر">
+            <option [ngValue]="null">— اختر خزان —</option>
+            @for (t of stationTanks(); track t.id) {
+              <option [ngValue]="t.id">{{ t.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="field-group">
+          <label>الخزان الهدف *</label>
+          <select [(ngModel)]="transferForm.destinationTankId" name="destinationTankId" required title="الخزان الهدف">
+            <option [ngValue]="null">— اختر خزان —</option>
+            @for (t of stationTanks(); track t.id) {
+              <option [ngValue]="t.id">{{ t.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="field-group">
+          <label>قراءة العداد (قبل)</label>
+          <input type="number" [(ngModel)]="transferForm.meterReadingBefore" name="mrb" (ngModelChange)="onMeterChange()" min="0" placeholder="0" title="قراءة العداد قبل التحويل" />
+        </div>
+        <div class="field-group">
+          <label>قراءة العداد (بعد)</label>
+          <input type="number" [(ngModel)]="transferForm.meterReadingAfter" name="mra" (ngModelChange)="onMeterChange()" min="0" placeholder="0" title="قراءة العداد بعد التحويل" />
+        </div>
+        <div class="field-group">
+          <label>اللترات المحوّلة *</label>
+          <input type="number" [(ngModel)]="transferForm.liters" name="liters" min="0" required placeholder="0" title="اللترات المحوّلة" />
+        </div>
+        <div class="field-group">
+          <label>بواسطة</label>
+          <select [(ngModel)]="transferForm.operatorEmployeeId" name="operatorEmployeeId" title="المنفّذ">
+            <option [ngValue]="null">— اختر موظف —</option>
+            @for (e of stationEmployees(); track e.id) {
+              <option [ngValue]="e.id">{{ e.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="field-group full">
+          <label>ملاحظات</label>
+          <textarea [(ngModel)]="transferForm.notes" name="notes" rows="3" placeholder="ملاحظات..."></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-ghost" (click)="showTransferForm.set(false)">إلغاء</button>
+          <button type="submit" class="btn-primary">
+            <mat-icon>save</mat-icon> حفظ التحويل
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <!-- CONSUMPTION FORM -->
+  @if (showConsumptionForm()) {
+    <div class="modal-overlay" (click)="showConsumptionForm.set(false)"></div>
+    <div class="form-panel">
+      <header class="form-header">
+        <div class="form-title">
+          <mat-icon>whatshot</mat-icon>
+          <h3>تسجيل استهلاك مولد</h3>
+        </div>
+        <button class="close-btn" (click)="showConsumptionForm.set(false)" title="إغلاق">
+          <mat-icon>close</mat-icon>
+        </button>
+      </header>
+      <form class="entity-form" (ngSubmit)="saveConsumption()">
+        <div class="field-group full">
+          <label>المولد *</label>
+          <select [(ngModel)]="consumptionForm.generatorId" name="generatorId" required title="المولد">
+            <option [ngValue]="null">— اختر مولداً —</option>
+            @for (g of stationGenerators(); track g.id) {
+              <option [ngValue]="g.id">{{ g.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="field-group">
+          <label>اللترات المستهلكة *</label>
+          <input type="number" [(ngModel)]="consumptionForm.liters" name="liters" min="0" required placeholder="0" title="اللترات المستهلكة" />
+        </div>
+        <div class="field-group">
+          <label>ساعات التشغيل</label>
+          <input type="number" [(ngModel)]="consumptionForm.hoursRun" name="hoursRun" min="0" step="0.5" placeholder="0" title="ساعات تشغيل المولد" />
+        </div>
+        <div class="field-group full">
+          <label>المسؤول</label>
+          <select [(ngModel)]="consumptionForm.operatorEmployeeId" name="operatorEmployeeId" title="المسؤول">
+            <option [ngValue]="null">— اختر موظف —</option>
+            @for (e of stationEmployees(); track e.id) {
+              <option [ngValue]="e.id">{{ e.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="field-group full">
+          <label>ملاحظات</label>
+          <textarea [(ngModel)]="consumptionForm.notes" name="notes" rows="3" placeholder="ملاحظات..."></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-ghost" (click)="showConsumptionForm.set(false)">إلغاء</button>
+          <button type="submit" class="btn-primary">
+            <mat-icon>save</mat-icon> حفظ
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+</div>

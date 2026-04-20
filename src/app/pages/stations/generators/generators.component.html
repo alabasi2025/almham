@@ -1,0 +1,293 @@
+<div class="generators-page">
+
+  <!-- ============ HERO HEADER ============ -->
+  <header class="gen-hero">
+    <div class="hero-bg-grid"></div>
+    <div class="hero-bg-orb orb-1"></div>
+    <div class="hero-bg-orb orb-2"></div>
+
+    <div class="hero-top">
+      <div class="hero-title">
+        <div class="hero-icon">
+          <mat-icon>bolt</mat-icon>
+        </div>
+        <div class="hero-text">
+          <h1>المولدات الكهربائية</h1>
+          <p>إدارة مولدات الكهرباء وربطها بخزانات الديزل في جميع المحطات</p>
+        </div>
+      </div>
+
+      <div class="hero-actions">
+        <button class="btn-ghost" (click)="refresh()" title="تحديث">
+          <mat-icon>refresh</mat-icon>
+        </button>
+        <button class="btn-primary" (click)="openNew()">
+          <mat-icon>add_circle</mat-icon>
+          <span>مولد جديد</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Hero KPIs -->
+    <div class="hero-kpis">
+      <div class="k-card total">
+        <div class="k-icon"><mat-icon>electric_bolt</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ filtered().length }}</span>
+          <span class="k-label">إجمالي المولدات</span>
+        </div>
+      </div>
+
+      <div class="k-card capacity">
+        <div class="k-icon"><mat-icon>speed</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ totalCapacity() | number }}</span>
+          <span class="k-label">إجمالي ك.و</span>
+        </div>
+        <div class="k-trend"><span class="pct">{{ capacityMW() }} م.و</span></div>
+      </div>
+
+      <div class="k-card primary">
+        <div class="k-icon"><mat-icon>check_circle</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ primaryCount() }}</span>
+          <span class="k-label">رئيسية</span>
+        </div>
+      </div>
+
+      <div class="k-card backup">
+        <div class="k-icon"><mat-icon>backup</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ backupCount() }}</span>
+          <span class="k-label">احتياطية</span>
+        </div>
+      </div>
+
+      <div class="k-card linked">
+        <div class="k-icon"><mat-icon>link</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ linkedCount() }}</span>
+          <span class="k-label">مرتبطة بخزان</span>
+        </div>
+      </div>
+
+      <div class="k-card stations-count">
+        <div class="k-icon"><mat-icon>location_on</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ stationsWithGensCount() }}</span>
+          <span class="k-label">محطات مُجهَّزة</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ TOOLBAR ============ -->
+  <div class="toolbar">
+    <div class="search-box">
+      <mat-icon>search</mat-icon>
+      <input
+        type="text"
+        placeholder="ابحث عن مولد (اسم، موديل)..."
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+      />
+      @if (search()) {
+        <button class="search-clear" (click)="search.set('')">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+
+    <div class="station-filter">
+      <button
+        class="chip"
+        [class.active]="stationFilter() === 'all'"
+        (click)="stationFilter.set('all')">
+        <mat-icon>apps</mat-icon>
+        كل المحطات
+        <span class="count">{{ fuel.generators().length }}</span>
+      </button>
+      @for (s of stationService.stations(); track s.id) {
+        <button
+          class="chip"
+          [class.active]="stationFilter() === s.id"
+          (click)="stationFilter.set(s.id)">
+          <span class="dot"></span>
+          {{ stationName(s.id) }}
+          <span class="count">{{ genCountForStation(s.id) }}</span>
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- ============ GENERATORS GRID ============ -->
+  @if (filtered().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon"><mat-icon>bolt</mat-icon></div>
+      @if (fuel.generators().length === 0) {
+        <h3>لا توجد مولدات بعد</h3>
+        <p>ابدأ بإضافة أول مولد في النظام</p>
+        <button class="btn-primary" (click)="openNew()">
+          <mat-icon>add</mat-icon> إضافة مولد
+        </button>
+      } @else {
+        <h3>لا توجد نتائج مطابقة</h3>
+        <p>جرّب تعديل الفلاتر أو البحث</p>
+        <button class="btn-ghost" (click)="clearFilters()">
+          <mat-icon>clear</mat-icon> مسح الفلاتر
+        </button>
+      }
+    </div>
+  } @else {
+    <div class="gen-grid">
+      @for (g of filtered(); track g.id) {
+        <article class="gen-card" [class.is-backup]="g.isBackup">
+          <div class="gen-accent"></div>
+
+          <header class="gen-head">
+            <div class="gen-icon-wrap">
+              <mat-icon>{{ g.isBackup ? 'backup' : 'bolt' }}</mat-icon>
+            </div>
+            <div class="gen-title">
+              <h3>{{ g.name }}</h3>
+              @if (g.model) {
+                <span class="gen-model">
+                  <mat-icon>memory</mat-icon>
+                  {{ g.model }}
+                </span>
+              }
+            </div>
+            <span class="role-badge" [class.primary]="!g.isBackup" [class.backup]="g.isBackup">
+              <span class="pulse-dot"></span>
+              {{ g.isBackup ? 'احتياطي' : 'رئيسي' }}
+            </span>
+          </header>
+
+          <div class="capacity-panel">
+            <div class="cap-value">
+              <span class="num">{{ g.capacityKw | number }}</span>
+              <span class="unit">ك.و</span>
+            </div>
+            <div class="cap-bar">
+              <div class="cap-fill" [style.width.%]="capacityPct(g.capacityKw)"></div>
+            </div>
+            <span class="cap-label">{{ (g.capacityKw / 1000) | number:'1.1-1' }} ميجاواط</span>
+          </div>
+
+          <div class="gen-meta">
+            <div class="meta-row">
+              <mat-icon>electric_bolt</mat-icon>
+              <div>
+                <span class="meta-label">المحطة</span>
+                <span class="meta-value">{{ stationName(g.stationId) }}</span>
+              </div>
+            </div>
+
+            <div class="meta-row" [class.no-tank]="!g.rocketTankId">
+              <mat-icon>local_gas_station</mat-icon>
+              <div>
+                <span class="meta-label">خزان الديزل</span>
+                <span class="meta-value">{{ tankName(g.rocketTankId) }}</span>
+              </div>
+            </div>
+          </div>
+
+          @if (g.notes) {
+            <p class="gen-notes">
+              <mat-icon>sticky_note_2</mat-icon>
+              {{ g.notes }}
+            </p>
+          }
+
+          <footer class="gen-footer">
+            <button class="action-btn edit" (click)="edit(g)" title="تعديل">
+              <mat-icon>edit</mat-icon>
+              <span>تعديل</span>
+            </button>
+            <button class="action-btn del" (click)="delete(g)" title="حذف">
+              <mat-icon>delete</mat-icon>
+              <span>حذف</span>
+            </button>
+          </footer>
+        </article>
+      }
+    </div>
+  }
+
+  <!-- ============ FORM PANEL (slide-in modal) ============ -->
+  @if (showForm()) {
+    <div class="modal-overlay" (click)="cancel()"></div>
+    <div class="form-panel">
+      <header class="form-header">
+        <div class="form-title">
+          <mat-icon>{{ editingId() ? 'edit' : 'bolt' }}</mat-icon>
+          <h3>{{ editingId() ? 'تعديل المولد' : 'إضافة مولد جديد' }}</h3>
+        </div>
+        <button class="close-btn" (click)="cancel()" title="إغلاق">
+          <mat-icon>close</mat-icon>
+        </button>
+      </header>
+
+      <form class="gen-form" (ngSubmit)="save()">
+        <div class="field-group">
+          <label>المحطة *</label>
+          <select [(ngModel)]="form.stationId" name="stationId" required title="المحطة">
+            <option value="">— اختر محطة —</option>
+            @for (s of stationService.stations(); track s.id) {
+              <option [value]="s.id">{{ stationName(s.id) }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label>اسم المولد *</label>
+          <input type="text" [(ngModel)]="form.name" name="name" required placeholder="مثال: المولد الرئيسي" />
+        </div>
+
+        <div class="field-group">
+          <label>الموديل</label>
+          <input type="text" [(ngModel)]="form.model" name="model" placeholder="مثال: Perkins 2800" />
+        </div>
+
+        <div class="field-group">
+          <label>الحجم (كيلوواط)</label>
+          <input type="number" [(ngModel)]="form.capacityKw" name="capacityKw" min="0" placeholder="0" />
+        </div>
+
+        <div class="field-group full">
+          <label>خزان الصاروخ (الديزل المباشر)</label>
+          <select [(ngModel)]="form.rocketTankId" name="rocketTankId" title="خزان الديزل المرتبط">
+            <option [ngValue]="null">— بلا ربط —</option>
+            @for (t of tanksForStation(form.stationId); track t.id) {
+              <option [ngValue]="t.id">{{ t.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="field-group full checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" [(ngModel)]="form.isBackup" name="isBackup" />
+            <span class="checkbox-custom">
+              <mat-icon>check</mat-icon>
+            </span>
+            <span class="checkbox-text">مولد احتياطي (Backup)</span>
+          </label>
+        </div>
+
+        <div class="field-group full">
+          <label>ملاحظات</label>
+          <textarea [(ngModel)]="form.notes" name="notes" rows="3" placeholder="ملاحظات إضافية..."></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-ghost" (click)="cancel()">إلغاء</button>
+          <button type="submit" class="btn-primary">
+            <mat-icon>save</mat-icon>
+            {{ editingId() ? 'حفظ التعديلات' : 'إنشاء المولد' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+</div>

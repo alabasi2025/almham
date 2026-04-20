@@ -1,0 +1,66 @@
+# ───── Dependencies ─────
+node_modules/
+**/node_modules/
+
+# ───── Build output ─────
+dist/
+**/dist/
+.angular/
+/tmp/
+/out-tsc/
+
+# ───── Environment & secrets (NEVER commit) ─────
+.env
+.env.local
+.env.*.local
+**/.env
+!.env.example
+!**/.env.example
+
+# ───── IDE & OS ─────
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# ───── Logs ─────
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ───── Coverage / tests ─────
+coverage/
+.nyc_output/
+
+# ───── SQL Server installers (too big for git) ─────
+SQLEXPR_x64_ENU/
+SQLServer2022-DEV-x64-ENU/
+
+# ───── ECAS imports — big binaries and extracts ─────
+# (we keep the small analysis *.txt / *.md files)
+imports/*.bak
+imports/*.zip
+imports/sqldata/
+imports/sqldata2/
+imports/ecas-full/
+imports/ECAS-App/
+imports/decompressed/
+imports/vb6ocx/
+imports/ecas-data/
+
+# ───── Certificates & keys (NEVER commit) ─────
+*.pvk
+*.pfx
+*.key
+*.p12
+
+# ───── Temp files ─────
+_git-preview.txt
+
+# ───── Misc ─────
+*.tsbuildinfo
+.cache/

@@ -1,0 +1,83 @@
+=== Complete listing of ECAS folder ===
+D 2026-04-19 12:55              \CMSG_Rptfldr
+D 2026-01-07 01:04              \ECAS (exe-v9.0.4) Update At 04-01-2026
+D 2023-03-14 01:25              \ECAS.MC Dohmyah Station System BackUp
+D 2023-03-14 03:40              \ECAS.MC Gholeeil Station System BackUp
+D 2023-03-14 07:24              \ECAS.MC NewSabalieah One System BackUp
+D 2026-01-06 00:58              \ECAS.MC Saddam One System BackUp
+D 2023-04-05 21:39              \ECAS_2664_Mrany_Saddam_Ref
+D 2023-12-23 20:47              \ECAS_2668_Mrany_NewSabalieah_Ref
+D 2023-04-06 02:01              \ECAS_2670_Mrany_ALTofieq_Ref
+D 2023-12-23 18:22              \ECAS_2672_Mrany_Gholeeil_Ref
+D 2023-09-06 05:35              \ECAS_2673_Mrany_Dohmyah_Ref
+F 2026-01-01 05:54    144121856 \Electricity Customers Accounts System.exe
+F 2025-10-26 09:52        19374 \temp22668.html
+F 2025-10-23 03:24       895308 \temp22672.html
+F 2026-02-16 03:53      1038858 \temp22673.html
+D 2021-06-17 23:35              \CMSG_Rptfldr\Ani
+F 2015-12-14 01:18       380416 \CMSG_Rptfldr\cmpdta_h_gbare.rpt
+F 2015-12-14 01:18       378880 \CMSG_Rptfldr\cmpdta_h_gbbrn.rpt
+F 2015-12-14 01:18       379392 \CMSG_Rptfldr\cmpdta_h_gbsgl.rpt
+F 2015-12-14 01:17       161900 \CMSG_Rptfldr\cmpdta_h_gbstaare.rpt
+F 2015-12-14 01:17       162252 \CMSG_Rptfldr\cmpdta_h_gbstabrn.rpt
+F 2015-12-14 01:17       162283 \CMSG_Rptfldr\cmpdta_h_gbstasgl.rpt
+F 2015-12-14 01:16       158737 \CMSG_Rptfldr\cmpdta_v_gbare.rpt
+F 2015-12-14 01:16       372736 \CMSG_Rptfldr\cmpdta_v_gbbrn.rpt
+F 2015-12-14 01:16       373248 \CMSG_Rptfldr\cmpdta_v_gbsgl.rpt
+F 2015-12-14 01:15       380416 \CMSG_Rptfldr\cmpdta_v_gbstaare.rpt
+F 2015-12-14 01:15       379904 \CMSG_Rptfldr\cmpdta_v_gbstabrn.rpt
+F 2015-12-14 01:15       380416 \CMSG_Rptfldr\cmpdta_v_gbstasgl.rpt
+F 2015-12-14 01:14       398336 \CMSG_Rptfldr\cmpstc12col_h_gbany.rpt
+F 2015-12-14 01:14       409088 \CMSG_Rptfldr\cmpstc16col_h_gbany.rpt
+F 2015-12-14 01:14       420352 \CMSG_Rptfldr\cmpstc20col_h_gbany.rpt
+F 2015-12-14 01:14       431616 \CMSG_Rptfldr\cmpstc24col_h_gbany.rpt
+F 2015-12-14 01:13       367616 \CMSG_Rptfldr\cstbasicdat_gbare.rpt
+F 2015-12-14 01:13       368128 \CMSG_Rptfldr\cstbasicdat_gbbrn.rpt
+F 2015-12-14 01:12       368640 \CMSG_Rptfldr\cstbasicdat_gbsgl.rpt
+F 2019-11-12 02:55       393216 \CMSG_Rptfldr\DataBase.mDb
+F 2026-04-19 12:46       407318 \CMSG_Rptfldr\MyPicture.bmp
+F 2024-10-16 03:23          154 \CMSG_Rptfldr\WaBc_22668.jpg
+F 2024-12-09 04:59          154 \CMSG_Rptfldr\WaBc_22672.jpg
+F 2025-03-29 06:07          154 \CMSG_Rptfldr\WaBc_22673.jpg
+F 2000-10-15 23:52         6300 \CMSG_Rptfldr\Ani\GLOBE.ANI
+F 1998-05-11 22:01        20282 \CMSG_Rptfldr\Ani\Inside your Computer busy.ani
+F 2026-01-05 05:14    144142336 \ECAS (exe-v9.0.4) Update At 04-01-2026\Electricity Customers Accounts System.exe
+F 2024-07-31 05:17     54730533 \ECAS.MC Dohmyah Station System BackUp\ECAS_MC_HDohmyhS Intdb BackUp1.dbf
+F 2024-07-31 05:17     61916715 \ECAS.MC Gholeeil Station System BackUp\ECAS_MC_HGhS Intdb BackUp1.dbf
+F 2024-07-31 05:23     79913490 \ECAS.MC NewSabalieah One System BackUp\ECAS_MC_HSbOS Intdb BackUp1.dbf
+D 2021-09-02 22:38              \ECAS_2664_Mrany_Saddam_Ref\ExeRef
+D 2026-04-16 18:59              \ECAS_2664_Mrany_Saddam_Ref\tbu
+F 2026-04-16 15:28        94446 \ECAS_2664_Mrany_Saddam_Ref\SysLogo.bmp
+F 2011-02-15 19:49        57344 \ECAS_2664_Mrany_Saddam_Ref\ExeRef\arabic2.dll
+F 2017-02-26 17:57        94208 \ECAS_2664_Mrany_Saddam_Ref\ExeRef\esy.exe
+F 2008-12-20 06:16        32768 \ECAS_2664_Mrany_Saddam_Ref\ExeRef\hds.exe
+F 2016-03-15 09:14        53760 \ECAS_2664_Mrany_Saddam_Ref\ExeRef\YemenIDCopLib.DLL
+D 2021-06-17 23:35              \ECAS_2668_Mrany_NewSabalieah_Ref\ExeRef
+D 2026-04-19 12:16              \ECAS_2668_Mrany_NewSabalieah_Ref\tbu
+F 2026-04-19 12:46       407318 \ECAS_2668_Mrany_NewSabalieah_Ref\SysLogo.bmp
+F 2011-02-15 19:49        57344 \ECAS_2668_Mrany_NewSabalieah_Ref\ExeRef\arabic2.dll
+F 2019-05-19 01:38        98304 \ECAS_2668_Mrany_NewSabalieah_Ref\ExeRef\esy.exe
+F 2008-12-20 06:16        32768 \ECAS_2668_Mrany_NewSabalieah_Ref\ExeRef\hds.exe
+F 2016-03-15 09:14        53760 \ECAS_2668_Mrany_NewSabalieah_Ref\ExeRef\YemenIDCopLib.DLL
+D 2022-03-08 02:29              \ECAS_2670_Mrany_ALTofieq_Ref\ExeRef
+D 2026-03-28 20:20              \ECAS_2670_Mrany_ALTofieq_Ref\tbu
+F 2026-03-28 20:42       159206 \ECAS_2670_Mrany_ALTofieq_Ref\SysLogo.bmp
+F 2011-02-15 19:49        57344 \ECAS_2670_Mrany_ALTofieq_Ref\ExeRef\arabic2.dll
+F 2017-10-10 02:48        98304 \ECAS_2670_Mrany_ALTofieq_Ref\ExeRef\esy.exe
+F 2008-12-20 06:16        32768 \ECAS_2670_Mrany_ALTofieq_Ref\ExeRef\hds.exe
+F 2016-03-15 09:14        53760 \ECAS_2670_Mrany_ALTofieq_Ref\ExeRef\YemenIDCopLib.DLL
+D 2021-06-17 23:35              \ECAS_2672_Mrany_Gholeeil_Ref\ExeRef
+D 2026-04-19 10:46              \ECAS_2672_Mrany_Gholeeil_Ref\tbu
+F 2026-04-19 10:46        64062 \ECAS_2672_Mrany_Gholeeil_Ref\SysLogo.bmp
+F 2011-02-15 19:49        57344 \ECAS_2672_Mrany_Gholeeil_Ref\ExeRef\arabic2.dll
+F 2017-10-20 17:14        98304 \ECAS_2672_Mrany_Gholeeil_Ref\ExeRef\esy.exe
+F 2008-12-20 06:16        32768 \ECAS_2672_Mrany_Gholeeil_Ref\ExeRef\hds.exe
+F 2016-03-15 09:14        53760 \ECAS_2672_Mrany_Gholeeil_Ref\ExeRef\YemenIDCopLib.DLL
+D 2021-06-17 23:35              \ECAS_2673_Mrany_Dohmyah_Ref\ExeRef
+D 2026-04-19 08:50              \ECAS_2673_Mrany_Dohmyah_Ref\tbu
+F 2026-04-19 08:49        50958 \ECAS_2673_Mrany_Dohmyah_Ref\SysLogo.bmp
+F 2011-02-15 19:49        57344 \ECAS_2673_Mrany_Dohmyah_Ref\ExeRef\arabic2.dll
+F 2017-08-25 00:41        98304 \ECAS_2673_Mrany_Dohmyah_Ref\ExeRef\esy.exe
+F 2008-12-20 06:16        32768 \ECAS_2673_Mrany_Dohmyah_Ref\ExeRef\hds.exe
+F 2016-03-15 09:14        53760 \ECAS_2673_Mrany_Dohmyah_Ref\ExeRef\YemenIDCopLib.DLL
+

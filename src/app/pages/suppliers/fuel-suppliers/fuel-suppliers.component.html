@@ -1,0 +1,273 @@
+<div class="suppliers-page">
+
+  <!-- ============ HERO ============ -->
+  <header class="sup-hero">
+    <div class="hero-bg-grid"></div>
+    <div class="hero-bg-orb orb-1"></div>
+    <div class="hero-bg-orb orb-2"></div>
+
+    <div class="hero-top">
+      <div class="hero-title">
+        <div class="hero-icon">
+          <mat-icon>local_shipping</mat-icon>
+        </div>
+        <div class="hero-text">
+          <h1>موردو الديزل</h1>
+          <p>إدارة الموردين ومواقع التزويد المرتبطة بكل مورد</p>
+        </div>
+      </div>
+
+      <div class="hero-actions">
+        <button class="btn-ghost" (click)="refresh()" title="تحديث">
+          <mat-icon>refresh</mat-icon>
+        </button>
+        <button class="btn-primary" (click)="openNewSupplier()">
+          <mat-icon>person_add</mat-icon>
+          <span>مورد جديد</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Hero KPIs -->
+    <div class="hero-kpis">
+      <div class="k-card total">
+        <div class="k-icon"><mat-icon>groups</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ fuel.suppliers().length }}</span>
+          <span class="k-label">إجمالي الموردين</span>
+        </div>
+      </div>
+
+      <div class="k-card sites">
+        <div class="k-icon"><mat-icon>location_on</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ totalSites() }}</span>
+          <span class="k-label">موقع تزويد</span>
+        </div>
+      </div>
+
+      <div class="k-card avg">
+        <div class="k-icon"><mat-icon>pie_chart</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ avgSitesPerSupplier() }}</span>
+          <span class="k-label">متوسط مواقع/مورد</span>
+        </div>
+      </div>
+
+      <div class="k-card with-phone">
+        <div class="k-icon"><mat-icon>call</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ withPhoneCount() }}</span>
+          <span class="k-label">موردين بأرقام</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ TOOLBAR ============ -->
+  <div class="toolbar">
+    <div class="search-box">
+      <mat-icon>search</mat-icon>
+      <input
+        type="text"
+        placeholder="ابحث عن مورد (اسم، رقم جوال)..."
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+      />
+      @if (search()) {
+        <button class="search-clear" (click)="search.set('')">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+
+    <div class="actions-right">
+      <button class="expand-all" (click)="toggleAll()">
+        <mat-icon>{{ allExpanded() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
+        {{ allExpanded() ? 'طي الكل' : 'عرض كل المواقع' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- ============ SUPPLIERS LIST ============ -->
+  @if (filteredSuppliers().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon"><mat-icon>local_shipping</mat-icon></div>
+      @if (fuel.suppliers().length === 0) {
+        <h3>لا يوجد موردون بعد</h3>
+        <p>ابدأ بإضافة أول مورد ديزل لتتبع عمليات الاستلام</p>
+        <button class="btn-primary" (click)="openNewSupplier()">
+          <mat-icon>person_add</mat-icon> إضافة مورد
+        </button>
+      } @else {
+        <h3>لا توجد نتائج مطابقة</h3>
+        <p>جرّب تغيير البحث</p>
+        <button class="btn-ghost" (click)="search.set('')">
+          <mat-icon>clear</mat-icon> مسح البحث
+        </button>
+      }
+    </div>
+  } @else {
+    <div class="suppliers-grid">
+      @for (s of filteredSuppliers(); track s.id) {
+        <article class="sup-card" [class.expanded]="isExpanded(s.id)">
+          <div class="sup-accent"></div>
+
+          <header class="sup-head">
+            <div class="sup-avatar" [style.background]="avatarColor(s.name)">
+              {{ initial(s.name) }}
+            </div>
+
+            <div class="sup-info">
+              <h3>{{ s.name }}</h3>
+              <div class="sup-meta">
+                @if (s.phone) {
+                  <a [href]="'tel:' + s.phone" class="meta-chip call" title="اتصال">
+                    <mat-icon>call</mat-icon>
+                    <span dir="ltr">{{ s.phone }}</span>
+                  </a>
+                } @else {
+                  <span class="meta-chip no-phone">
+                    <mat-icon>phone_disabled</mat-icon>
+                    بلا رقم
+                  </span>
+                }
+                <span class="meta-chip sites">
+                  <mat-icon>location_on</mat-icon>
+                  {{ sitesFor(s.id).length }} موقع
+                </span>
+              </div>
+            </div>
+
+            <div class="sup-actions">
+              <button class="icon-btn toggle" (click)="toggleExpanded(s.id)" [title]="isExpanded(s.id) ? 'طي' : 'عرض المواقع'">
+                <mat-icon>{{ isExpanded(s.id) ? 'expand_less' : 'expand_more' }}</mat-icon>
+              </button>
+              <button class="icon-btn edit" (click)="editSupplier(s)" title="تعديل">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button class="icon-btn del" (click)="deleteSupplier(s)" title="حذف">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </header>
+
+          @if (s.notes) {
+            <p class="sup-notes">
+              <mat-icon>sticky_note_2</mat-icon>
+              {{ s.notes }}
+            </p>
+          }
+
+          <!-- Expanded: sites -->
+          @if (isExpanded(s.id)) {
+            <div class="sites-section">
+              <div class="sites-head">
+                <div class="sh-title">
+                  <mat-icon>place</mat-icon>
+                  <h4>مواقع التزويد</h4>
+                  <span class="sh-count">{{ sitesFor(s.id).length }}</span>
+                </div>
+                <button class="add-site-btn" (click)="openNewSite(s.id)">
+                  <mat-icon>add_location_alt</mat-icon>
+                  <span>موقع جديد</span>
+                </button>
+              </div>
+
+              <!-- Site form -->
+              @if (activeSiteSupplierId() === s.id) {
+                <form class="site-form" (ngSubmit)="saveSite()">
+                  <div class="sf-field">
+                    <label>اسم الموقع *</label>
+                    <input type="text" [(ngModel)]="siteForm.name" name="siteName" required placeholder="مثال: محطة القطن" />
+                  </div>
+                  <div class="sf-field">
+                    <label>العنوان / الموقع</label>
+                    <input type="text" [(ngModel)]="siteForm.location" name="siteLocation" placeholder="مثال: شارع تعز" />
+                  </div>
+                  <div class="sf-actions">
+                    <button type="button" class="btn-ghost sm" (click)="cancelSite()">إلغاء</button>
+                    <button type="submit" class="btn-primary sm">
+                      <mat-icon>save</mat-icon> حفظ الموقع
+                    </button>
+                  </div>
+                </form>
+              }
+
+              @if (sitesFor(s.id).length > 0) {
+                <div class="sites-list">
+                  @for (site of sitesFor(s.id); track site.id) {
+                    <div class="site-chip">
+                      <div class="pin">
+                        <mat-icon>place</mat-icon>
+                      </div>
+                      <div class="site-text">
+                        <strong>{{ site.name }}</strong>
+                        @if (site.location) {
+                          <span class="muted">
+                            <mat-icon>place</mat-icon>
+                            {{ site.location }}
+                          </span>
+                        }
+                      </div>
+                      <button class="site-del" (click)="deleteSite(site)" title="حذف الموقع">
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    </div>
+                  }
+                </div>
+              } @else if (activeSiteSupplierId() !== s.id) {
+                <div class="no-sites">
+                  <mat-icon>info</mat-icon>
+                  <span>لا توجد مواقع مسجلة — أضف أول موقع للمورد</span>
+                </div>
+              }
+            </div>
+          }
+        </article>
+      }
+    </div>
+  }
+
+  <!-- ============ SUPPLIER FORM PANEL ============ -->
+  @if (showSupplierForm()) {
+    <div class="modal-overlay" (click)="cancelSupplier()"></div>
+    <div class="form-panel">
+      <header class="form-header">
+        <div class="form-title">
+          <mat-icon>{{ editingSupplierId() ? 'edit' : 'person_add' }}</mat-icon>
+          <h3>{{ editingSupplierId() ? 'تعديل مورد' : 'إضافة مورد ديزل' }}</h3>
+        </div>
+        <button class="close-btn" (click)="cancelSupplier()" title="إغلاق">
+          <mat-icon>close</mat-icon>
+        </button>
+      </header>
+
+      <form class="sup-form" (ngSubmit)="saveSupplier()">
+        <div class="field-group full">
+          <label>اسم المورد *</label>
+          <input type="text" [(ngModel)]="supplierForm.name" name="name" required placeholder="مثال: شركة الديزل السريع" />
+        </div>
+
+        <div class="field-group full">
+          <label>رقم الجوال</label>
+          <input type="tel" [(ngModel)]="supplierForm.phone" name="phone" dir="ltr" placeholder="+967 7XX XXX XXX" />
+        </div>
+
+        <div class="field-group full">
+          <label>ملاحظات</label>
+          <textarea [(ngModel)]="supplierForm.notes" name="notes" rows="4" placeholder="ملاحظات عامة، شروط، أسعار..."></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-ghost" (click)="cancelSupplier()">إلغاء</button>
+          <button type="submit" class="btn-primary">
+            <mat-icon>save</mat-icon>
+            {{ editingSupplierId() ? 'حفظ التعديلات' : 'إنشاء المورد' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+</div>

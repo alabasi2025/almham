@@ -1,0 +1,256 @@
+﻿[0x2F5000] wyqzlpbxidb8mtaolvrsxjpqheiynPwr
+[0x2F5048] ef5b2f5808e5a3a672087585b2bb0c46
+[0x2F5090] Ma3berPwr
+[0x2F50A8] Lit_Ma3berPwr_$_9143@255
+[0x2F50E0] 4e8408094fb845fda956282ab92f1c95
+[0x2F5128] baefe4dd417205c46f2e4afd86e16d8e
+[0x2F5170] 86de4ef09bca5818c37e3d0e9dd27f42
+[0x2F51B8] Power_Light
+[0x2F51D4] LitPower_LightEcas9147@255
+[0x2F5210] EzzLights
+[0x2F5228] Lit_EzzLights_$_9148@255
+[0x2F5260] TaizOneElc
+[0x2F527C] 35ebb65c34345583e605ee2c8a6a874f
+[0x2F52C4] AboAmarNaderh
+[0x2F52E4] Lit_AboAmarNaderh_$_9149@255
+[0x2F5324] f2c06a52ee0b5ed4b95b2b35df4cfb0e
+[0x2F536C] RobaPower
+[0x2F5384] Lit_RobaPower_$_9151@255
+[0x2F53BC] 05ddd212480e0c3c35f1a340952ba1b2
+[0x2F5404] StarPower
+[0x2F541C] Lit_StarPower_$_9153@255
+[0x2F5458] 3a62a6e3663e59419949554bff54df42
+[0x2F54A0] 69ff9d982437ad85d7ae35e5071262d3
+[0x2F54E8] ALTaawoun
+[0x2F5500] Lit_ALTaawoun_$_9154@255
+[0x2F5538] 43c0a797aec9eeb5a177ef2e7dd9625c
+[0x2F5580] MansoorElc
+[0x2F559C] Lit_MansoorElc_$_9155@255
+[0x2F55D4] a77a6b1b73e1ba6f1011f7e13ab02280
+[0x2F561C] LabFZID
+[0x2F5634] Lit_TaizOneElc_$_9157@255
+[0x2F566C] 046115d706aec81c807f48d1ca1885f8
+[0x2F56B4] TaizTowElc
+[0x2F56D0] Lit_TaizTowElc_$_9158@255
+[0x2F5708] 2cc368f2910520b60b4e844cbf66a436
+[0x2F5750] Sharaq Elec
+[0x2F577C] Admin@206
+[0x2F5794] OsimiTajdod
+[0x2F57B0] Lit_OsimiTajdod_$_9160@255
+[0x2F57EC] Like '
+[0x2F5800] 4d5755eb25a08bf9db3e7f5b55b8f38a
+[0x2F5848] ALOsemeTow
+[0x2F5864] ALOsemeTow@277
+[0x2F5888] a31a78af7c7e5a6c56f1d30a6b63032f
+[0x2F58D0] ALOsemeElc
+[0x2F58EC] ALOsemeElc@277
+[0x2F5910] H2-Power
+[0x2F5928] Lit_H2-Power_$_9161@255
+[0x2F595C] 894a4791a1db622d4d72785c9ab305a6
+[0x2F59A4] AkrmHathrmy
+[0x2F59D4] AkrmHathrmyDmtB01
+[0x2F59FC] AkrmHathrmyDmtB01@255
+[0x2F5A2C] Akrm_Jabarh
+[0x2F5A48] Lit_Akrm_Jabarh_$_9444@255
+[0x2F5A84] 0dc44cb05bc8b46856d40cbac811060a
+[0x2F5ACC] 99cb32f7b84e833d0bb988f2ac4325ff
+[0x2F5B14] AkrmHathrmyRdmhB03
+[0x2F5B40] AkrmHathrmyRdmhB03@255
+[0x2F5B74] AkrmHathrmyJobnB04
+[0x2F5BA0] AkrmHathrmyJobnB04@255
+[0x2F5BD4] AkrmHathrmyHajajB05
+[0x2F5C00] AkrmHathrmyHajajB05@55
+[0x2F5C34] ALNoorElec
+[0x2F5C50] Lit_ALNoorElec_$_9460@255
+[0x2F5C88] dbbda11303cd73d9b169e5c72adba276
+[0x2F5CD0] 8226efdb6adecf0e85dfd1c2800a1b51
+[0x2F5D18] ALMothalath
+[0x2F5D34] Lit_ALMothalath_$_9981@255
+[0x2F5D70] fe40ff103ba8c43405a2b66ae0cdc715
+[0x2F5DB8] f41c9aa6d0e9775ec6abc1bcbebdd729
+[0x2F5E00] wMothalath
+[0x2F5E1C] Lit_wMothalath_$_Ecas_9981@255
+[0x2F5E60] 2d25c037039c68a6c13d1fdf8ca9ced3
+[0x2F5EA8] Kamaran24
+[0x2F5EC0] Lit_Kamaran24_$_9982@255
+[0x2F5EF8] 52deb76560a14e14a853eb2d6d3d2691
+[0x2F5F40] 213440bd8a67b093ca68443d088d1d2b
+[0x2F5F88] wKamaran24
+[0x2F5FA4] Lit_wKamaran24_$_Ecas_9982@255
+[0x2F5FE8] Lit_Kamaran24_$_Ecas_9982@255
+[0x2F6028] 5044f47b3ef1ab954beb572d06d75df0
+[0x2F6070] MohafaDhah
+[0x2F608C] Lit_MohafaDhah_$_9983@255
+[0x2F60C4] d259d31f6aca8f7270010bc55134cbeb
+[0x2F611C] ea9b26b504e2d2919bc1a400831d6a62
+[0x2F6164] 8ad5117074031df700b08ce07ebdfbbd
+[0x2F61AC] NjmStation
+[0x2F61C8] Lit_NjmStation_$_9990@255
+[0x2F6200] e2e5056d3a9ce75440ed8091adf8de6b
+[0x2F6248] 9dfcce0fad8d0df2829a2ec42e162fec
+[0x2F6290] GetComUserNamePW_Info_4_Sms_WhatsApp
+[0x2F62F0] CompInfosFinancialSetting
+[0x2F6328] SELECT DISTINCT CompInfosFinancialSetting.Ar_ID, CompInfosFinancialSetting.Acc_ActiveAutoDbn
+[0x2F63E8] FROM CompInfosFinancialSetting;
+[0x2F6430] DROP TABLE A_Fincl
+[0x2F645C] INTO A_Fincl
+[0x2F647C] DELETE FROM CompInfosFinancialSetting
+[0x2F64CC] INSERT INTO CompInfosFinancialSetting SELECT A_Fincl.* FROM A_Fincl;
+[0x2F655C] Acc_ActiveAutoDbn
+[0x2F6584] Inv_CSNL_ActiveCatSerialNoListSystem
+[0x2F65D4] Inv_CSNL_RejectInvDnbIfDoNotHaveCtgSerialNo
+[0x2F6630] LoadFinancialSettingAndInfo
+[0x2F6670] WHERE (((LinkPoint.RS_ID)=
+[0x2F66AC] SELECT UserPrivileg.RU_ID, Sum(UserPrivileg.Frm_ID) AS SumFrm_ID, Sum(UserPrivileg.Evn_ID) AS SumEvn_ID
+[0x2F6780] FROM UserPrivileg
+[0x2F67AC] GROUP BY UserPrivileg.RU_ID;
+[0x2F67EC] GROUP BY UserPrivileg.RU_ID
+[0x2F682C] HAVING (((UserPrivileg.RU_ID)>
+[0x2F6870] Prompt
+[0x2F6884] UPDATE RankUser SET RankUser.SFID =
+[0x2F68D4] SumFrm_ID
+[0x2F68EC] , RankUser.SEID =
+[0x2F6918] SumEvn_ID
+[0x2F6930] WHERE (((RankUser.RU_ID) =
+[0x2F6970] UpdateRankUserSumFormAndEvent
+[0x2F69B4] SELECT * FROM Segel
+[0x2F69E0] WHERE (((Segel.Sgl_ID)=
+[0x2F6A18] SELECT * FROM LinkPoint
+[0x2F6A5C] لا يمكنك العمل على البيانات الحالية، لإنه تم ترحيل بيانات سجل(حرف)القراءة الذي توجد فيه هذه البيانات ...
+[0x2F6B34] قم بإلغاء ترحيل سجل(حرف)القراءة أولاً ثم حاول مجدداَ .
+[0x2F6BA8] خطاء ... محاولة العمل على بيانات تم ترحيلها
+[0x2F6C04] gfCheckIfSegelWasCommit
+[0x2F6C3C] لا يمكنك العمل على البيانات الحالية، لإنه تم ترحيل بيانات ( بعض أو كل ) الفيادر ...
+[0x2F6CE8] قم بإلغاء ترحيل بيانات كل الفيادر أولاً ثم حاول مجدداَ .
+[0x2F6D60] gfCheckIfAnyLinkPointWasCommit
+[0x2F6DA4] عدم وجود صلاحيات الوصول للنظام
+[0x2F6DE8] gfCloseAllDataEnvironment
+[0x2F6E20] SELECT UserPrivileg.RU_ID, Sum(UserPrivileg.Frm_ID) AS SumFrmID, Sum(UserPrivileg.Evn_ID) AS SumFvnID
+[0x2F6EF0] HAVING (((UserPrivileg.RU_ID)=
+[0x2F6F34] من الملاحظ عدم وجود أي صلاحيات تخولك من الوصول للنظام ... لذلك لا يـمكنك إستخدام النطام في الوقت الحالي !
+[0x2F700C] هناك خطاء أو مشكلة في تحديد صلاحيات الوصول للنظام ... لذلك لا يــــمكن الإستمرار في إستخدام النطام في الوقت الحالي !!!
+[0x2F7100] وجود مشكلة في تحديد صلاحيات الوصول للنظام
+[0x2F7158] SumFvnID
+[0x2F7170] Recordsets
+[0x2F718C] There Are an Error But System Will Resume Next
+[0x2F71F0] تم تحديث صلاحيات الوصول للنظام بنجاح ... لذلك يتوجب عليك إعادة تشغيل البرنامج حتى تصبح الإعدادات سارية المفعول .
+[0x2F72D8] نجاح عملية تحديث صلاحيات الوصول للنظام
+[0x2F732C] خطاء صلاحيات فى بيانات المستخدم
+[0x2F7370] راجع مهندس النظام حرصاً على بياناتكـــم...
+[0x2F73DC] لسبب أو لآخر ... أستشعر النظام أن هناك محاولة فاشلة لإختراقة أو العبث بمحتوياتة! لذلك وحرصاً على سلامة وأمان بياناتكم فأنة:
+[0x2F74D8] سوف يتوقف النظام عن العمل حالياً. لحين حل المشكلة والتخلص من أي تهديدات محتملة .
+[0x2F7580] كشف عملية تجسس2
+[0x2F75A4] SumFrmID
+[0x2F75BC] من الملاحظ أن هناك خطاء متراكم في صلاحيات العمل، لذلك لا يــــمكن الإستمرار في إستخدام النطام في الوقت الحالي !!!
+[0x2F76A4] وجود خطاء في بيانات وصلاحيات النظام
+[0x2F76F0] Operation is not allowed when the object is closed.
+[0x2F775C] Method
+[0x2F7770] of object
+[0x2F7788] failed
+[0x2F779C] من الملاحظ أن هناك خطاء متراكم في صلاحيات العمل، لذلك لا يــــمكن الإستمرار في إستخدام النطام في الوق الحالي ...
+[0x2F7884] راجع مهندس النظام.
+[0x2F78B0] CheckUserPrivileg
+[0x2F78F8] Automation_Error
+[0x2F7920] AutomatiOn Error
+[0x2F7948] closed
+[0x2F796C] Could not find installable ISAM.
+[0x2F79B4] Cannot start your application. The workgroup information file is missing or opened exclusively by another user.
+[0x2F7A98] Data provider could not be initialized.
+[0x2F7AEC] Not a valid account name or password.
+[0x2F7B48] gfOpenAllDataEnvironment
+[0x2F7B80] MainMomule
+[0x2F7B9C] CheckPWIsEquel
+[0x2F7CAC] عدم تطابق في البيانات
+[0x2F7CDC] Us_PassWord = '
+[0x2F7D04] , Us_UpDateDate = '
+[0x2F7D34] ==========================================================================
+[0x2F7DD0] صُمِم هذا البرنامج لِـ
+[0x2F7E04] Mobile No :
+[0x2F7E24] إسم المشروع
+[0x2F7E44] About Integrable Accompts System For Special Electricity Enterprises Customers
+[0x2F7EE8] Version
+[0x2F7F00] Challengers Company Email:
+[0x2F7F3C] Challengers@yahoo.com
+[0x2F7F6C] Can Not Display This Informations
+[0x2F7FC4] mailto:
+[0x2F7FD8] ?subject= &body=
+[0x2F8000] نص الرسالة
+[0x2F8020] قام بـبرمجة و إعداد و  تصميم هذا البرنامج
+[0x2F8078] م/ محمد عبد الله حسين المغربي
+[0x2F80B8] جميع الحقُوق محفوظة لِـ
+[0x2F80EC] يمن آي دي المحدودة للبرمجيات و أنظمة المعلومات
+[0x2F8150] YemenID Ltd. Company For Programmes & Informations Systems's
+[0x2F81D0] الجمهورية اليمنية ـ ذمار
+[0x2F8208] 711401070 ، 777707971
+[0x2F8238] Fax No :
+[0x2F8250] 06426258
+[0x2F8268] \MSINFO32.EXE
+[0x2F8288] C:\Windows\System32\msinfo32.exe
+[0x2F82D0] System Information Is Unavailable At This Time
+[0x2F83D0] pfSplit_And_Replace_StringForSearch
+[0x2F8420] عرض بيانات المشروع
+[0x2F844C] رقم المشروع
+[0x2F8468] Cst_AdNo
+[0x2F8480] عرض بيانات الفروع
+[0x2F84A8] رقم الفرع
+[0x2F84C0] إسم الفرع
+[0x2F84D8] عرض بيانات سجلات(حروف)القراءة
+[0x2F8518] رقم سجل(حرف)القراءة
+[0x2F8544] إسم سجل(حرف)القراءة
+[0x2F8570] عرض بيانات رموز التعرفة
+[0x2F85A4] رقم الرمز
+[0x2F85BC] إسم الرمز
+[0x2F85D4] TypeSymbol
+[0x2F85F0] Tsm_ID
+[0x2F8604] Tsm_Name
+[0x2F861C] رقم العداد
+[0x2F8648] بحث و إيجاد بيانات المشتركين
+[0x2F8688] رقم المشترك
+[0x2F86A8] إسم المشترك
+[0x2F86C8] Customer
+[0x2F86E0] البحث عن بيانات مشترك بواسطة رقم المشترك و/أو العنوان
+[0x2F8750] رقم المشترك
+[0x2F876C] العنوان
+[0x2F8780] Cst_Address
+[0x2F879C] البحث عن بيانات مشترك بواسطة رقم المشترك و/أو رقم العداد
+[0x2F8820] البحث عن بيانات الحسابات
+[0x2F8858] رقم الحساب
+[0x2F8874] إسم الحساب
+[0x2F8890] AccountInfo
+[0x2F88AC] Acc_ID
+[0x2F88C0] Acc_Name
+[0x2F88D4] SetFocus
+[0x2F88EC] ResetData
+[0x2F8914] SELECT
+[0x2F8928] TOP 200
+[0x2F8940] AS [رقم المشترك] ,
+[0x2F8970] WHERE Cst_ID Is Not Null
+[0x2F89C0] Is Not Null
+[0x2F89E4] AS [إسم المشترك] , Cst_Address AS [العنوان], Cst_AdNo AS [رقم العداد] , Cst_CountNo AS [رقم خط السير] , Squr_ID AS [رقم المربع]
+[0x2F8AEC] , Cst_TeleNo AS [رقم الهاتف]  , LnkP_ID AS [رقم الفيدر]  , LnkM_ID AS [رقم نقطة الرصد]
+[0x2F8BB4] Like '%
+[0x2F8BCC] AND Cst_Address  Like '%
+[0x2F8C04] AND Cst_AdNo  Like '
+[0x2F8C34] AND Cst_CountNo  Like '
+[0x2F8C6C] AND Squr_ID  Like '
+[0x2F8C9C] AND Cst_TeleNo  Like '
+[0x2F8CD0] AND LnkP_ID  Like '
+[0x2F8D00] AND LnkM_ID  Like '
+[0x2F8D30] AND Cst_Address  Like '
+[0x2F8D68] ORDER BY 1
+[0x2F8D88] , Cst_Name
+[0x2F8DA4] , Cst_Address
+[0x2F8DC8] , Cst_AdNo
+[0x2F8DE4] , Cst_CountNo
+[0x2F8E08] , Cst_TeleNo
+[0x2F8E28] , LnkM_ID
+[0x2F8E44] عدد السجلات المطابقة هو (
+[0x2F8E80] [رقم المشترك] Like '%
+[0x2F8EB0] [إسم المشترك] Like '%
+[0x2F8EE0] [العنوان] Like '%
+[0x2F8F08] [رقم العداد] Like '
+[0x2F8F34] [رقم خط السير] Like '
+[0x2F8F64] [رقم المربع]  Like '
+[0x2F8F94] [رقم الهاتف]  Like '
+[0x2F8FC4] [رقم الفيدر]  Like '
+[0x2F8FF4] [رقم ن

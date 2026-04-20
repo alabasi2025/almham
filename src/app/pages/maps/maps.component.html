@@ -1,0 +1,250 @@
+<div class="maps-page" [class.editing]="editingMode() !== null">
+
+  <!-- ========== SIDE PANEL ========== -->
+  <aside class="side-panel">
+    <!-- Header -->
+    <div class="panel-head">
+      <div class="brand">
+        <div class="brand-icon">
+          <mat-icon>public</mat-icon>
+        </div>
+        <div>
+          <h2>الخرائط</h2>
+          <p>المحطات ومواقع الموردين</p>
+        </div>
+      </div>
+
+      <div class="quick-stats">
+        <div class="qs" [class.on]="showStations()">
+          <span class="dot station"></span>
+          <span class="v">{{ stationService.stations().length }}</span>
+          <span class="l">محطة</span>
+        </div>
+        <div class="qs" [class.on]="showSuppliers()">
+          <span class="dot supplier"></span>
+          <span class="v">{{ fuel.supplierSites().length }}</span>
+          <span class="l">موقع مورد</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Side search: filters stations & suppliers list -->
+    <div class="panel-search">
+      <mat-icon>filter_alt</mat-icon>
+      <input
+        type="text"
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+        placeholder="تصفية قائمة المحطات والموردين..." />
+    </div>
+
+    <!-- Layer toggles -->
+    <div class="layers">
+      <button
+        class="layer-btn stations"
+        [class.active]="showStations()"
+        (click)="toggleLayer('stations')">
+        <mat-icon>shield</mat-icon>
+        <span>المحطات</span>
+        <span class="spacer"></span>
+        <mat-icon>{{ showStations() ? 'visibility' : 'visibility_off' }}</mat-icon>
+      </button>
+      <button
+        class="layer-btn suppliers"
+        [class.active]="showSuppliers()"
+        (click)="toggleLayer('suppliers')">
+        <mat-icon>local_shipping</mat-icon>
+        <span>الموردين</span>
+        <span class="spacer"></span>
+        <mat-icon>{{ showSuppliers() ? 'visibility' : 'visibility_off' }}</mat-icon>
+      </button>
+    </div>
+
+    <!-- Points list -->
+    <div class="points-section">
+      <div class="sec-head">
+        <h4>النقاط المعروضة</h4>
+        <span class="count">{{ filteredPoints().length }}</span>
+      </div>
+
+      <div class="points-list">
+        @for (p of filteredPoints(); track p.id) {
+          <button
+            class="point-item"
+            [class.selected]="selectedPointId() === p.id"
+            [class.station]="p.kind === 'stations'"
+            [class.supplier]="p.kind === 'suppliers'"
+            (click)="focusPoint(p)">
+            <div class="point-icon">
+              <mat-icon>{{ pointIcon(p) }}</mat-icon>
+            </div>
+            <div class="point-body">
+              <strong>{{ p.title }}</strong>
+              <span>{{ p.subtitle }}</span>
+            </div>
+            <mat-icon class="go">chevron_left</mat-icon>
+          </button>
+        } @empty {
+          <p class="empty-hint">
+            <mat-icon>info</mat-icon>
+            {{ search() ? 'لا نتائج للبحث' : 'لا توجد نقاط معروضة — حدد الإحداثيات أدناه' }}
+          </p>
+        }
+      </div>
+    </div>
+
+    <!-- Unmapped items (need coordinates) -->
+    @if (unmappedStations().length > 0 || unmappedSites().length > 0) {
+      <div class="unmapped-section">
+        <div class="sec-head">
+          <h4>
+            <mat-icon>edit_location_alt</mat-icon>
+            لم تحدد إحداثياتها
+          </h4>
+          <span class="count warn">{{ unmappedStations().length + unmappedSites().length }}</span>
+        </div>
+
+        @if (unmappedStations().length > 0) {
+          <div class="unmapped-group">
+            <span class="grp-label">محطات</span>
+            @for (s of unmappedStations(); track s.id) {
+              <button class="unmapped-item station" (click)="startEditStation(s)">
+                <mat-icon>shield</mat-icon>
+                <span>{{ stationName(s) }}</span>
+                <mat-icon class="add">add_location</mat-icon>
+              </button>
+            }
+          </div>
+        }
+
+        @if (unmappedSites().length > 0) {
+          <div class="unmapped-group">
+            <span class="grp-label">مواقع موردين</span>
+            @for (site of unmappedSites(); track site.id) {
+              <button class="unmapped-item supplier" (click)="startEditSite(site)">
+                <mat-icon>local_shipping</mat-icon>
+                <span>{{ site.name }}<small>{{ site.supplierName }}</small></span>
+                <mat-icon class="add">add_location</mat-icon>
+              </button>
+            }
+          </div>
+        }
+      </div>
+    }
+  </aside>
+
+  <!-- ========== MAP ========== -->
+  <main class="map-area">
+
+    <!-- Floating GEO SEARCH (top center) -->
+    <div class="geo-search" [class.has-results]="geoResults().length > 0 && geoFocused()">
+      <div class="geo-search-input">
+        <mat-icon class="search-icon">travel_explore</mat-icon>
+        <input
+          type="text"
+          [ngModel]="geoQuery()"
+          (ngModelChange)="onGeoQueryChange($event)"
+          (focus)="geoFocused.set(true)"
+          (blur)="blurGeoSearch()"
+          placeholder="ابحث عن مدينة، منطقة، أو معلم في اليمن..." />
+
+        @if (geoLoading()) {
+          <mat-icon class="geo-spinner">sync</mat-icon>
+        }
+
+        @if (geoQuery() && !geoLoading()) {
+          <button class="geo-clear" (click)="clearGeoSearch()" matTooltip="مسح">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </div>
+
+      @if (geoFocused() && geoResults().length > 0) {
+        <div class="geo-dropdown">
+          @for (r of geoResults(); track $index) {
+            <button class="geo-item" (mousedown)="selectGeoResult(r)">
+              <div class="geo-item-icon">
+                <mat-icon>place</mat-icon>
+              </div>
+              <div class="geo-item-body">
+                <strong>{{ r.display_name.split(',')[0] }}</strong>
+                <span>{{ r.display_name }}</span>
+              </div>
+            </button>
+          }
+        </div>
+      }
+
+      @if (geoFocused() && geoQuery().length >= 2 && !geoLoading() && geoResults().length === 0) {
+        <div class="geo-dropdown">
+          <div class="geo-empty">
+            <mat-icon>search_off</mat-icon>
+            <span>لا نتائج مطابقة في اليمن</span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Floating toolbar -->
+    <div class="map-toolbar">
+      <div class="toolbar-group tile-style">
+        <button
+          [class.active]="tileStyle() === 'dark'"
+          (click)="setTileStyle('dark')"
+          matTooltip="ليلي">
+          <mat-icon>dark_mode</mat-icon>
+        </button>
+        <button
+          [class.active]="tileStyle() === 'streets'"
+          (click)="setTileStyle('streets')"
+          matTooltip="شوارع">
+          <mat-icon>map</mat-icon>
+        </button>
+        <button
+          [class.active]="tileStyle() === 'satellite'"
+          (click)="setTileStyle('satellite')"
+          matTooltip="قمر صناعي">
+          <mat-icon>satellite_alt</mat-icon>
+        </button>
+      </div>
+
+      <button class="toolbar-btn fit" (click)="fitToAll()" matTooltip="عرض كل النقاط">
+        <mat-icon>zoom_out_map</mat-icon>
+      </button>
+
+      <button class="toolbar-btn yemen" (click)="fitToYemen()" matTooltip="عرض اليمن كاملةً">
+        <mat-icon>public</mat-icon>
+      </button>
+    </div>
+
+    <!-- Edit mode banner -->
+    @if (editingMode(); as mode) {
+      <div class="edit-banner">
+        <mat-icon class="pulse">touch_app</mat-icon>
+        <div>
+          <strong>وضع تعيين الموقع</strong>
+          <span>اضغط على الخريطة لتعيين موقع "{{ mode.name }}"</span>
+        </div>
+        <button mat-button (click)="cancelEdit()">
+          <mat-icon>close</mat-icon> إلغاء
+        </button>
+      </div>
+    }
+
+    <!-- The actual Leaflet map -->
+    <div #mapEl class="map-el"></div>
+
+    <!-- Legend -->
+    <div class="legend">
+      <div class="legend-item">
+        <span class="leg-pin station"></span>
+        <span>محطة</span>
+      </div>
+      <div class="legend-item">
+        <span class="leg-pin supplier"></span>
+        <span>مورد</span>
+      </div>
+    </div>
+  </main>
+
+</div>

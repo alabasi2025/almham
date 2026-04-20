@@ -1,0 +1,433 @@
+<div class="stations-page">
+
+  <!-- ============ HERO HEADER ============ -->
+  <header class="stations-hero">
+    <div class="hero-bg-grid"></div>
+    <div class="hero-bg-orb orb-1"></div>
+    <div class="hero-bg-orb orb-2"></div>
+
+    <div class="hero-top">
+      <div class="hero-title">
+        <div class="hero-icon">
+          <mat-icon>electric_bolt</mat-icon>
+        </div>
+        <div class="hero-text">
+          <h1>محطات توليد وتوزيع الكهرباء</h1>
+          <p>إدارة شاملة لمحطات الشركة ومرافقها التشغيلية</p>
+        </div>
+      </div>
+
+      <div class="hero-actions">
+        <button class="btn-ghost" (click)="refresh()" title="تحديث">
+          <mat-icon>refresh</mat-icon>
+        </button>
+        <button class="btn-primary" (click)="openForm()">
+          <mat-icon>add_circle</mat-icon>
+          <span>إضافة محطة</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Hero KPIs -->
+    <div class="hero-kpis">
+      <div class="k-card total">
+        <div class="k-icon"><mat-icon>hub</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ stationService.stations().length }}</span>
+          <span class="k-label">إجمالي المحطات</span>
+        </div>
+      </div>
+
+      <div class="k-card active">
+        <div class="k-icon"><mat-icon>check_circle</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ stationService.activeCount() }}</span>
+          <span class="k-label">محطات نشطة</span>
+        </div>
+        <div class="k-trend">
+          <span class="pct">{{ activePercent() }}%</span>
+        </div>
+      </div>
+
+      <div class="k-card maintenance">
+        <div class="k-icon"><mat-icon>build_circle</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ stationService.maintenanceCount() }}</span>
+          <span class="k-label">تحت الصيانة</span>
+        </div>
+      </div>
+
+      <div class="k-card capacity">
+        <div class="k-icon"><mat-icon>bolt</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ totalCapacityMW() }}</span>
+          <span class="k-label">ميجاواط إجمالي</span>
+        </div>
+        <div class="k-trend">
+          <span class="pct">{{ activeCapacityMW() }} MW نشط</span>
+        </div>
+      </div>
+
+      <div class="k-card generators">
+        <div class="k-icon"><mat-icon>settings_power</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ fuelService.generators().length }}</span>
+          <span class="k-label">إجمالي المولدات</span>
+        </div>
+      </div>
+
+      <div class="k-card employees">
+        <div class="k-icon"><mat-icon>groups</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ employeeService.employees().length }}</span>
+          <span class="k-label">إجمالي الموظفين</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ TOOLBAR ============ -->
+  <div class="toolbar">
+    <div class="search-box">
+      <mat-icon>search</mat-icon>
+      <input
+        type="text"
+        placeholder="ابحث عن محطة بالاسم، الموقع أو النوع..."
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)"
+      />
+      @if (searchQuery()) {
+        <button class="search-clear" (click)="searchQuery.set('')">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+
+    <div class="filter-chips">
+      <button
+        class="chip"
+        [class.active]="statusFilter() === 'all'"
+        (click)="statusFilter.set('all')">
+        <mat-icon>apps</mat-icon> الكل
+        <span class="count">{{ stationService.stations().length }}</span>
+      </button>
+      <button
+        class="chip chip-active"
+        [class.active]="statusFilter() === 'active'"
+        (click)="statusFilter.set('active')">
+        <span class="dot"></span> نشطة
+        <span class="count">{{ stationService.activeCount() }}</span>
+      </button>
+      <button
+        class="chip chip-maintenance"
+        [class.active]="statusFilter() === 'maintenance'"
+        (click)="statusFilter.set('maintenance')">
+        <span class="dot"></span> صيانة
+        <span class="count">{{ stationService.maintenanceCount() }}</span>
+      </button>
+      <button
+        class="chip chip-inactive"
+        [class.active]="statusFilter() === 'inactive'"
+        (click)="statusFilter.set('inactive')">
+        <span class="dot"></span> متوقفة
+        <span class="count">{{ stationService.inactiveCount() }}</span>
+      </button>
+    </div>
+
+    <div class="view-toggle">
+      <button
+        class="view-btn"
+        [class.active]="viewMode() === 'cards'"
+        (click)="viewMode.set('cards')"
+        title="عرض بطاقات">
+        <mat-icon>grid_view</mat-icon>
+      </button>
+      <button
+        class="view-btn"
+        [class.active]="viewMode() === 'table'"
+        (click)="viewMode.set('table')"
+        title="عرض جدول">
+        <mat-icon>table_rows</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- ============ CARDS VIEW ============ -->
+  @if (viewMode() === 'cards') {
+    <div class="cards-grid">
+      @for (s of filteredStations(); track s.id) {
+        <article class="station-card" [class]="'status-' + s.status">
+          <div class="card-accent"></div>
+
+          <header class="card-head">
+            <div class="card-badge">
+              <mat-icon>{{ getTypeIcon(s.type) }}</mat-icon>
+              <span>{{ s.type }}</span>
+            </div>
+            <div class="status-chip" [class]="s.status">
+              <span class="pulse-dot"></span>
+              {{ getStatusLabel(s.status) }}
+            </div>
+          </header>
+
+          <div class="card-body">
+            <h3 class="station-name">{{ shortName(s.name) }}</h3>
+            <div class="station-meta">
+              <span class="meta-item">
+                <mat-icon>place</mat-icon>
+                {{ s.location }}
+              </span>
+              @if (s.latitude && s.longitude) {
+                <span class="meta-item coords">
+                  <mat-icon>my_location</mat-icon>
+                  {{ (+s.latitude).toFixed(3) }}, {{ (+s.longitude).toFixed(3) }}
+                </span>
+              }
+            </div>
+
+            <!-- Capacity progress -->
+            <div class="capacity-section">
+              <div class="capacity-header">
+                <span class="cap-label">السعة المركبة</span>
+                <span class="cap-value">{{ (s.capacity / 1000) | number: '1.1-1' }} MW</span>
+              </div>
+              <div class="capacity-bar">
+                <div
+                  class="capacity-fill"
+                  [style.width.%]="capacityPercent(s)">
+                </div>
+              </div>
+              <span class="cap-compare">{{ capacityPercent(s) }}% من أكبر محطة</span>
+            </div>
+
+            <!-- Mini stats -->
+            <div class="mini-stats">
+              <div class="mini-stat">
+                <mat-icon>settings_power</mat-icon>
+                <div>
+                  <span class="ms-value">{{ generatorsCount(s.id) }}</span>
+                  <span class="ms-label">مولد</span>
+                </div>
+              </div>
+              <div class="mini-stat">
+                <mat-icon>oil_barrel</mat-icon>
+                <div>
+                  <span class="ms-value">{{ tanksCount(s.id) }}</span>
+                  <span class="ms-label">خزان</span>
+                </div>
+              </div>
+              <div class="mini-stat">
+                <mat-icon>person</mat-icon>
+                <div>
+                  <span class="ms-value">{{ employeesCount(s.id) }}</span>
+                  <span class="ms-label">موظف</span>
+                </div>
+              </div>
+            </div>
+
+            @if (stationManager(s.id); as mgr) {
+              <div class="manager-row">
+                <mat-icon>badge</mat-icon>
+                <div>
+                  <span class="mgr-role">مدير المحطة</span>
+                  <span class="mgr-name">{{ mgr.name }}</span>
+                </div>
+              </div>
+            }
+          </div>
+
+          <footer class="card-footer">
+            <button class="action-btn fuel" (click)="goFuel(s.id)" title="إدارة الديزل">
+              <mat-icon>local_gas_station</mat-icon>
+              <span>الديزل</span>
+            </button>
+            <button class="action-btn gen" (click)="goGenerators(s.id)" title="المولدات">
+              <mat-icon>settings_power</mat-icon>
+              <span>المولدات</span>
+            </button>
+            <button class="action-btn emp" (click)="goEmployees(s.id)" title="الموظفين">
+              <mat-icon>groups</mat-icon>
+              <span>الموظفين</span>
+            </button>
+            @if (s.latitude && s.longitude) {
+              <button class="action-btn map" (click)="goMap(s)" title="عرض على الخريطة">
+                <mat-icon>map</mat-icon>
+              </button>
+            }
+            <div class="footer-divider"></div>
+            <button class="action-btn edit" (click)="edit(s)" title="تعديل">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button class="action-btn del" (click)="delete(s.id)" title="حذف">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </footer>
+        </article>
+      }
+    </div>
+  }
+
+  <!-- ============ TABLE VIEW ============ -->
+  @if (viewMode() === 'table') {
+    <div class="table-wrap">
+      <table class="stations-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>المحطة</th>
+            <th>الموقع</th>
+            <th>النوع</th>
+            <th>السعة</th>
+            <th>المولدات</th>
+            <th>الموظفين</th>
+            <th>الحالة</th>
+            <th>إجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (s of filteredStations(); track s.id; let i = $index) {
+            <tr>
+              <td class="row-num">{{ i + 1 }}</td>
+              <td>
+                <div class="name-cell">
+                  <mat-icon [class]="'type-icon ' + s.status">{{ getTypeIcon(s.type) }}</mat-icon>
+                  <span>{{ shortName(s.name) }}</span>
+                </div>
+              </td>
+              <td>{{ s.location }}</td>
+              <td><span class="type-tag">{{ s.type }}</span></td>
+              <td class="num">{{ s.capacity | number }} ك.و</td>
+              <td class="num">{{ generatorsCount(s.id) }}</td>
+              <td class="num">{{ employeesCount(s.id) }}</td>
+              <td>
+                <span class="status-chip compact" [class]="s.status">
+                  <span class="pulse-dot"></span>
+                  {{ getStatusLabel(s.status) }}
+                </span>
+              </td>
+              <td>
+                <div class="table-actions">
+                  <button class="t-btn fuel" (click)="goFuel(s.id)" title="الديزل">
+                    <mat-icon>local_gas_station</mat-icon>
+                  </button>
+                  <button class="t-btn gen" (click)="goGenerators(s.id)" title="المولدات">
+                    <mat-icon>settings_power</mat-icon>
+                  </button>
+                  <button class="t-btn edit" (click)="edit(s)" title="تعديل">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button class="t-btn del" (click)="delete(s.id)" title="حذف">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <!-- ============ EMPTY STATE ============ -->
+  @if (filteredStations().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">
+        <mat-icon>electrical_services</mat-icon>
+      </div>
+      @if (stationService.stations().length === 0) {
+        <h3>لا توجد محطات بعد</h3>
+        <p>ابدأ بإضافة أول محطة توليد أو توزيع للكهرباء</p>
+        <button class="btn-primary" (click)="openForm()">
+          <mat-icon>add_circle</mat-icon>
+          إضافة محطة جديدة
+        </button>
+      } @else {
+        <h3>لا توجد نتائج مطابقة</h3>
+        <p>لا توجد محطات تطابق معايير البحث والتصفية الحالية</p>
+        <button class="btn-ghost" (click)="clearFilters()">
+          <mat-icon>clear</mat-icon>
+          مسح الفلاتر
+        </button>
+      }
+    </div>
+  }
+
+  <!-- ============ FORM MODAL ============ -->
+  @if (showForm()) {
+    <div class="modal-overlay" (click)="cancelForm()"></div>
+    <div class="form-panel">
+      <header class="form-header">
+        <div class="form-title">
+          <mat-icon>{{ editingId() ? 'edit' : 'add_circle' }}</mat-icon>
+          <h3>{{ editingId() ? 'تعديل بيانات المحطة' : 'إضافة محطة جديدة' }}</h3>
+        </div>
+        <button class="close-btn" (click)="cancelForm()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </header>
+
+      <form class="station-form" (ngSubmit)="save()">
+        <div class="field-group full">
+          <label>اسم المحطة *</label>
+          <input type="text" [(ngModel)]="form.name" name="name" required placeholder="مثال: محطة الصبالية لتوليد الكهرباء" />
+        </div>
+
+        <div class="field-group">
+          <label>الموقع *</label>
+          <input type="text" [(ngModel)]="form.location" name="location" required placeholder="المحافظة / المدينة" />
+        </div>
+
+        <div class="field-group">
+          <label>النوع</label>
+          <select [(ngModel)]="form.type" name="type" title="نوع المحطة">
+            <option value="توليد">توليد</option>
+            <option value="توزيع">توزيع</option>
+            <option value="نقل">نقل</option>
+            <option value="تحويل">تحويل</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label>السعة (كيلوواط)</label>
+          <input type="number" [(ngModel)]="form.capacity" name="capacity" min="0" placeholder="1000" />
+        </div>
+
+        <div class="field-group">
+          <label>الحالة</label>
+          <select [(ngModel)]="form.status" name="status" title="حالة المحطة">
+            <option value="active">نشطة</option>
+            <option value="maintenance">صيانة</option>
+            <option value="inactive">متوقفة</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label>خط العرض (Latitude)</label>
+          <input type="number" [(ngModel)]="form.latitude" name="latitude" step="0.000001" placeholder="15.3694" />
+        </div>
+
+        <div class="field-group">
+          <label>خط الطول (Longitude)</label>
+          <input type="number" [(ngModel)]="form.longitude" name="longitude" step="0.000001" placeholder="44.1910" />
+        </div>
+
+        <div class="field-group full coords-hint">
+          <mat-icon>info</mat-icon>
+          <span>
+            لا تعرف الإحداثيات؟
+            <a (click)="goMapPicker()">اختَر الموقع من الخريطة</a>
+          </span>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-ghost" (click)="cancelForm()">إلغاء</button>
+          <button type="submit" class="btn-primary">
+            <mat-icon>save</mat-icon>
+            {{ editingId() ? 'حفظ التعديلات' : 'إنشاء المحطة' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+</div>

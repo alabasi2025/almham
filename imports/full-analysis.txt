@@ -1,0 +1,148 @@
+﻿==========================================
+ STRINGS IN REGION 0x17B000 - 0x17C800
+==========================================
+
+==========================================
+ SQL QUERIES ON PERMISSION TABLES
+==========================================
+[UserPrivileg #1 @ 0x1692B3]
+   \ ` d h l p t x |         | ¤ ¨ ¬ ° ´ ¸ ¼ À Ä È Ì Ð Ô Ø Ü à ä è ì ð ô ø ü Ā Ą Ĉ Č Đ Ĕ 佉㎭暙ᇏಷꨀ怀鏓> SELECT FormData.* FROM FormData 탧ག衖䷁垮乆Ҥ螂  >  WHERE (((FormData.Frm_ID) IN ( l  SELECT DISTINCT UserPrivileg.Frm_ID FROM UserPrivileg  @  WHERE (((UserPrivileg.RU_ID) = | )) | B  )) AND ((FormData.Frm_RankID) =  D  )) ORDER BY FormData.Frm_MnuName; | SetPrivileg  晧牐䱥慯䙤牯m < \(Before Period L
+
+[UserPrivileg #2 @ 0x1692CC]
+       | ¤ ¨ ¬ ° ´ ¸ ¼ À Ä È Ì Ð Ô Ø Ü à ä è ì ð ô ø ü Ā Ą Ĉ Č Đ Ĕ 佉㎭暙ᇏಷꨀ怀鏓> SELECT FormData.* FROM FormData 탧ག衖䷁垮乆Ҥ螂  >  WHERE (((FormData.Frm_ID) IN ( l  SELECT DISTINCT UserPrivileg.Frm_ID FROM UserPrivileg  @  WHERE (((UserPrivileg.RU_ID) = | )) | B  )) AND ((FormData.Frm_RankID) =  D  )) ORDER BY FormData.Frm_MnuName; | SetPrivileg  晧牐䱥慯䙤牯m < \(Before Period Locked) BackUp  0 yyyy/MM/
+
+[UserPrivileg #3 @ 0x1692E6]
+  À Ä È Ì Ð Ô Ø Ü à ä è ì ð ô ø ü Ā Ą Ĉ Č Đ Ĕ 佉㎭暙ᇏಷꨀ怀鏓> SELECT FormData.* FROM FormData 탧ག衖䷁垮乆Ҥ螂  >  WHERE (((FormData.Frm_ID) IN ( l  SELECT DISTINCT UserPrivileg.Frm_ID FROM UserPrivileg  @  WHERE (((UserPrivileg.RU_ID) = | )) | B  )) AND ((FormData.Frm_RankID) =  D  )) ORDER BY FormData.Frm_MnuName; | SetPrivileg  晧牐䱥慯䙤牯m < \(Before Period Locked) BackUp  0 yyyy/MM/dd hh:mm:ss AMPM | hh.mm 
+
+[UserPrivileg #4 @ 0x171AD0]
+   WHERE (Cst_Arrears <> ((Cst_LastBalance + Cst_TaswihValue) - Cst_PaymentSumMoney));  & C:\WINDOWS\system32 L لا يمكن تشغيل أكثر من نسخة من البرنامج | JOIN ((  ( | Error At Runtime   DELETE FROM UserPrivileg WHERE RU_ID >= 2 AND Frm_ID = 2001 AND Evn_ID = 1 ; | ; ¸ DELETE FROM UserPrivileg WHERE (((UserPrivileg.Frm_ID)=7203) AND ((UserPrivileg.RU_ID)<>1));  �l䨴n  識ࣗ | 悡힋ଈ瓀＂棠㛬n往＀￐à | 敇䕴楸䍴摯健
+
+[UserPrivileg #5 @ 0x171B24]
+    & C:\WINDOWS\system32 L لا يمكن تشغيل أكثر من نسخة من البرنامج | JOIN ((  ( | Error At Runtime   DELETE FROM UserPrivileg WHERE RU_ID >= 2 AND Frm_ID = 2001 AND Evn_ID = 1 ; | ; ¸ DELETE FROM UserPrivileg WHERE (((UserPrivileg.Frm_ID)=7203) AND ((UserPrivileg.RU_ID)<>1));  �l䨴n  識ࣗ | 悡힋ଈ瓀＂棠㛬n往＀￐à | 敇䕴楸䍴摯健潲散獳 Ĳ DELETE FROM UserPrivileg WHERE (((UserPrivileg.RU_ID)>=2) AND ((UserPrivileg.F
+
+[FormRankUser #1 @ 0x171CA2]
+  D ((UserPrivileg.Frm_ID)=3005 Or (UserPrivileg.Frm_ID)=3007) AND ((UserPrivileg.Evn_ID)=13)); ° UPDATE CompInfoAndSysOption SET CompInfoAndSysOption.SST_UseSmartSurveillanceSystem = 0 | ¸ DELETE FROM FormRankUser WHERE (((FormRankUser.Frm_ID)=7203) AND ((FormRankUser.RU_ID)<>1));  x DELETE FROM UserPrivileg WHERE RU_ID <>1 AND Frm_ID = 9014 ;  x DELETE FROM FormRankUser WHERE RU_ID <>1 AND Frm_ID 
+
+[FormRankUser #2 @ 0x171CB8]
+  D)=3005 Or (UserPrivileg.Frm_ID)=3007) AND ((UserPrivileg.Evn_ID)=13)); ° UPDATE CompInfoAndSysOption SET CompInfoAndSysOption.SST_UseSmartSurveillanceSystem = 0 | ¸ DELETE FROM FormRankUser WHERE (((FormRankUser.Frm_ID)=7203) AND ((FormRankUser.RU_ID)<>1));  x DELETE FROM UserPrivileg WHERE RU_ID <>1 AND Frm_ID = 9014 ;  x DELETE FROM FormRankUser WHERE RU_ID <>1 AND Frm_ID = 9014 ; | JOIN (((( 
+
+[FormRankUser #3 @ 0x171CD9]
+  3007) AND ((UserPrivileg.Evn_ID)=13)); ° UPDATE CompInfoAndSysOption SET CompInfoAndSysOption.SST_UseSmartSurveillanceSystem = 0 | ¸ DELETE FROM FormRankUser WHERE (((FormRankUser.Frm_ID)=7203) AND ((FormRankUser.RU_ID)<>1));  x DELETE FROM UserPrivileg WHERE RU_ID <>1 AND Frm_ID = 9014 ;  x DELETE FROM FormRankUser WHERE RU_ID <>1 AND Frm_ID = 9014 ; | JOIN (((( | Asc( | ņ UPDATE CompInfoAndSys
+
+[FormRankUser #4 @ 0x171D42]
+  tSurveillanceSystem = 0 | ¸ DELETE FROM FormRankUser WHERE (((FormRankUser.Frm_ID)=7203) AND ((FormRankUser.RU_ID)<>1));  x DELETE FROM UserPrivileg WHERE RU_ID <>1 AND Frm_ID = 9014 ;  x DELETE FROM FormRankUser WHERE RU_ID <>1 AND Frm_ID = 9014 ; | JOIN (((( | Asc( | ņ UPDATE CompInfoAndSysOption SET Red_UseLinkMonitor =False, Red_ActiveLinkMonitor =False, Red_AllowAddParentLinkMonitor =False,
+
+[FormRankUser #5 @ 0x1729DA]
+  ملية إعادة تعيين الصلاحيات بنجاح - وبيانات الخطأ كالتالي :  f ولذلك لم يتم الإتصال بملف قاعدة البيانات المركزية . L يرجى التواصل مع مهندس النظام للأهمية . | __ | 15/01/2026 | JOIN (  r INSERT INTO FormRankUser(RU_ID ,Frm_ID )VALUES( 2,2001 ); r INSERT INTO FormRankUser(RU_ID ,Frm_ID )VALUES( 2,3001 ); | 9.0.4 f UPDATE SummaryMonthData SET N_BillWithOutIssue = 0; l  لم تنجح عملية (بداء تشغيل) ال
+
+[RankUser #1 @ 0x16F08A]
+  彟扶䙡牯慅档潃汬扏j彟扶䍡獡佴橢慖rp هذه الميزه خاصة بالأنظمة التي تعمل بنظام الجوال فقط ... | عرض السجل رقم ( | : تواصل مــع ههنــدس النــظام . 4 خطاء في صلاحيات التفعـــيل | تنفيذ | Form_KeyDown . SELECT * FROM RankUser | WHERE (RU_ID > | )  *  And (RU_ID Not In ( | And (RU_ID <> | ORDER BY RU_ID | RU_Name | نتائج البحث  L SELECT * FROM RankWork WHERE RW_ID >= | :  AND RW_ID<>0 ORDER BY RW_ID | 
+
+[RankUser #2 @ 0x171CA6]
+  UserPrivileg.Frm_ID)=3005 Or (UserPrivileg.Frm_ID)=3007) AND ((UserPrivileg.Evn_ID)=13)); ° UPDATE CompInfoAndSysOption SET CompInfoAndSysOption.SST_UseSmartSurveillanceSystem = 0 | ¸ DELETE FROM FormRankUser WHERE (((FormRankUser.Frm_ID)=7203) AND ((FormRankUser.RU_ID)<>1));  x DELETE FROM UserPrivileg WHERE RU_ID <>1 AND Frm_ID = 9014 ;  x DELETE FROM FormRankUser WHERE RU_ID <>1 AND Frm_ID = 90
+
+[RankUser #3 @ 0x171CBC]
+  005 Or (UserPrivileg.Frm_ID)=3007) AND ((UserPrivileg.Evn_ID)=13)); ° UPDATE CompInfoAndSysOption SET CompInfoAndSysOption.SST_UseSmartSurveillanceSystem = 0 | ¸ DELETE FROM FormRankUser WHERE (((FormRankUser.Frm_ID)=7203) AND ((FormRankUser.RU_ID)<>1));  x DELETE FROM UserPrivileg WHERE RU_ID <>1 AND Frm_ID = 9014 ;  x DELETE FROM FormRankUser WHERE RU_ID <>1 AND Frm_ID = 9014 ; | JOIN (((( | A
+
+[RankUser #4 @ 0x171CDD]
+  ) AND ((UserPrivileg.Evn_ID)=13)); ° UPDATE CompInfoAndSysOption SET CompInfoAndSysOption.SST_UseSmartSurveillanceSystem = 0 | ¸ DELETE FROM FormRankUser WHERE (((FormRankUser.Frm_ID)=7203) AND ((FormRankUser.RU_ID)<>1));  x DELETE FROM UserPrivileg WHERE RU_ID <>1 AND Frm_ID = 9014 ;  x DELETE FROM FormRankUser WHERE RU_ID <>1 AND Frm_ID = 9014 ; | JOIN (((( | Asc( | ņ UPDATE CompInfoAndSysOpti
+
+[RankUser #5 @ 0x171D46]
+  veillanceSystem = 0 | ¸ DELETE FROM FormRankUser WHERE (((FormRankUser.Frm_ID)=7203) AND ((FormRankUser.RU_ID)<>1));  x DELETE FROM UserPrivileg WHERE RU_ID <>1 AND Frm_ID = 9014 ;  x DELETE FROM FormRankUser WHERE RU_ID <>1 AND Frm_ID = 9014 ; | JOIN (((( | Asc( | ņ UPDATE CompInfoAndSysOption SET Red_UseLinkMonitor =False, Red_ActiveLinkMonitor =False, Red_AllowAddParentLinkMonitor =False, Red
+
+[RankWork #1 @ 0x16F116]
+  صلاحيات التفعـــيل | تنفيذ | Form_KeyDown . SELECT * FROM RankUser | WHERE (RU_ID > | )  *  And (RU_ID Not In ( | And (RU_ID <> | ORDER BY RU_ID | RU_Name | نتائج البحث  L SELECT * FROM RankWork WHERE RW_ID >= | :  AND RW_ID<>0 ORDER BY RW_ID | RW_Name . SELECT * FROM UserData  B  WHERE (Us_ID>0 And Us_ID<10000) | And (RU_ID > | @  ORDER BY RU_ID, Us_ID, Us_Name | . Us_HaveRestric
+
+[RankWork #2 @ 0x16FBBD]
+  ات الصلاحيات | Segel  يجب عليك إدخال بيانات سجلات(حروف)القراءة قبل العمل على بيانات الصلاحيات | UserData   يجب عليك إدخال بيانات المستخدمين قبل العمل على بيانات الصلاحيات | JOIN (((  N SELECT RankWork.* FROM RankWork WHERE ( .  ((RankWork.RW_ID) IN ( j  SELECT DISTINCT UserData.RW_ID FROM UserData WHERE ( *  ((UserData.RW_ID)>=  4  ) AND ((UserData.RU_ID)> | B  ));)) ) ORDER BY RankWork.RW
+
+[RankWork #3 @ 0x16FBCD]
+   Segel  يجب عليك إدخال بيانات سجلات(حروف)القراءة قبل العمل على بيانات الصلاحيات | UserData   يجب عليك إدخال بيانات المستخدمين قبل العمل على بيانات الصلاحيات | JOIN (((  N SELECT RankWork.* FROM RankWork WHERE ( .  ((RankWork.RW_ID) IN ( j  SELECT DISTINCT UserData.RW_ID FROM UserData WHERE ( *  ((UserData.RW_ID)>=  4  ) AND ((UserData.RU_ID)> | B  ));)) ) ORDER BY RankWork.RW_ID; .  ) ORDER 
+
+[RankWork #4 @ 0x16FBE3]
+  ل بيانات سجلات(حروف)القراءة قبل العمل على بيانات الصلاحيات | UserData   يجب عليك إدخال بيانات المستخدمين قبل العمل على بيانات الصلاحيات | JOIN (((  N SELECT RankWork.* FROM RankWork WHERE ( .  ((RankWork.RW_ID) IN ( j  SELECT DISTINCT UserData.RW_ID FROM UserData WHERE ( *  ((UserData.RW_ID)>=  4  ) AND ((UserData.RU_ID)> | B  ));)) ) ORDER BY RankWork.RW_ID; .  ) ORDER BY Area.Ar_ID; | x SEL
+
+[RankWork #5 @ 0x16FC7A]
+    N SELECT RankWork.* FROM RankWork WHERE ( .  ((RankWork.RW_ID) IN ( j  SELECT DISTINCT UserData.RW_ID FROM UserData WHERE ( *  ((UserData.RW_ID)>=  4  ) AND ((UserData.RU_ID)> | B  ));)) ) ORDER BY RankWork.RW_ID; .  ) ORDER BY Area.Ar_ID; | x SELECT DISTINCT UserWorkBoundary.Ar_ID FROM UserWorkBoundary    WHERE (((UserWorkBoundary.Ar_ID)>0) AND ((UserWorkBoundary.Us_ID)= | > SELECT Area.* FROM
+
+[UserWorkBoundary #1 @ 0x168B93]
+  ل  > SELECT UserData.* FROM UserData P  WHERE ( (((Us_ID<>0 And Us_ID<10000))) | H | AND ((UserData.RU_ID) Not In ( | , | )) 䜬杀䜶亊㆓膏ꛩ륇♜룐䈱⾰徔뿼腁  ®  AND ((UserData.Us_ID) IN (SELECT DISTINCT UserWorkBoundary.Us_ID FROM UserWorkBoundary Þ  WHERE (((UserWorkBoundary.Ar_ID) > 0) AND ((UserWorkBoundary.Brn_ID) > 0) AND ((UserWorkBoundary.Sgl_ID) > 0)) < | ))) ORDER BY UserData.Us_ID;  錎ꏌ⣬䁋₽蓛㵺
+
+[UserWorkBoundary #2 @ 0x168BAF]
+  UserData P  WHERE ( (((Us_ID<>0 And Us_ID<10000))) | H | AND ((UserData.RU_ID) Not In ( | , | )) 䜬杀䜶亊㆓膏ꛩ륇♜룐䈱⾰徔뿼腁  ®  AND ((UserData.Us_ID) IN (SELECT DISTINCT UserWorkBoundary.Us_ID FROM UserWorkBoundary Þ  WHERE (((UserWorkBoundary.Ar_ID) > 0) AND ((UserWorkBoundary.Brn_ID) > 0) AND ((UserWorkBoundary.Sgl_ID) > 0)) < | ))) ORDER BY UserData.Us_ID;  錎ꏌ⣬䁋₽蓛㵺⡏   وجد النظام أن هناك محاو
+
+[UserWorkBoundary #3 @ 0x168BCC]
+  >0 And Us_ID<10000))) | H | AND ((UserData.RU_ID) Not In ( | , | )) 䜬杀䜶亊㆓膏ꛩ륇♜룐䈱⾰徔뿼腁  ®  AND ((UserData.Us_ID) IN (SELECT DISTINCT UserWorkBoundary.Us_ID FROM UserWorkBoundary Þ  WHERE (((UserWorkBoundary.Ar_ID) > 0) AND ((UserWorkBoundary.Brn_ID) > 0) AND ((UserWorkBoundary.Sgl_ID) > 0)) < | ))) ORDER BY UserData.Us_ID;  錎ꏌ⣬䁋₽蓛㵺⡏   وجد النظام أن هناك محاولة فاشلة لإختراقه! لذا سوف يت
+
+[UserWorkBoundary #4 @ 0x168BEF]
+  AND ((UserData.RU_ID) Not In ( | , | )) 䜬杀䜶亊㆓膏ꛩ륇♜룐䈱⾰徔뿼腁  ®  AND ((UserData.Us_ID) IN (SELECT DISTINCT UserWorkBoundary.Us_ID FROM UserWorkBoundary Þ  WHERE (((UserWorkBoundary.Ar_ID) > 0) AND ((UserWorkBoundary.Brn_ID) > 0) AND ((UserWorkBoundary.Sgl_ID) > 0)) < | ))) ORDER BY UserData.Us_ID;  錎ꏌ⣬䁋₽蓛㵺⡏   وجد النظام أن هناك محاولة فاشلة لإختراقه! لذا سوف يتوقف العمل حالياً. l راجع مهندس النظ
+
+[UserWorkBoundary #5 @ 0x168C13]
+   | )) 䜬杀䜶亊㆓膏ꛩ륇♜룐䈱⾰徔뿼腁  ®  AND ((UserData.Us_ID) IN (SELECT DISTINCT UserWorkBoundary.Us_ID FROM UserWorkBoundary Þ  WHERE (((UserWorkBoundary.Ar_ID) > 0) AND ((UserWorkBoundary.Brn_ID) > 0) AND ((UserWorkBoundary.Sgl_ID) > 0)) < | ))) ORDER BY UserData.Us_ID;  錎ꏌ⣬䁋₽蓛㵺⡏   وجد النظام أن هناك محاولة فاشلة لإختراقه! لذا سوف يتوقف العمل حالياً. l راجع مهندس النظام حرصاً على عدم تشفير كافة البيانات
+
+[UserRestrictedSomeID #1 @ 0x2051F6]
+  nfo SET Tbl_SyncImpSysDBSortNo = Tbl_SyncImpSysDBSortNo*(IIF(Tbl_SyncImpSysDBSortNo>0, -1, 1)), Tbl_SyncImpBrnDBSortNo = Tbl_SyncImpBrnDBSortNo*(IIF(Tbl_SyncImpBrnDBSortNo>0, -1, 1)) WHERE (Tbl_Name='UserRestrictedSomeID'); | 8.6.2 Ǵ UPDATE TswType INNER JOIN TswBasicData ON TswType.TwTp_ID = TswBasicData.TwTp_ID SET TswType.TwTp_ID = 201, TswType.TwTp_Name = 'خصم - من حساب الخصم المسموح به', TswB
+
+[UserRestrictedSomeID #2 @ 0x211C4E]
+  nfo SET Tbl_SyncImpSysDBSortNo = Tbl_SyncImpSysDBSortNo*(IIF(Tbl_SyncImpSysDBSortNo<0, -1, 1)), Tbl_SyncImpBrnDBSortNo = Tbl_SyncImpBrnDBSortNo*(IIF(Tbl_SyncImpBrnDBSortNo<0, -1, 1)) WHERE (Tbl_Name='UserRestrictedSomeID'); | Ecas0771  Ģ UPDATE BARD_RaedHistorical SET BRD_ID = CStr(Mid(BRD_ID, 1 , Len(BRD_ID)-4) & '0' & Right(BRD_ID,4)) WHERE BRD_ID IS Not Null And Len(BRD_ID)>=9; Æ UpDate Account
+
+[UserRestrictedSomeID #3 @ 0x2165A2]
+   = 0 Or (DebentureInfo.Dbn_No) Is Null) | TswAccrual | ú UPDATE AccountInfo SET Acc_Name ='الخصم المسموح به لـ نظام الفوترة' WHERE Acc_Name='الخصم المسموح به' And Acc_ID = 31103001 ; ¢ ALTER Table UserRestrictedSomeID Alter Column Fld_Value TEXT(255) WITH COMP NULL; > بيانات عدادات المشتركين المبدلة Ğ UPDATE TransFormer SET TF_AvgDieselToTFConsume = 0, TF_AvgDieselToCstConsume = 0, TF_AvgDiesel
+
+[UserRestrictedSomeID #4 @ 0x2E0806]
+  nt(BillAndRaedDataHistorical.Cst_MonthConsume) AS vTotalCurrentPeriod ì SELECT ('SELECT ' & Fld_Name & ' FROM ' & Tbl_Name & ' WHERE ' & Fld_Name & ' IN ( '  & Fld_Value & ' ); ') AS StrExec  6  FROM UserRestrictedSomeID  "  And Tbl_Name = ' : SELECT UserRestrictedSomeID.* 4  FROM UserRestrictedSomeID | سعد ون  Þ  , 'SELECT ' + Fld_Name + ' FROM ' + Tbl_Name + ' WHERE ' + Fld_Name + ' IN ( '  + F
+
+[UserRestrictedSomeID #5 @ 0x2E0839]
+  TotalCurrentPeriod ì SELECT ('SELECT ' & Fld_Name & ' FROM ' & Tbl_Name & ' WHERE ' & Fld_Name & ' IN ( '  & Fld_Value & ' ); ') AS StrExec  6  FROM UserRestrictedSomeID  "  And Tbl_Name = ' : SELECT UserRestrictedSomeID.* 4  FROM UserRestrictedSomeID | سعد ون  Þ  , 'SELECT ' + Fld_Name + ' FROM ' + Tbl_Name + ' WHERE ' + Fld_Name + ' IN ( '  + Fld_Value + ' ) ' AS StrExec Þ  , 'SELECT ' & Fld_Na
+
+[UserRestrictedFormTable #1 @ 0x1A7E66]
+  P SELECT * FROM StateClass WHERE Scs_ID = | d INSERT INTO StateClass(Scs_ID , Scs_Name )VALUES( | T SELECT * FROM StateClass WHERE Scs_ID > 0 | Scs_ID = |   Frm_ID IN (SELECT DISTINCT Frm_ID FROM UserRestrictedFormTable ) (  ) ORDER BY Frm_Name  H  And (Us_HaveRestrictedSomeID <> 0 )  ¢ يجب عليك إدخال بيانات رتب المستخدمين قبل العمل على بيانات صلاحيات تنفيذ العمليات  2 SELECT Event.* FROM Even
+
+[UserRestrictedFormTable #2 @ 0x2050FA]
+  nfo SET Tbl_SyncImpSysDBSortNo = Tbl_SyncImpSysDBSortNo*(IIF(Tbl_SyncImpSysDBSortNo>0, -1, 1)), Tbl_SyncImpBrnDBSortNo = Tbl_SyncImpBrnDBSortNo*(IIF(Tbl_SyncImpBrnDBSortNo>0, -1, 1)) WHERE (Tbl_Name='UserRestrictedFormTable'); | 8.5.4 ǚ UPDATE zTableInfo SET Tbl_SyncImpSysDBSortNo = Tbl_SyncImpSysDBSortNo*(IIF(Tbl_SyncImpSysDBSortNo>0, -1, 1)), Tbl_SyncImpBrnDBSortNo = Tbl_SyncImpBrnDBSortNo*(IIF
+
+[UserRestrictedFormTable #3 @ 0x211B5A]
+  nfo SET Tbl_SyncImpSysDBSortNo = Tbl_SyncImpSysDBSortNo*(IIF(Tbl_SyncImpSysDBSortNo<0, -1, 1)), Tbl_SyncImpBrnDBSortNo = Tbl_SyncImpBrnDBSortNo*(IIF(Tbl_SyncImpBrnDBSortNo<0, -1, 1)) WHERE (Tbl_Name='UserRestrictedFormTable');  ǚ UPDATE zTableInfo SET Tbl_SyncImpSysDBSortNo = Tbl_SyncImpSysDBSortNo*(IIF(Tbl_SyncImpSysDBSortNo<0, -1, 1)), Tbl_SyncImpBrnDBSortNo = Tbl_SyncImpBrnDBSortNo*(IIF(Tbl_Syn
+
+[UserEvent #1 @ 0x16CF2E]
+  $ FnclAnalysisReport | FnclSumReport & FnclBallancesReport < CheckListAndTrialBalanceReport  ( InvStrgBasicDataMenu | * InvStrgOpeningBalMenu | InvStrgDbnMenu | InvReportMenu " UpdateTaswiatMenu & UserEventReportMenu | TswReportMenu | SmryReportMenu  4 CstMonthProblemsReportMenu  6 NumbersAndSymbolsReportMenu | PrivilegMenu | UserMenu  碦㴓䍳沠㼒顱ὢ | IntBackUpMenu | ExtIntBackUpMenu | CompactDBM
+
+[UserEvent #2 @ 0x16EE79]
+  펄೹ꎱ⭟䶆몸鉠㽫৬텽ង䜁廙鬃�  (´ | 8 < @ D H L P 俀㲠⑝䢏辀崂ᆳ㣯㭺ୗ噀䜩㲮莃矐ุ炿콡�䷒㆖㼥푁푗�㣄䚙▐楔쫳0Ø | 8 < @ D H L h l p ᳲ㼤䃌䡬箾䦑隂㓏㩀䂄䊷견箣痦醴ҷῈ䔔枹霆茰ᵅᩝ뢻㟎䤷ᎉ権耿꧌0  UpdateTaswiatMenu_Click  迆蕄붱䬶↦÷ꈹ柪袖셅䧠ꢛꦧ㊟ևⳆ㛄鐘䟬종῿硿흍ﺃ䞫ﮧ㓣⡬⩥ ´ | 4 X 4  UserEventReportMenu_Click  烟ꏝ潆䌬ᖳ쩹‼媚῿酪䴧쾒ᱥ⨷픁甈틵舡䏿䮲샨莶꒸᳠ᇗ봸仚즜盆ᡐ桃䡫癡剥獥牴捩整卤浯䥥D | | 4 8 < 庎ى涹䜢햞䈱Პ懟꽈碷袌䒜ʇ崥ކẵ쵴婡檨䆻䦤愎汳⾉葎歪㯅䱛媁腿桢ⷍ慌䱢獩䑴瑡a$x | 4 8 < @ D H | UserMenu_Click | 彟扶䅡祲敄瑳畲瑣  彟扶䕡慲敳 彟扶噡牡潃祰 | JOIN (  (  
+
+[UserEvent #4 @ 0x18A5A4]
+  ervice, TwDL_ErrorRsomService, TwDL_Notes)VALUES( | gfAddTswDetail $  gfUpdateTswDetail  F  ReportModule - gfGetRptNo_Boundary & qvCustomerBasicData $ qvCstMonthProblems  & qvAllTswiatTypeData | qvUserEvent : qvForDetailStatistic_Captions 2 qvForDetailStatistic_Info Z إن طريقة إختيارك لعرض هذا القرير غير مفهومة ! | LabUdSmID P DROP TABLE A_________4ExtrnlCrstlRprt___  @ SELECT MyQuereForCrystal
+
+[UserEvent #5 @ 0x1A5E30]
+  ة النسخ الإحتياطي | _@_ | _F_ | g#  T Current External DataBase Backup - Named: | , UPDATE StateClass SET |  لم تتم عملية نسخ قاعدة البيانات بنجاح ، لذلك تم إيقاف عملية النسخ الإحتياطي p DELETE FROM UserEvent WHERE (((UserEvent.UE_CurrentID)='  8 DataBase Files (*.dbf)|*.dbf  @ حفظ ملف قاعدة بيانات النظام بأسم  TxtLinkName  إسم ملف قاعدة البيانات الـمُـدخل طويــــل جداً !1! أدخل إسم آخر. | تسمي
+
+[FormData #1 @ 0x16925B]
+  獯湩奧慥䵲湥彵汃捩k 慃桳敩䅲摮慍畮污扄獮敍畮䍟楬正 湕潬摡汁䕬捸灥佴敮 潍瑮䉨汩偬潲散獳獥䍟楬正  灕慤整慔睳慩䵴湥彵汃捩kðȨ 9  4 8 < @ D H L P T X \ ` d h l p t x |         | ¤ ¨ ¬ ° ´ ¸ ¼ À Ä È Ì Ð Ô Ø Ü à ä è ì ð ô ø ü Ā Ą Ĉ Č Đ Ĕ 佉㎭暙ᇏಷꨀ怀鏓> SELECT FormData.* FROM FormData 탧ག衖䷁垮乆Ҥ螂  >  WHERE (((FormData.Frm_ID) IN ( l  SELECT DISTINCT UserPrivileg.Frm_ID FROM UserPrivileg  @  WHERE (((UserPrivileg.RU_ID) = | )) | B  )) AND ((FormData.Frm_Rank
+
+[FormData #2 @ 0x16926B]
+  慍畮污扄獮敍畮䍟楬正 湕潬摡汁䕬捸灥佴敮 潍瑮䉨汩偬潲散獳獥䍟楬正  灕慤整慔睳慩䵴湥彵汃捩kðȨ 9  4 8 < @ D H L P T X \ ` d h l p t x |         | ¤ ¨ ¬ ° ´ ¸ ¼ À Ä È Ì Ð Ô Ø Ü à ä è ì ð ô ø ü Ā Ą Ĉ Č Đ Ĕ 佉㎭暙ᇏಷꨀ怀鏓> SELECT FormData.* FROM FormData 탧ག衖䷁垮乆Ҥ螂  >  WHERE (((FormData.Frm_ID) IN ( l  SELECT DISTINCT UserPrivileg.Frm_ID FROM UserPrivileg  @  WHERE (((UserPrivileg.RU_ID) = | )) | B  )) AND ((FormData.Frm_RankID) =  D  )) ORD
+
+[FormData #3 @ 0x16928A]
+  楬正  灕慤整慔睳慩䵴湥彵汃捩kðȨ 9  4 8 < @ D H L P T X \ ` d h l p t x |         | ¤ ¨ ¬ ° ´ ¸ ¼ À Ä È Ì Ð Ô Ø Ü à ä è ì ð ô ø ü Ā Ą Ĉ Č Đ Ĕ 佉㎭暙ᇏಷꨀ怀鏓> SELECT FormData.* FROM FormData 탧ག衖䷁垮乆Ҥ螂  >  WHERE (((FormData.Frm_ID) IN ( l  SELECT DISTINCT UserPrivileg.Frm_ID FROM UserPrivileg  @  WHERE (((UserPrivileg.RU_ID) = | )) | B  )) AND ((FormData.Frm_RankID) =  D  )) ORDER BY FormData.Frm_MnuName; | 
+
+[FormData #4 @ 0x169312]
+  佉㎭暙ᇏಷꨀ怀鏓> SELECT FormData.* FROM FormData 탧ག衖䷁垮乆Ҥ螂  >  WHERE (((FormData.Frm_ID) IN ( l  SELECT DISTINCT UserPrivileg.Frm_ID FROM UserPrivileg  @  WHERE (((UserPrivileg.RU_ID) = | )) | B  )) AND ((FormData.Frm_RankID) =  D  )) ORDER BY FormData.Frm_MnuName; | SetPrivileg  晧牐䱥慯䙤牯m < \(Before Period Locked) BackUp  0 yyyy/MM/dd hh:mm:ss AMPM | hh.mm AMPM | - | dd-MM-yyyy | .dbf | *.dbf 
+
+[FormData #5 @ 0x169339]
+  ta 탧ག衖䷁垮乆Ҥ螂  >  WHERE (((FormData.Frm_ID) IN ( l  SELECT DISTINCT UserPrivileg.Frm_ID FROM UserPrivileg  @  WHERE (((UserPrivileg.RU_ID) = | )) | B  )) AND ((FormData.Frm_RankID) =  D  )) ORDER BY FormData.Frm_MnuName; | SetPrivileg  晧牐䱥慯䙤牯m < \(Before Period Locked) BackUp  0 yyyy/MM/dd hh:mm:ss AMPM | hh.mm AMPM | - | dd-MM-yyyy | .dbf | *.dbf | hh.mm ~ سبق عمل نسخة إحتياطية لملف قا
+
+[FormEvent #1 @ 0x172B21]
+  aryMonthData SET N_BillWithOutIssue = 0; l  لم تنجح عملية (بداء تشغيل) السرف المركزي وذلك بسبب : | ̊ INSERT INTO UserPrivileg ( RU_ID, Frm_ID, Evn_ID ) SELECT FormRankUser.RU_ID, FormRankUser.Frm_ID, FormEvent.Evn_ID FROM RankUser INNER JOIN ((FormData INNER JOIN FormEvent ON FormData.Frm_ID = FormEvent.Frm_ID) INNER JOIN FormRankUser ON FormData.Frm_ID = FormRankUser.Frm_ID) ON RankUser.RU_ID = F
+
+[FormEvent #2 @ 0x172B61]
+  تشغيل) السرف المركزي وذلك بسبب : | ̊ INSERT INTO UserPrivileg ( RU_ID, Frm_ID, Evn_ID ) SELECT FormRankUser.RU_ID, FormRankUser.Frm_ID, FormEvent.Evn_ID FROM RankUser INNER JOIN ((FormData INNER JOIN FormEvent ON FormData.Frm_ID = FormEvent.Frm_ID) INNER JOIN FormRankUser ON FormData.Frm_ID = FormRankUser.Frm_ID) ON RankUser.RU_ID = FormRankUser.RU_ID WHERE ( ((FormRankUser.RU_ID)= 2 ) AND ((FormR
+
+[FormEvent #3 @ 0x172B80]
+  : | ̊ INSERT INTO UserPrivileg ( RU_ID, Frm_ID, Evn_ID ) SELECT FormRankUser.RU_ID, FormRankUser.Frm_ID, FormEvent.Evn_ID FROM RankUser INNER JOIN ((FormData INNER JOIN FormEvent ON FormData.Frm_ID = FormEvent.Frm_ID) INNER JOIN FormRankUser ON FormData.Frm_ID = FormRankUser.Frm_ID) ON RankUser.RU_ID = FormRankUser.RU_ID WHERE ( ((FormRankUser.RU_ID)= 2 ) AND ((FormRankUser.Frm_ID)= 2001 ) ); ̊ IN
+
+[FormEvent #4 @ 0x172CA9]
+  U_ID = FormRankUser.RU_ID WHERE ( ((FormRankUser.RU_ID)= 2 ) AND ((FormRankUser.Frm_ID)= 2001 ) ); ̊ INSERT INTO UserPrivileg ( RU_ID, Frm_ID, Evn_ID ) SELECT FormRankUser.RU_ID, FormRankUser.Frm_ID, FormEvent.Evn_ID FROM RankUser INNER JOIN ((FormData INNER JOIN FormEvent ON FormData.Frm_ID = FormEvent.Frm_ID) INNER JOIN FormRankUser ON FormData.Frm_ID = FormRankUser.Frm_ID) ON RankUser.RU_ID = F
+
+[FormEvent #5 @ 0x172CE9]
+   ((FormRankUser.Frm_ID)= 2001 ) ); ̊ INSERT INTO UserPrivileg ( RU_ID, Frm_ID, Evn_ID ) SELECT FormRankUser.RU_ID, FormRankUser.Frm_ID, FormEvent.Evn_ID FROM RankUser INNER JOIN ((FormData INNER JOIN FormEvent ON FormData.Frm_ID = FormEvent.Frm_ID) INNER JOIN FormRankUser ON FormData.Frm_ID = FormRankUser.Frm_ID) ON RankUser.RU_ID = FormRankUser.RU_ID WHERE ( ((FormRankUser.RU_ID)= 2 ) AND ((FormR
+

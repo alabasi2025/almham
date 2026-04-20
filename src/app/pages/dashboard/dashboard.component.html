@@ -1,0 +1,387 @@
+<div class="dashboard-page">
+
+  <!-- ============ HERO HEADER ============ -->
+  <header class="dash-hero">
+    <div class="hero-bg-grid"></div>
+    <div class="hero-bg-orb orb-1"></div>
+    <div class="hero-bg-orb orb-2"></div>
+    <div class="hero-bg-orb orb-3"></div>
+
+    <div class="hero-content">
+      <div class="hero-main">
+        <div class="hero-icon">
+          <mat-icon>dashboard</mat-icon>
+        </div>
+        <div class="hero-text">
+          <p class="greeting">{{ greeting() }}</p>
+          <h1>العباسي للأنظمة الذكية</h1>
+          <p class="hero-sub">
+            <span>نظام إدارة محطات الكهرباء</span>
+            <span class="dot-sep"></span>
+            <span>{{ today() }}</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="hero-quick-actions">
+        <a routerLink="/maps" class="qa-card">
+          <mat-icon>map</mat-icon>
+          <span>الخريطة</span>
+        </a>
+        <a routerLink="/fuel" class="qa-card">
+          <mat-icon>local_gas_station</mat-icon>
+          <span>الديزل</span>
+        </a>
+        <a routerLink="/stations" class="qa-card">
+          <mat-icon>electric_bolt</mat-icon>
+          <span>المحطات</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ KPIs ============ -->
+  <section class="kpis-grid">
+    <a routerLink="/stations" class="kpi-card stations">
+      <div class="kpi-head">
+        <div class="kpi-icon"><mat-icon>electric_bolt</mat-icon></div>
+        <span class="kpi-trend up">
+          <mat-icon>check_circle</mat-icon>
+          {{ stationService.activeCount() }} نشطة
+        </span>
+      </div>
+      <div class="kpi-value">{{ stationService.stations().length }}</div>
+      <div class="kpi-label">محطات كهربائية</div>
+      <div class="kpi-bar">
+        <div class="kpi-fill stations-fill"
+          [style.width.%]="percent(stationService.activeCount(), stationService.stations().length)"></div>
+      </div>
+      <div class="kpi-foot">
+        <span>{{ totalCapacityMW() }} ميجاواط</span>
+        <mat-icon>arrow_back</mat-icon>
+      </div>
+    </a>
+
+    <a routerLink="/employees" class="kpi-card employees">
+      <div class="kpi-head">
+        <div class="kpi-icon"><mat-icon>groups</mat-icon></div>
+        <span class="kpi-trend up">
+          <mat-icon>how_to_reg</mat-icon>
+          {{ employeeService.activeCount() }} فعّال
+        </span>
+      </div>
+      <div class="kpi-value">{{ employeeService.employees().length }}</div>
+      <div class="kpi-label">إجمالي الموظفين</div>
+      <div class="kpi-bar">
+        <div class="kpi-fill employees-fill"
+          [style.width.%]="percent(employeeService.activeCount(), employeeService.employees().length)"></div>
+      </div>
+      <div class="kpi-foot">
+        <span>عبر {{ stationService.stations().length }} محطة</span>
+        <mat-icon>arrow_back</mat-icon>
+      </div>
+    </a>
+
+    <a routerLink="/tasks" class="kpi-card tasks">
+      <div class="kpi-head">
+        <div class="kpi-icon"><mat-icon>pending_actions</mat-icon></div>
+        <span class="kpi-trend neutral">
+          <mat-icon>schedule</mat-icon>
+          قيد العمل
+        </span>
+      </div>
+      <div class="kpi-value">{{ taskService.inProgressCount() }}</div>
+      <div class="kpi-label">مهام نشطة الآن</div>
+      <div class="kpi-bar">
+        <div class="kpi-fill tasks-fill"
+          [style.width.%]="percent(taskService.inProgressCount(), taskService.tasks().length)"></div>
+      </div>
+      <div class="kpi-foot">
+        <span>من أصل {{ taskService.tasks().length }} مهمة</span>
+        <mat-icon>arrow_back</mat-icon>
+      </div>
+    </a>
+
+    <a routerLink="/tasks" class="kpi-card urgent">
+      <div class="kpi-head">
+        <div class="kpi-icon"><mat-icon>priority_high</mat-icon></div>
+        @if (taskService.highPriorityCount() > 0) {
+          <span class="kpi-trend down pulse">
+            <mat-icon>warning_amber</mat-icon>
+            عاجل
+          </span>
+        } @else {
+          <span class="kpi-trend up">
+            <mat-icon>check_circle</mat-icon>
+            لا تنبيهات
+          </span>
+        }
+      </div>
+      <div class="kpi-value">{{ taskService.highPriorityCount() }}</div>
+      <div class="kpi-label">مهام عالية الأولوية</div>
+      <div class="kpi-bar">
+        <div class="kpi-fill urgent-fill"
+          [style.width.%]="percent(taskService.highPriorityCount(), taskService.tasks().length)"></div>
+      </div>
+      <div class="kpi-foot">
+        <span>تحتاج اهتمام فوري</span>
+        <mat-icon>arrow_back</mat-icon>
+      </div>
+    </a>
+
+    <a routerLink="/fuel" class="kpi-card fuel">
+      <div class="kpi-head">
+        <div class="kpi-icon"><mat-icon>local_gas_station</mat-icon></div>
+        <span class="kpi-trend neutral">
+          <mat-icon>oil_barrel</mat-icon>
+          {{ fuelService.tanks().length }} خزان
+        </span>
+      </div>
+      <div class="kpi-value">{{ fuelService.generators().length }}</div>
+      <div class="kpi-label">المولدات الفعّالة</div>
+      <div class="kpi-bar">
+        <div class="kpi-fill fuel-fill" [style.width.%]="100"></div>
+      </div>
+      <div class="kpi-foot">
+        <span>عبر {{ fuelService.suppliers().length }} مورّد ديزل</span>
+        <mat-icon>arrow_back</mat-icon>
+      </div>
+    </a>
+
+    <a routerLink="/tasks" class="kpi-card done">
+      <div class="kpi-head">
+        <div class="kpi-icon"><mat-icon>task_alt</mat-icon></div>
+        <span class="kpi-trend up">
+          <mat-icon>trending_up</mat-icon>
+          {{ completionRate() }}%
+        </span>
+      </div>
+      <div class="kpi-value">{{ taskService.completedCount() }}</div>
+      <div class="kpi-label">مهام مكتملة</div>
+      <div class="kpi-bar">
+        <div class="kpi-fill done-fill" [style.width.%]="completionRate()"></div>
+      </div>
+      <div class="kpi-foot">
+        <span>معدّل الإنجاز</span>
+        <mat-icon>arrow_back</mat-icon>
+      </div>
+    </a>
+  </section>
+
+  <!-- ============ MAIN GRID ============ -->
+  <section class="main-grid">
+
+    <!-- Task distribution chart -->
+    <div class="panel chart-panel">
+      <header class="panel-head">
+        <div class="panel-title">
+          <mat-icon>donut_large</mat-icon>
+          <div>
+            <h3>توزيع المهام</h3>
+            <span class="sub">حسب حالة التنفيذ</span>
+          </div>
+        </div>
+      </header>
+      <div class="chart-wrapper">
+        <canvas baseChart [data]="taskChartData" [options]="doughnutOptions" type="doughnut"></canvas>
+      </div>
+      <div class="chart-legend">
+        <div class="legend-item">
+          <span class="dot" style="background:#64748b"></span>
+          <span class="l-label">معلّقة</span>
+          <span class="l-value">{{ taskService.pendingCount() }}</span>
+        </div>
+        <div class="legend-item">
+          <span class="dot" style="background:#2563eb"></span>
+          <span class="l-label">قيد التنفيذ</span>
+          <span class="l-value">{{ taskService.inProgressCount() }}</span>
+        </div>
+        <div class="legend-item">
+          <span class="dot" style="background:#10b981"></span>
+          <span class="l-label">مكتملة</span>
+          <span class="l-value">{{ taskService.completedCount() }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Station status chart -->
+    <div class="panel chart-panel">
+      <header class="panel-head">
+        <div class="panel-title">
+          <mat-icon>electrical_services</mat-icon>
+          <div>
+            <h3>حالة المحطات</h3>
+            <span class="sub">التوزيع التشغيلي</span>
+          </div>
+        </div>
+      </header>
+      <div class="chart-wrapper">
+        <canvas baseChart [data]="stationChartData" [options]="doughnutOptions" type="doughnut"></canvas>
+      </div>
+      <div class="chart-legend">
+        <div class="legend-item">
+          <span class="dot" style="background:#10b981"></span>
+          <span class="l-label">نشطة</span>
+          <span class="l-value">{{ stationService.activeCount() }}</span>
+        </div>
+        <div class="legend-item">
+          <span class="dot" style="background:#f59e0b"></span>
+          <span class="l-label">صيانة</span>
+          <span class="l-value">{{ stationService.maintenanceCount() }}</span>
+        </div>
+        <div class="legend-item">
+          <span class="dot" style="background:#ef4444"></span>
+          <span class="l-label">متوقفة</span>
+          <span class="l-value">{{ stationService.inactiveCount() }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Completion ring -->
+    <div class="panel ring-panel">
+      <header class="panel-head">
+        <div class="panel-title">
+          <mat-icon>insights</mat-icon>
+          <div>
+            <h3>معدّل الإنجاز</h3>
+            <span class="sub">ملخص الأداء</span>
+          </div>
+        </div>
+      </header>
+      <div class="completion-ring">
+        <svg viewBox="0 0 120 120">
+          <defs>
+            <linearGradient id="ring-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#6366f1"/>
+              <stop offset="100%" stop-color="#ec4899"/>
+            </linearGradient>
+          </defs>
+          <circle cx="60" cy="60" r="50" fill="none" stroke="#e2e8f0" stroke-width="10"/>
+          <circle cx="60" cy="60" r="50" fill="none" stroke="url(#ring-grad)" stroke-width="10"
+            stroke-linecap="round" [attr.stroke-dasharray]="314"
+            [attr.stroke-dashoffset]="314 - (completionRate() / 100 * 314)"
+            transform="rotate(-90 60 60)"/>
+        </svg>
+        <div class="ring-text">
+          <span class="ring-value">{{ completionRate() }}%</span>
+          <span class="ring-label">مكتمل</span>
+        </div>
+      </div>
+      <div class="ring-stats">
+        <div class="rs-item success">
+          <span class="rs-dot"></span>
+          <span class="rs-label">مكتملة</span>
+          <span class="rs-value">{{ taskService.completedCount() }}</span>
+        </div>
+        <div class="rs-item warning">
+          <span class="rs-dot"></span>
+          <span class="rs-label">قيد التنفيذ</span>
+          <span class="rs-value">{{ taskService.inProgressCount() }}</span>
+        </div>
+        <div class="rs-item info">
+          <span class="rs-dot"></span>
+          <span class="rs-label">معلّقة</span>
+          <span class="rs-value">{{ taskService.pendingCount() }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STATIONS OVERVIEW ============ -->
+  <section class="panel stations-panel">
+    <header class="panel-head with-link">
+      <div class="panel-title">
+        <mat-icon>grid_view</mat-icon>
+        <div>
+          <h3>نظرة سريعة على المحطات</h3>
+          <span class="sub">الحالة التشغيلية والسعة</span>
+        </div>
+      </div>
+      <a routerLink="/stations" class="view-all">
+        عرض الكل <mat-icon>arrow_back</mat-icon>
+      </a>
+    </header>
+
+    <div class="station-mini-grid">
+      @for (s of stationService.stations(); track s.id) {
+        <a [routerLink]="['/stations']" [queryParams]="{station: s.id}" class="station-mini" [class]="'status-' + s.status">
+          <div class="sm-top">
+            <mat-icon>electric_bolt</mat-icon>
+            <span class="sm-badge" [class]="s.status">
+              <span class="sm-dot"></span>
+              {{ statusLabel(s.status) }}
+            </span>
+          </div>
+          <h4>{{ shortName(s.name) }}</h4>
+          <span class="sm-loc">{{ s.location }}</span>
+          <div class="sm-stats">
+            <div>
+              <span class="sm-num">{{ s.capacity | number }}</span>
+              <span class="sm-unit">ك.و</span>
+            </div>
+            <div>
+              <span class="sm-num">{{ generatorsOf(s.id) }}</span>
+              <span class="sm-unit">مولد</span>
+            </div>
+            <div>
+              <span class="sm-num">{{ employeesOf(s.id) }}</span>
+              <span class="sm-unit">موظف</span>
+            </div>
+          </div>
+        </a>
+      }
+    </div>
+  </section>
+
+  <!-- ============ RECENT TASKS ============ -->
+  <section class="panel tasks-panel">
+    <header class="panel-head with-link">
+      <div class="panel-title">
+        <mat-icon>playlist_add_check</mat-icon>
+        <div>
+          <h3>أحدث المهام</h3>
+          <span class="sub">آخر {{ recentTasks().length }} مهام تم تسجيلها</span>
+        </div>
+      </div>
+      <a routerLink="/tasks" class="view-all">
+        عرض الكل <mat-icon>arrow_back</mat-icon>
+      </a>
+    </header>
+
+    @if (recentTasks().length === 0) {
+      <div class="inline-empty">
+        <mat-icon>inbox</mat-icon>
+        <span>لا توجد مهام بعد</span>
+      </div>
+    } @else {
+      <div class="task-list">
+        @for (task of recentTasks(); track task.id) {
+          <div class="task-row" [class]="'prio-' + task.priority">
+            <div class="task-info">
+              <div class="task-icon" [class]="task.type">
+                <mat-icon>{{ getTypeIcon(task.type) }}</mat-icon>
+              </div>
+              <div>
+                <p class="task-name">{{ task.title }}</p>
+                <p class="task-meta">
+                  <span><mat-icon>electric_bolt</mat-icon> {{ getStationName(task.stationId) }}</span>
+                  <span><mat-icon>person</mat-icon> {{ getEmployeeName(task.employeeId) }}</span>
+                  @if (task.dueDate) {
+                    <span><mat-icon>event</mat-icon> {{ task.dueDate }}</span>
+                  }
+                </p>
+              </div>
+            </div>
+            <div class="task-end">
+              <span class="prio-badge" [class]="task.priority">
+                {{ priorityLabel(task.priority) }}
+              </span>
+              <span class="status-badge" [class]="task.status">{{ getStatusLabel(task.status) }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </section>
+
+</div>

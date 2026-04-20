@@ -1,0 +1,480 @@
+<div class="tasks-page">
+
+  <!-- ============ HERO HEADER ============ -->
+  <header class="tasks-hero">
+    <div class="hero-bg-grid"></div>
+    <div class="hero-bg-orb orb-1"></div>
+    <div class="hero-bg-orb orb-2"></div>
+
+    <div class="hero-top">
+      <div class="hero-title">
+        <div class="hero-icon">
+          <mat-icon>task_alt</mat-icon>
+        </div>
+        <div class="hero-text">
+          <h1>إدارة المهام والأعمال</h1>
+          <p>متابعة مهام الصيانة والفحص والإصلاح عبر المحطات</p>
+        </div>
+      </div>
+
+      <div class="hero-actions">
+        <button class="btn-ghost" (click)="refresh()" title="تحديث">
+          <mat-icon>refresh</mat-icon>
+        </button>
+        <button class="btn-primary" (click)="openForm()">
+          <mat-icon>add_task</mat-icon>
+          <span>إضافة مهمة</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Hero KPIs -->
+    <div class="hero-kpis">
+      <div class="k-card total">
+        <div class="k-icon"><mat-icon>assignment</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ taskService.tasks().length }}</span>
+          <span class="k-label">إجمالي المهام</span>
+        </div>
+      </div>
+
+      <div class="k-card pending">
+        <div class="k-icon"><mat-icon>pending_actions</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ countByStatus('pending') }}</span>
+          <span class="k-label">معلّقة</span>
+        </div>
+      </div>
+
+      <div class="k-card progress">
+        <div class="k-icon"><mat-icon>autorenew</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ countByStatus('in-progress') }}</span>
+          <span class="k-label">قيد التنفيذ</span>
+        </div>
+      </div>
+
+      <div class="k-card completed">
+        <div class="k-icon"><mat-icon>check_circle</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ countByStatus('completed') }}</span>
+          <span class="k-label">مكتملة</span>
+        </div>
+        <div class="k-trend"><span class="pct">{{ completionRate() }}%</span></div>
+      </div>
+
+      <div class="k-card overdue">
+        <div class="k-icon"><mat-icon>schedule</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ overdueCount() }}</span>
+          <span class="k-label">متأخرة</span>
+        </div>
+      </div>
+
+      <div class="k-card high-priority">
+        <div class="k-icon"><mat-icon>priority_high</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ countByPriority('high') }}</span>
+          <span class="k-label">أولوية عالية</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ TOOLBAR ============ -->
+  <div class="toolbar">
+    <div class="search-box">
+      <mat-icon>search</mat-icon>
+      <input
+        type="text"
+        placeholder="ابحث في المهام (عنوان، وصف، موظف)..."
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)"
+      />
+      @if (searchQuery()) {
+        <button class="search-clear" (click)="searchQuery.set('')">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+
+    <div class="filter-chips">
+      <button
+        class="chip"
+        [class.active]="statusFilter() === 'all'"
+        (click)="statusFilter.set('all')">
+        <mat-icon>apps</mat-icon> الكل
+        <span class="count">{{ taskService.tasks().length }}</span>
+      </button>
+      <button
+        class="chip chip-pending"
+        [class.active]="statusFilter() === 'pending'"
+        (click)="statusFilter.set('pending')">
+        <span class="dot"></span> معلّقة
+        <span class="count">{{ countByStatus('pending') }}</span>
+      </button>
+      <button
+        class="chip chip-progress"
+        [class.active]="statusFilter() === 'in-progress'"
+        (click)="statusFilter.set('in-progress')">
+        <span class="dot"></span> قيد التنفيذ
+        <span class="count">{{ countByStatus('in-progress') }}</span>
+      </button>
+      <button
+        class="chip chip-completed"
+        [class.active]="statusFilter() === 'completed'"
+        (click)="statusFilter.set('completed')">
+        <span class="dot"></span> مكتملة
+        <span class="count">{{ countByStatus('completed') }}</span>
+      </button>
+    </div>
+
+    <div class="priority-filter">
+      <select
+        [ngModel]="priorityFilter()"
+        (ngModelChange)="priorityFilter.set($event)"
+        title="الأولوية"
+        class="prio-select">
+        <option value="all">كل الأولويات</option>
+        <option value="high">عالية فقط</option>
+        <option value="medium">متوسطة فقط</option>
+        <option value="low">منخفضة فقط</option>
+      </select>
+    </div>
+
+    <div class="view-toggle">
+      <button class="view-btn" [class.active]="viewMode() === 'kanban'" (click)="viewMode.set('kanban')" title="لوحة Kanban">
+        <mat-icon>view_week</mat-icon>
+      </button>
+      <button class="view-btn" [class.active]="viewMode() === 'cards'" (click)="viewMode.set('cards')" title="بطاقات">
+        <mat-icon>grid_view</mat-icon>
+      </button>
+      <button class="view-btn" [class.active]="viewMode() === 'table'" (click)="viewMode.set('table')" title="جدول">
+        <mat-icon>table_rows</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- ============ KANBAN VIEW ============ -->
+  @if (viewMode() === 'kanban') {
+    <div class="kanban-board">
+      @for (col of kanbanColumns; track col.status) {
+        <div class="kanban-col" [class]="'col-' + col.status">
+          <header class="kanban-header">
+            <div class="kh-left">
+              <mat-icon>{{ col.icon }}</mat-icon>
+              <h3>{{ col.label }}</h3>
+            </div>
+            <span class="kh-count">{{ kanbanTasks(col.status).length }}</span>
+          </header>
+
+          <div class="kanban-list">
+            @for (t of kanbanTasks(col.status); track t.id) {
+              <article class="kanban-card" [class]="'prio-' + t.priority">
+                <div class="kc-top">
+                  <span class="type-tag">{{ getTypeLabel(t.type) }}</span>
+                  <span class="prio-badge" [class]="t.priority">
+                    <mat-icon>{{ t.priority === 'high' ? 'priority_high' : (t.priority === 'medium' ? 'remove' : 'low_priority') }}</mat-icon>
+                    {{ getPriorityLabel(t.priority) }}
+                  </span>
+                </div>
+                <h4 class="kc-title">{{ t.title }}</h4>
+                @if (t.description) {
+                  <p class="kc-desc">{{ t.description }}</p>
+                }
+                <div class="kc-meta">
+                  @if (t.stationId) {
+                    <span class="meta-pill">
+                      <mat-icon>electric_bolt</mat-icon>
+                      {{ getStationName(t.stationId) }}
+                    </span>
+                  }
+                  @if (t.employeeId) {
+                    <span class="meta-pill emp">
+                      <mat-icon>person</mat-icon>
+                      {{ getEmployeeName(t.employeeId) }}
+                    </span>
+                  }
+                  @if (t.dueDate) {
+                    <span class="meta-pill due" [class.overdue]="isOverdue(t)">
+                      <mat-icon>event</mat-icon>
+                      {{ t.dueDate }}
+                    </span>
+                  }
+                </div>
+                <div class="kc-actions">
+                  @if (col.status !== 'completed' && col.status !== 'cancelled') {
+                    <button class="advance-btn" (click)="advance(t)" title="نقل للحالة التالية">
+                      <mat-icon>arrow_forward</mat-icon>
+                      <span>{{ nextLabel(t.status) }}</span>
+                    </button>
+                  }
+                  <button class="icon-btn edit" (click)="edit(t)" title="تعديل">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button class="icon-btn del" (click)="delete(t.id)" title="حذف">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </article>
+            }
+            @if (kanbanTasks(col.status).length === 0) {
+              <div class="kanban-empty">
+                <mat-icon>inbox</mat-icon>
+                <span>لا مهام</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ============ CARDS VIEW ============ -->
+  @if (viewMode() === 'cards') {
+    <div class="cards-grid">
+      @for (t of filteredTasks(); track t.id) {
+        <article class="task-card" [class]="'status-' + t.status + ' prio-' + t.priority">
+          <div class="card-accent"></div>
+          <header class="card-head">
+            <span class="type-tag">
+              <mat-icon>{{ getTypeIcon(t.type) }}</mat-icon>
+              {{ getTypeLabel(t.type) }}
+            </span>
+            <span class="prio-badge" [class]="t.priority">
+              {{ getPriorityLabel(t.priority) }}
+            </span>
+          </header>
+
+          <div class="card-body">
+            <h3>{{ t.title }}</h3>
+            @if (t.description) {
+              <p class="desc">{{ t.description }}</p>
+            }
+
+            <div class="card-meta">
+              <div class="meta-row">
+                <mat-icon>electric_bolt</mat-icon>
+                <span>{{ getStationName(t.stationId) }}</span>
+              </div>
+              <div class="meta-row">
+                <mat-icon>person</mat-icon>
+                <span>{{ getEmployeeName(t.employeeId) }}</span>
+              </div>
+              @if (t.dueDate) {
+                <div class="meta-row" [class.overdue]="isOverdue(t)">
+                  <mat-icon>event</mat-icon>
+                  <span>{{ t.dueDate }}</span>
+                  @if (isOverdue(t)) {
+                    <span class="overdue-tag">متأخرة</span>
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="status-row">
+              <span class="status-chip" [class]="t.status">
+                <span class="pulse-dot"></span>
+                {{ getStatusLabel(t.status) }}
+              </span>
+            </div>
+          </div>
+
+          <footer class="card-footer">
+            @if (t.status !== 'completed' && t.status !== 'cancelled') {
+              <button class="action-btn advance" (click)="advance(t)">
+                <mat-icon>arrow_forward</mat-icon>
+                <span>{{ nextLabel(t.status) }}</span>
+              </button>
+            }
+            <div class="footer-divider"></div>
+            <button class="action-btn edit" (click)="edit(t)" title="تعديل">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button class="action-btn del" (click)="delete(t.id)" title="حذف">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </footer>
+        </article>
+      }
+    </div>
+  }
+
+  <!-- ============ TABLE VIEW ============ -->
+  @if (viewMode() === 'table') {
+    <div class="table-wrap">
+      <table class="tasks-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>المهمة</th>
+            <th>النوع</th>
+            <th>المحطة</th>
+            <th>الموظف</th>
+            <th>الأولوية</th>
+            <th>الحالة</th>
+            <th>الاستحقاق</th>
+            <th>إجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (t of filteredTasks(); track t.id; let i = $index) {
+            <tr>
+              <td class="row-num">{{ i + 1 }}</td>
+              <td>
+                <div class="title-cell">
+                  <mat-icon [class]="'type-icon ' + t.type">{{ getTypeIcon(t.type) }}</mat-icon>
+                  <div>
+                    <div class="t-title">{{ t.title }}</div>
+                    @if (t.description) {
+                      <div class="t-desc">{{ t.description }}</div>
+                    }
+                  </div>
+                </div>
+              </td>
+              <td>{{ getTypeLabel(t.type) }}</td>
+              <td>{{ getStationName(t.stationId) }}</td>
+              <td>{{ getEmployeeName(t.employeeId) }}</td>
+              <td>
+                <span class="prio-badge compact" [class]="t.priority">{{ getPriorityLabel(t.priority) }}</span>
+              </td>
+              <td>
+                <span class="status-chip compact" [class]="t.status">
+                  <span class="pulse-dot"></span>
+                  {{ getStatusLabel(t.status) }}
+                </span>
+              </td>
+              <td [class.overdue]="isOverdue(t)">{{ t.dueDate || '-' }}</td>
+              <td>
+                <div class="table-actions">
+                  @if (t.status !== 'completed' && t.status !== 'cancelled') {
+                    <button class="t-btn advance" (click)="advance(t)" title="نقل للحالة التالية">
+                      <mat-icon>arrow_forward</mat-icon>
+                    </button>
+                  }
+                  <button class="t-btn edit" (click)="edit(t)" title="تعديل">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button class="t-btn del" (click)="delete(t.id)" title="حذف">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <!-- ============ EMPTY STATE ============ -->
+  @if (filteredTasks().length === 0 && viewMode() !== 'kanban') {
+    <div class="empty-state">
+      <div class="empty-icon"><mat-icon>inbox</mat-icon></div>
+      @if (taskService.tasks().length === 0) {
+        <h3>لا توجد مهام بعد</h3>
+        <p>ابدأ بإضافة أول مهمة لفريق العمل</p>
+        <button class="btn-primary" (click)="openForm()">
+          <mat-icon>add_task</mat-icon> إضافة مهمة
+        </button>
+      } @else {
+        <h3>لا توجد نتائج مطابقة</h3>
+        <p>جرّب تعديل الفلاتر أو البحث</p>
+        <button class="btn-ghost" (click)="clearFilters()">
+          <mat-icon>clear</mat-icon> مسح الفلاتر
+        </button>
+      }
+    </div>
+  }
+
+  <!-- ============ FORM PANEL ============ -->
+  @if (showForm()) {
+    <div class="modal-overlay" (click)="cancelForm()"></div>
+    <div class="form-panel">
+      <header class="form-header">
+        <div class="form-title">
+          <mat-icon>{{ editingId() ? 'edit' : 'add_task' }}</mat-icon>
+          <h3>{{ editingId() ? 'تعديل المهمة' : 'إضافة مهمة جديدة' }}</h3>
+        </div>
+        <button class="close-btn" (click)="cancelForm()" title="إغلاق">
+          <mat-icon>close</mat-icon>
+        </button>
+      </header>
+
+      <form class="task-form" (ngSubmit)="save()">
+        <div class="field-group full">
+          <label>عنوان المهمة *</label>
+          <input type="text" [(ngModel)]="form.title" name="title" required placeholder="مثال: صيانة مولد Perkins 2800" />
+        </div>
+
+        <div class="field-group full">
+          <label>الوصف</label>
+          <textarea [(ngModel)]="form.description" name="description" rows="3" placeholder="تفاصيل المهمة..."></textarea>
+        </div>
+
+        <div class="field-group">
+          <label>نوع المهمة</label>
+          <select [(ngModel)]="form.type" name="type" title="النوع">
+            <option value="maintenance">صيانة</option>
+            <option value="inspection">فحص</option>
+            <option value="repair">إصلاح</option>
+            <option value="installation">تركيب</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label>الأولوية</label>
+          <select [(ngModel)]="form.priority" name="priority" title="الأولوية">
+            <option value="high">عالية</option>
+            <option value="medium">متوسطة</option>
+            <option value="low">منخفضة</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label>الحالة</label>
+          <select [(ngModel)]="form.status" name="status" title="الحالة">
+            <option value="pending">معلّقة</option>
+            <option value="in-progress">قيد التنفيذ</option>
+            <option value="completed">مكتملة</option>
+            <option value="cancelled">ملغاة</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label>تاريخ الاستحقاق</label>
+          <input type="date" [(ngModel)]="form.dueDate" name="dueDate" title="الاستحقاق" />
+        </div>
+
+        <div class="field-group">
+          <label>المحطة</label>
+          <select [(ngModel)]="form.stationId" name="stationId" title="المحطة">
+            <option value="">— اختر محطة —</option>
+            @for (s of stationService.stations(); track s.id) {
+              <option [value]="s.id">{{ s.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label>الموظف المسؤول</label>
+          <select [(ngModel)]="form.employeeId" name="employeeId" title="الموظف">
+            <option value="">— اختر موظف —</option>
+            @for (e of employeeService.employees(); track e.id) {
+              <option [value]="e.id">{{ e.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-ghost" (click)="cancelForm()">إلغاء</button>
+          <button type="submit" class="btn-primary">
+            <mat-icon>save</mat-icon>
+            {{ editingId() ? 'حفظ التعديلات' : 'إنشاء المهمة' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+</div>
