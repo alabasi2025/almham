@@ -8,6 +8,14 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/login/login.component').then((m) => m.LoginComponent),
   },
+  {
+    path: 'change-password',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./pages/change-password/change-password.component').then(
+        (m) => m.ChangePasswordComponent,
+      ),
+  },
 
   {
     path: '',
@@ -36,10 +44,24 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'stations/network',
+        loadComponent: () =>
+          import('./pages/stations/network/network.component').then(
+            (m) => m.NetworkComponent,
+          ),
+      },
+      {
         path: 'employees',
         loadComponent: () =>
           import('./pages/employees/employees.component').then(
             (m) => m.EmployeesComponent,
+          ),
+      },
+      {
+        path: 'employees/attendance',
+        loadComponent: () =>
+          import('./pages/employees/attendance/attendance.component').then(
+            (m) => m.AttendanceComponent,
           ),
       },
       {
@@ -68,6 +90,33 @@ export const routes: Routes = [
           import('./pages/suppliers/fuel-suppliers/fuel-suppliers.component').then(
             (m) => m.FuelSuppliersComponent,
           ),
+      },
+      {
+        path: 'treasury',
+        loadComponent: () =>
+          import('./pages/treasury/treasury.component').then((m) => m.TreasuryComponent),
+      },
+      {
+        path: 'treasury/billing',
+        loadComponent: () =>
+          import('./pages/treasury/treasury.component').then((m) => m.TreasuryComponent),
+      },
+      {
+        path: 'treasury/collections',
+        loadComponent: () =>
+          import('./pages/treasury/collections/collections.component').then(
+            (m) => m.CollectionsComponent,
+          ),
+      },
+      {
+        path: 'treasury/expenses',
+        loadComponent: () =>
+          import('./pages/treasury/expenses/expenses.component').then((m) => m.ExpensesComponent),
+      },
+      {
+        path: 'billing',
+        redirectTo: 'treasury/billing',
+        pathMatch: 'full',
       },
       {
         path: 'users',

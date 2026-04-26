@@ -17,6 +17,14 @@ export const movementRefTypeEnum = pgEnum('movement_ref_type', [
 ]);
 export const paymentMethodEnum = pgEnum('payment_method', ['cash', 'wallet', 'hexcell', 'other']);
 export const closureStatusEnum = pgEnum('closure_status', ['draft', 'closed', 'approved']);
+export const billingSystemTypeEnum = pgEnum('billing_system_type', ['ecas', 'hexcell', 'manual', 'other']);
+export const billingAccountTypeEnum = pgEnum('billing_account_type', ['collection', 'sales', 'settlement']);
+export const workSessionStatusEnum = pgEnum('work_session_status', ['open', 'closed', 'abandoned']);
+export const attendanceEventTypeEnum = pgEnum('attendance_event_type', ['check_in', 'check_out']);
+export const attendanceSourceEnum = pgEnum('attendance_source', ['mobile', 'zkteco', 'manager']);
+export const attendanceEventStatusEnum = pgEnum('attendance_event_status', ['accepted', 'rejected']);
+export const feederStatusEnum = pgEnum('feeder_status', ['active', 'off', 'maintenance', 'overloaded']);
+export const panelTypeEnum = pgEnum('panel_type', ['sync', 'main_distribution', 'meter_box']);
 
 export const stations = pgTable('stations', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -223,6 +231,95 @@ export const auditLog = pgTable('audit_log', {
   createdAtIdx: index('audit_created_at_idx').on(t.createdAt),
 }));
 
+// ============ EMPLOYEE ATTENDANCE & MOBILE TRACKING ============
+
+export const stationAttendanceSettings = pgTable('station_attendance_settings', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  stationId: uuid('station_id').notNull().unique().references(() => stations.id, { onDelete: 'cascade' }),
+  radiusMeters: integer('radius_meters').notNull().default(100),
+  trackingIntervalSeconds: integer('tracking_interval_seconds').notNull().default(300),
+  requireGps: boolean('require_gps').notNull().default(true),
+  requireBiometric: boolean('require_biometric').notNull().default(false),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+}, (t) => ({
+  stationIdx: index('attendance_settings_station_idx').on(t.stationId),
+}));
+
+export const workSessions = pgTable('work_sessions', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  clientSessionId: varchar('client_session_id', { length: 128 }).notNull().unique(),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  employeeId: uuid('employee_id').notNull().references(() => employees.id, { onDelete: 'cascade' }),
+  stationId: uuid('station_id').notNull().references(() => stations.id),
+  status: workSessionStatusEnum('status').notNull().default('open'),
+  startedAt: timestamp('started_at').notNull(),
+  endedAt: timestamp('ended_at'),
+  checkInLatitude: numeric('check_in_latitude', { precision: 10, scale: 7 }),
+  checkInLongitude: numeric('check_in_longitude', { precision: 10, scale: 7 }),
+  checkInAccuracyMeters: integer('check_in_accuracy_meters'),
+  checkInDistanceMeters: integer('check_in_distance_meters'),
+  checkOutLatitude: numeric('check_out_latitude', { precision: 10, scale: 7 }),
+  checkOutLongitude: numeric('check_out_longitude', { precision: 10, scale: 7 }),
+  checkOutAccuracyMeters: integer('check_out_accuracy_meters'),
+  checkOutDistanceMeters: integer('check_out_distance_meters'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (t) => ({
+  clientSessionIdx: index('work_sessions_client_session_idx').on(t.clientSessionId),
+  employeeStatusIdx: index('work_sessions_employee_status_idx').on(t.employeeId, t.status),
+  stationStatusIdx: index('work_sessions_station_status_idx').on(t.stationId, t.status),
+  startedAtIdx: index('work_sessions_started_at_idx').on(t.startedAt),
+}));
+
+export const attendanceEvents = pgTable('attendance_events', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  clientEventId: varchar('client_event_id', { length: 128 }).notNull().unique(),
+  sessionId: uuid('session_id').references(() => workSessions.id, { onDelete: 'set null' }),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  employeeId: uuid('employee_id').notNull().references(() => employees.id, { onDelete: 'cascade' }),
+  stationId: uuid('station_id').notNull().references(() => stations.id),
+  type: attendanceEventTypeEnum('type').notNull(),
+  source: attendanceSourceEnum('source').notNull().default('mobile'),
+  status: attendanceEventStatusEnum('status').notNull().default('accepted'),
+  recordedAt: timestamp('recorded_at').notNull(),
+  receivedAt: timestamp('received_at').defaultNow().notNull(),
+  latitude: numeric('latitude', { precision: 10, scale: 7 }),
+  longitude: numeric('longitude', { precision: 10, scale: 7 }),
+  accuracyMeters: integer('accuracy_meters'),
+  distanceMeters: integer('distance_meters'),
+  rejectionReason: text('rejection_reason'),
+  metadata: jsonb('metadata').$type<Record<string, unknown>>(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (t) => ({
+  clientEventIdx: index('attendance_events_client_event_idx').on(t.clientEventId),
+  employeeRecordedIdx: index('attendance_events_employee_recorded_idx').on(t.employeeId, t.recordedAt),
+  stationRecordedIdx: index('attendance_events_station_recorded_idx').on(t.stationId, t.recordedAt),
+}));
+
+export const locationPoints = pgTable('location_points', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  clientPointId: varchar('client_point_id', { length: 128 }).notNull().unique(),
+  sessionId: uuid('session_id').references(() => workSessions.id, { onDelete: 'cascade' }),
+  clientSessionId: varchar('client_session_id', { length: 128 }).notNull(),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  employeeId: uuid('employee_id').notNull().references(() => employees.id, { onDelete: 'cascade' }),
+  stationId: uuid('station_id').notNull().references(() => stations.id),
+  recordedAt: timestamp('recorded_at').notNull(),
+  receivedAt: timestamp('received_at').defaultNow().notNull(),
+  latitude: numeric('latitude', { precision: 10, scale: 7 }).notNull(),
+  longitude: numeric('longitude', { precision: 10, scale: 7 }).notNull(),
+  accuracyMeters: integer('accuracy_meters'),
+  speedMetersPerSecond: numeric('speed_meters_per_second', { precision: 10, scale: 3 }),
+  headingDegrees: numeric('heading_degrees', { precision: 10, scale: 3 }),
+  batteryLevel: numeric('battery_level', { precision: 5, scale: 4 }),
+  isOffline: boolean('is_offline').notNull().default(false),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (t) => ({
+  clientPointIdx: index('location_points_client_point_idx').on(t.clientPointId),
+  sessionRecordedIdx: index('location_points_session_recorded_idx').on(t.sessionId, t.recordedAt),
+  employeeRecordedIdx: index('location_points_employee_recorded_idx').on(t.employeeId, t.recordedAt),
+}));
+
 // ============ TREASURY & COLLECTIONS ============
 
 export const cashboxes = pgTable('cashboxes', {
@@ -261,11 +358,43 @@ export const cashMovements = pgTable('cash_movements', {
   occurredAtIdx: index('movements_occurred_at_idx').on(t.occurredAt),
 }));
 
+export const billingSystems = pgTable('billing_systems', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  name: varchar('name', { length: 128 }).notNull().unique(),
+  code: varchar('code', { length: 64 }),
+  type: billingSystemTypeEnum('type').notNull().default('other'),
+  stationId: uuid('station_id').references(() => stations.id, { onDelete: 'set null' }),
+  icon: varchar('icon', { length: 64 }),
+  color: varchar('color', { length: 16 }),
+  isActive: boolean('is_active').notNull().default(true),
+  notes: text('notes'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (t) => ({
+  stationIdx: index('billing_systems_station_idx').on(t.stationId),
+}));
+
+export const billingSystemAccounts = pgTable('billing_system_accounts', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  billingSystemId: uuid('billing_system_id').notNull().references(() => billingSystems.id, { onDelete: 'cascade' }),
+  name: varchar('name', { length: 128 }).notNull(),
+  code: varchar('code', { length: 64 }),
+  type: billingAccountTypeEnum('type').notNull(),
+  isActive: boolean('is_active').notNull().default(true),
+  notes: text('notes'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (t) => ({
+  systemIdx: index('billing_accounts_system_idx').on(t.billingSystemId),
+  typeIdx: index('billing_accounts_type_idx').on(t.type),
+}));
+
 export const collections = pgTable('collections', {
   id: uuid('id').primaryKey().defaultRandom(),
   stationId: uuid('station_id').notNull().references(() => stations.id),
   cashboxId: uuid('cashbox_id').notNull().references(() => cashboxes.id),
+  billingSystemId: uuid('billing_system_id').references(() => billingSystems.id, { onDelete: 'set null' }),
+  billingAccountId: uuid('billing_account_id').references(() => billingSystemAccounts.id, { onDelete: 'set null' }),
   collectorUserId: uuid('collector_user_id').references(() => users.id, { onDelete: 'set null' }),
+  collectorEmployeeId: uuid('collector_employee_id').references(() => employees.id, { onDelete: 'set null' }),
   subscriberName: varchar('subscriber_name', { length: 255 }),
   meterNumber: varchar('meter_number', { length: 64 }),
   amount: numeric('amount', { precision: 18, scale: 2 }).notNull(),
@@ -279,7 +408,42 @@ export const collections = pgTable('collections', {
 }, (t) => ({
   stationIdx: index('collections_station_idx').on(t.stationId),
   collectorIdx: index('collections_collector_idx').on(t.collectorUserId),
+  collectorEmployeeIdx: index('collections_collector_employee_idx').on(t.collectorEmployeeId),
+  billingSystemIdx: index('collections_billing_system_idx').on(t.billingSystemId),
+  billingAccountIdx: index('collections_billing_account_idx').on(t.billingAccountId),
   occurredAtIdx: index('collections_occurred_at_idx').on(t.occurredAt),
+}));
+
+export const billingCollectionBatches = pgTable('billing_collection_batches', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  stationId: uuid('station_id').notNull().references(() => stations.id),
+  billingSystemId: uuid('billing_system_id').notNull().references(() => billingSystems.id),
+  billingAccountId: uuid('billing_account_id').notNull().references(() => billingSystemAccounts.id),
+  cashboxId: uuid('cashbox_id').notNull().references(() => cashboxes.id),
+  enteredByUserId: uuid('entered_by_user_id').references(() => users.id, { onDelete: 'set null' }),
+  collectionDate: timestamp('collection_date').notNull(),
+  totalAmount: numeric('total_amount', { precision: 18, scale: 2 }).notNull().default('0'),
+  notes: text('notes'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (t) => ({
+  stationDateIdx: index('billing_batches_station_date_idx').on(t.stationId, t.collectionDate),
+  billingSystemIdx: index('billing_batches_system_idx').on(t.billingSystemId),
+  billingAccountIdx: index('billing_batches_account_idx').on(t.billingAccountId),
+  enteredByIdx: index('billing_batches_entered_by_idx').on(t.enteredByUserId),
+}));
+
+export const billingCollectionEntries = pgTable('billing_collection_entries', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  batchId: uuid('batch_id').notNull().references(() => billingCollectionBatches.id, { onDelete: 'cascade' }),
+  collectorEmployeeId: uuid('collector_employee_id').references(() => employees.id, { onDelete: 'set null' }),
+  collectionId: uuid('collection_id').references(() => collections.id, { onDelete: 'set null' }),
+  amount: numeric('amount', { precision: 18, scale: 2 }).notNull(),
+  notes: text('notes'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (t) => ({
+  batchIdx: index('billing_entries_batch_idx').on(t.batchId),
+  collectorIdx: index('billing_entries_collector_idx').on(t.collectorEmployeeId),
+  collectionIdx: index('billing_entries_collection_idx').on(t.collectionId),
 }));
 
 export const cashTransfers = pgTable('cash_transfers', {
@@ -343,4 +507,44 @@ export const dailyClosures = pgTable('daily_closures', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 }, (t) => ({
   stationDateIdx: index('closures_station_date_idx').on(t.stationId, t.closureDate),
+}));
+
+// ============ ELECTRICAL NETWORK ============
+
+export const feeders = pgTable('feeders', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  stationId: uuid('station_id').notNull().references(() => stations.id, { onDelete: 'cascade' }),
+  name: varchar('name', { length: 255 }).notNull(),
+  code: varchar('code', { length: 64 }),
+  responsibleEmployeeId: uuid('responsible_employee_id').references(() => employees.id, { onDelete: 'set null' }),
+  cableType: varchar('cable_type', { length: 128 }),
+  maxLoadAmps: integer('max_load_amps'),
+  lengthMeters: integer('length_meters'),
+  status: feederStatusEnum('status').notNull().default('active'),
+  notes: text('notes'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (t) => ({
+  stationIdx: index('feeders_station_idx').on(t.stationId),
+}));
+
+export const panels = pgTable('panels', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  stationId: uuid('station_id').notNull().references(() => stations.id, { onDelete: 'cascade' }),
+  feederId: uuid('feeder_id').references(() => feeders.id, { onDelete: 'set null' }),
+  name: varchar('name', { length: 255 }).notNull(),
+  code: varchar('code', { length: 64 }),
+  type: panelTypeEnum('type').notNull().default('meter_box'),
+  controllerType: varchar('controller_type', { length: 128 }),
+  capacityAmps: integer('capacity_amps'),
+  poleNumber: varchar('pole_number', { length: 64 }),
+  maxSlots: integer('max_slots'),
+  latitude: numeric('latitude', { precision: 10, scale: 7 }),
+  longitude: numeric('longitude', { precision: 10, scale: 7 }),
+  status: stationStatusEnum('status').notNull().default('active'),
+  notes: text('notes'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (t) => ({
+  stationIdx: index('panels_station_idx').on(t.stationId),
+  feederIdx: index('panels_feeder_idx').on(t.feederId),
+  typeIdx: index('panels_type_idx').on(t.type),
 }));

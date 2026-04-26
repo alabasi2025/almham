@@ -85,21 +85,46 @@ import { AuthService } from '../../services/auth.service';
               <span class="sub-dot"></span>
               <span>المولدات</span>
             </a>
+            <a routerLink="/stations/network" routerLinkActive="active" class="subnav-item">
+              <span class="sub-dot"></span>
+              <span>الطبلات والشبكة</span>
+            </a>
           </div>
         </div>
 
-        <a routerLink="/employees" routerLinkActive="active" class="nav-item">
-          <div class="nav-icon employees">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-              <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.5" fill="currentColor" fill-opacity="0.1"/>
-              <path d="M22 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-              <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <!-- Employees group (expandable) -->
+        <div class="nav-group" [class.open]="isEmployeesOpen() || employeesRouteActive()">
+          <button
+            type="button"
+            class="nav-item nav-group-toggle"
+            [class.active]="employeesRouteActive()"
+            (click)="toggleEmployees($event)">
+            <div class="nav-icon employees">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.5" fill="currentColor" fill-opacity="0.1"/>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span>الموظفين</span>
+            <div class="count-badge">{{ employeeService.activeCount() }}</div>
+            <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
             </svg>
+          </button>
+
+          <div class="subnav">
+            <a routerLink="/employees" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="subnav-item">
+              <span class="sub-dot"></span>
+              <span>الموظفين</span>
+            </a>
+            <a routerLink="/employees/attendance" routerLinkActive="active" class="subnav-item">
+              <span class="sub-dot"></span>
+              <span>الحضور والوردية</span>
+            </a>
           </div>
-          <span>الموظفين</span>
-          <div class="count-badge">{{ employeeService.activeCount() }}</div>
-        </a>
+        </div>
 
         <a routerLink="/tasks" routerLinkActive="active" class="nav-item">
           <div class="nav-icon tasks">
@@ -169,6 +194,18 @@ import { AuthService } from '../../services/auth.service';
             </a>
           </div>
         </div>
+
+        <!-- Treasury -->
+        <a routerLink="/treasury" routerLinkActive="active" class="nav-item">
+          <div class="nav-icon treasury-nav">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M12 2L2 7l10 5 10-5-10-5z" fill="currentColor" fill-opacity="0.2"/>
+              <path d="M2 17l10 5 10-5"/>
+              <path d="M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <span>الخزينة والتحصيل</span>
+        </a>
 
         <!-- Users management (admin/accountant only) -->
         @if (authService.canManageUsers()) {
@@ -477,6 +514,24 @@ import { AuthService } from '../../services/auth.service';
     .nav-icon.maps svg {
       color: #34d399;
       filter: drop-shadow(0 2px 4px rgba(16, 185, 129, 0.3));
+    }
+
+    .nav-icon.treasury-nav {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(37, 99, 235, 0.15));
+      box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.2);
+    }
+    .nav-icon.treasury-nav svg {
+      color: #5eead4;
+      filter: drop-shadow(0 2px 4px rgba(45, 212, 191, 0.3));
+    }
+
+    .nav-icon.users-nav {
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.15), rgba(139, 92, 246, 0.15));
+      box-shadow: 0 0 0 1px rgba(236, 72, 153, 0.2);
+    }
+    .nav-icon.users-nav svg {
+      color: #f0abfc;
+      filter: drop-shadow(0 2px 4px rgba(236, 72, 153, 0.3));
     }
 
     .new-badge {
@@ -1026,6 +1081,7 @@ export class SidebarComponent {
   isSidebarOpen = signal(false);
   isSuppliersOpen = signal(false);
   isStationsOpen = signal(false);
+  isEmployeesOpen = signal(false);
 
   userDisplayName = computed(() => {
     const user = this.authService.user();
@@ -1066,6 +1122,7 @@ export class SidebarComponent {
 
   suppliersRouteActive = computed(() => this.currentUrl().startsWith('/suppliers'));
   stationsRouteActive = computed(() => this.currentUrl().startsWith('/stations'));
+  employeesRouteActive = computed(() => this.currentUrl().startsWith('/employees'));
 
   toggleSidebar() {
     this.isSidebarOpen.set(!this.isSidebarOpen());
@@ -1083,6 +1140,11 @@ export class SidebarComponent {
   toggleStations(event: Event) {
     event.stopPropagation();
     this.isStationsOpen.set(!this.isStationsOpen());
+  }
+
+  toggleEmployees(event: Event) {
+    event.stopPropagation();
+    this.isEmployeesOpen.set(!this.isEmployeesOpen());
   }
 
   onSidebarClick(event: Event) {

@@ -1,0 +1,309 @@
+<div class="network-page">
+
+  <!-- ============ HERO HEADER ============ -->
+  <header class="network-hero">
+    <div class="hero-bg-orb orb-1"></div>
+    <div class="hero-bg-orb orb-2"></div>
+
+    <div class="hero-top">
+      <div class="hero-title">
+        <div class="hero-icon">
+          <mat-icon>electrical_services</mat-icon>
+        </div>
+        <div>
+          <h1>الشبكة الكهربائية</h1>
+          <p>الفيدرات والطبلات ومربعات العدّادات</p>
+        </div>
+      </div>
+      <div class="hero-stations">
+        <button class="station-chip" [class.active]="stationFilter() === 'all'" (click)="stationFilter.set('all')">
+          <span class="chip-dot"></span> الكل
+        </button>
+        @for (s of stationService.stations(); track s.id) {
+          <button class="station-chip" [class.active]="stationFilter() === s.id" (click)="stationFilter.set(s.id)">
+            <span class="chip-dot"></span>
+            {{ shortStation(s.name) }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="hero-kpis">
+      <div class="k-card feeders-card">
+        <div class="k-icon"><mat-icon>cable</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ feederStats().total }}</span>
+          <span class="k-label">فيدر</span>
+        </div>
+        <span class="k-sub">{{ feederStats().active }} شغّال</span>
+      </div>
+      <div class="k-card panels-card">
+        <div class="k-icon"><mat-icon>grid_view</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ panelStats().total }}</span>
+          <span class="k-label">طبلة / مربع</span>
+        </div>
+        <span class="k-sub">{{ panelStats().active }} نشطة</span>
+      </div>
+      <div class="k-card linked-card">
+        <div class="k-icon"><mat-icon>link</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ feederStats().totalPanels }}</span>
+          <span class="k-label">طبلة مرتبطة بفيدر</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ SEARCH + TABS ============ -->
+  <div class="toolbar">
+    <div class="main-tabs">
+      <button class="main-tab" [class.active]="activeTab() === 'feeders'" (click)="activeTab.set('feeders')">
+        <mat-icon>cable</mat-icon>
+        <span>الفيدرات</span>
+        <span class="tab-count">{{ feederStats().total }}</span>
+      </button>
+      <button class="main-tab" [class.active]="activeTab() === 'panels'" (click)="activeTab.set('panels')">
+        <mat-icon>grid_view</mat-icon>
+        <span>الطبلات</span>
+        <span class="tab-count">{{ panelStats().total }}</span>
+      </button>
+    </div>
+    <div class="toolbar-actions">
+      <div class="search-box">
+        <mat-icon>search</mat-icon>
+        <input type="text" [ngModel]="search()" (ngModelChange)="search.set($event)" placeholder="بحث بالاسم أو الكود..." />
+      </div>
+      @if (activeTab() === 'feeders') {
+        <button class="btn-primary" (click)="openFeederForm()"><mat-icon>add</mat-icon> فيدر جديد</button>
+      } @else {
+        <button class="btn-primary" (click)="openPanelForm()"><mat-icon>add</mat-icon> طبلة جديدة</button>
+      }
+    </div>
+  </div>
+
+  <!-- ============ FEEDERS TAB ============ -->
+  @if (activeTab() === 'feeders') {
+    <div class="cards-grid feeders-grid">
+      @for (f of filteredFeeders(); track f.id) {
+        <article class="feeder-card" [class.off]="f.status !== 'active'">
+          <div class="card-head">
+            <div class="card-icon"><mat-icon>cable</mat-icon></div>
+            <div class="card-title">
+              <h3>{{ f.name }}</h3>
+              <span class="card-station">{{ shortStation(f.stationName) }}</span>
+            </div>
+            <span class="status-chip" [attr.data-status]="f.status">{{ feederStatusLabel(f.status) }}</span>
+          </div>
+          <div class="card-stats">
+            <div class="mini-stat">
+              <mat-icon>grid_view</mat-icon>
+              <strong>{{ f.panelsCount }}</strong>
+              <span>طبلة</span>
+            </div>
+            @if (f.code) {
+              <div class="mini-stat">
+                <mat-icon>tag</mat-icon>
+                <span class="code">{{ f.code }}</span>
+              </div>
+            }
+            @if (f.cableType) {
+              <div class="mini-stat">
+                <mat-icon>power</mat-icon>
+                <span>{{ f.cableType }}</span>
+              </div>
+            }
+          </div>
+          <div class="card-actions">
+            <button class="icon-btn" (click)="openFeederForm(f)" title="تعديل"><mat-icon>edit</mat-icon></button>
+            <button class="icon-btn danger" (click)="removeFeeder(f.id, f.name)" title="حذف"><mat-icon>delete_outline</mat-icon></button>
+          </div>
+        </article>
+      } @empty {
+        <div class="empty-state">
+          <mat-icon>cable</mat-icon>
+          <p>لا توجد فيدرات</p>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ============ PANELS TAB ============ -->
+  @if (activeTab() === 'panels') {
+    <div class="panels-toolbar">
+      <select [ngModel]="feederFilter()" (ngModelChange)="feederFilter.set($event)" title="فلتر الفيدر" class="feeder-select">
+        <option value="all">كل الفيدرات</option>
+        @for (f of feedersForStation(); track f.id) {
+          <option [value]="f.id">{{ f.name }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="cards-grid panels-grid">
+      @for (p of filteredPanels(); track p.id) {
+        <article class="panel-card" [class.inactive]="p.status !== 'active'">
+          <div class="card-head">
+            <div class="card-icon panel-icon"><mat-icon>grid_view</mat-icon></div>
+            <div class="card-title">
+              <h3>{{ p.name }}</h3>
+              <span class="card-station">{{ shortStation(p.stationName) }}</span>
+            </div>
+            <span class="status-chip" [attr.data-status]="p.status">{{ statusLabel(p.status) }}</span>
+          </div>
+          <div class="card-meta">
+            @if (p.feederName) {
+              <div class="meta-item">
+                <mat-icon>cable</mat-icon>
+                <span>{{ p.feederName }}</span>
+              </div>
+            }
+            <div class="meta-item">
+              <mat-icon>category</mat-icon>
+              <span>{{ panelTypeLabel(p.type) }}</span>
+            </div>
+            @if (p.code) {
+              <div class="meta-item">
+                <mat-icon>tag</mat-icon>
+                <span class="code">{{ p.code }}</span>
+              </div>
+            }
+            @if (p.poleNumber) {
+              <div class="meta-item">
+                <mat-icon>signpost</mat-icon>
+                <span>عمود {{ p.poleNumber }}</span>
+              </div>
+            }
+          </div>
+          <div class="card-actions">
+            <button class="icon-btn" (click)="openPanelForm(p)" title="تعديل"><mat-icon>edit</mat-icon></button>
+            <button class="icon-btn danger" (click)="removePanel(p.id, p.name)" title="حذف"><mat-icon>delete_outline</mat-icon></button>
+          </div>
+        </article>
+      } @empty {
+        <div class="empty-state">
+          <mat-icon>grid_view</mat-icon>
+          <p>لا توجد طبلات</p>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ============ FEEDER FORM MODAL ============ -->
+  @if (showFeederForm()) {
+    <div class="modal-overlay" (click)="showFeederForm.set(false)"></div>
+    <div class="form-panel">
+      <header class="form-header">
+        <mat-icon>{{ editingFeederId() ? 'edit' : 'add' }}</mat-icon>
+        <h3>{{ editingFeederId() ? 'تعديل فيدر' : 'فيدر جديد' }}</h3>
+        <button class="close-btn" (click)="showFeederForm.set(false)"><mat-icon>close</mat-icon></button>
+      </header>
+      <div class="form-body">
+        <div class="field">
+          <label>المحطة *</label>
+          <select [(ngModel)]="feederForm.stationId" title="المحطة">
+            <option value="">اختر المحطة</option>
+            @for (s of stationService.stations(); track s.id) {
+              <option [value]="s.id">{{ shortStation(s.name) }}</option>
+            }
+          </select>
+        </div>
+        <div class="field">
+          <label>اسم الفيدر *</label>
+          <input type="text" [(ngModel)]="feederForm.name" placeholder="مثلاً: فيدر مجموعة 1" />
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>الكود</label>
+            <input type="text" [(ngModel)]="feederForm.code" dir="ltr" placeholder="7301" />
+          </div>
+          <div class="field">
+            <label>نوع الكابل</label>
+            <input type="text" [(ngModel)]="feederForm.cableType" placeholder="مثلاً: أبو 50" />
+          </div>
+        </div>
+        <div class="field">
+          <label>ملاحظات</label>
+          <textarea [(ngModel)]="feederForm.notes" rows="2"></textarea>
+        </div>
+        @if (feederError()) {
+          <div class="error-box"><mat-icon>error</mat-icon> {{ feederError() }}</div>
+        }
+      </div>
+      <footer class="form-footer">
+        <button class="btn-ghost" (click)="showFeederForm.set(false)" [disabled]="savingFeeder()">إلغاء</button>
+        <button class="btn-primary" (click)="saveFeeder()" [disabled]="savingFeeder()">
+          @if (savingFeeder()) { جاري الحفظ... } @else { <mat-icon>save</mat-icon> حفظ }
+        </button>
+      </footer>
+    </div>
+  }
+
+  <!-- ============ PANEL FORM MODAL ============ -->
+  @if (showPanelForm()) {
+    <div class="modal-overlay" (click)="showPanelForm.set(false)"></div>
+    <div class="form-panel">
+      <header class="form-header">
+        <mat-icon>{{ editingPanelId() ? 'edit' : 'add' }}</mat-icon>
+        <h3>{{ editingPanelId() ? 'تعديل طبلة' : 'طبلة جديدة' }}</h3>
+        <button class="close-btn" (click)="showPanelForm.set(false)"><mat-icon>close</mat-icon></button>
+      </header>
+      <div class="form-body">
+        <div class="field">
+          <label>المحطة *</label>
+          <select [(ngModel)]="panelForm.stationId" title="المحطة">
+            <option value="">اختر المحطة</option>
+            @for (s of stationService.stations(); track s.id) {
+              <option [value]="s.id">{{ shortStation(s.name) }}</option>
+            }
+          </select>
+        </div>
+        <div class="field">
+          <label>الفيدر</label>
+          <select [(ngModel)]="panelForm.feederId" title="الفيدر">
+            <option [ngValue]="null">بدون فيدر</option>
+            @for (f of feedersForStation(); track f.id) {
+              <option [value]="f.id">{{ f.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="field">
+          <label>اسم الطبلة *</label>
+          <input type="text" [(ngModel)]="panelForm.name" placeholder="مثلاً: طبلة عاصم" />
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>الكود</label>
+            <input type="text" [(ngModel)]="panelForm.code" dir="ltr" placeholder="105" />
+          </div>
+          <div class="field">
+            <label>النوع</label>
+            <select [(ngModel)]="panelForm.type" title="النوع">
+              <option value="meter_box">طبلة عدّادات</option>
+              <option value="sync">طبلة دمج</option>
+              <option value="main_distribution">توزيع رئيسية</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>رقم العمود</label>
+            <input type="text" [(ngModel)]="panelForm.poleNumber" placeholder="اختياري" />
+          </div>
+        </div>
+        <div class="field">
+          <label>ملاحظات</label>
+          <textarea [(ngModel)]="panelForm.notes" rows="2"></textarea>
+        </div>
+        @if (panelError()) {
+          <div class="error-box"><mat-icon>error</mat-icon> {{ panelError() }}</div>
+        }
+      </div>
+      <footer class="form-footer">
+        <button class="btn-ghost" (click)="showPanelForm.set(false)" [disabled]="savingPanel()">إلغاء</button>
+        <button class="btn-primary" (click)="savePanel()" [disabled]="savingPanel()">
+          @if (savingPanel()) { جاري الحفظ... } @else { <mat-icon>save</mat-icon> حفظ }
+        </button>
+      </footer>
+    </div>
+  }
+
+</div>

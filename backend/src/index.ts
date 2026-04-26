@@ -12,6 +12,10 @@ import fuelRoute from './routes/fuel.js';
 import authRoute from './routes/auth.js';
 import usersRoute from './routes/users.js';
 import treasuryRoute from './routes/treasury.js';
+import attendanceRoute from './routes/attendance.js';
+import billingRoute from './routes/billing.js';
+import networkRoute from './routes/network.js';
+
 
 const app = new Hono();
 
@@ -24,7 +28,7 @@ app.use('*', cors({
     return allowed ? origin : null;
   },
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowHeaders: ['Content-Type'],
+  allowHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 }));
 
@@ -38,18 +42,23 @@ app.get('/', (c) => {
       employees: '/api/employees',
       tasks: '/api/tasks',
       fuel: '/api/fuel',
+      attendance: '/api/attendance',
+      billing: '/api/billing',
     },
   });
 });
 
 app.route('/api/auth', authRoute);
 app.route('/api/treasury', treasuryRoute);
+app.route('/api/billing', billingRoute);
 app.route('/api/users', usersRoute);
 app.route('/api/stations', stationsRoute);
 app.route('/api/employees', employeesRoute);
 app.route('/api/tasks', tasksRoute);
 app.route('/api/reset', resetRoute);
 app.route('/api/fuel', fuelRoute);
+app.route('/api/attendance', attendanceRoute);
+app.route('/api/network', networkRoute);
 
 const port = Number(process.env['PORT']) || 3000;
 
