@@ -9,6 +9,7 @@ import { EmployeeService } from '../../services/employee.service';
 import { FuelService } from '../../services/fuel.service';
 import { Station } from '../../models/station.model';
 import { Employee } from '../../models/employee.model';
+import { shortenStationName } from '../../utils/station-name';
 
 type StatusFilter = 'all' | 'active' | 'maintenance' | 'inactive';
 type ViewMode = 'cards' | 'table';
@@ -94,12 +95,7 @@ export class StationsComponent {
   }
 
   shortName(name: string): string {
-    if (!name) return '';
-    return name
-      .replace(/^محطة\s+/, '')
-      .replace(/\s+لتوليد\s+و?توزيع\s+الكهرباء\s*$/, '')
-      .replace(/\s+لتوليد\s+الكهرباء\s*$/, '')
-      .replace(/\s+لتوزيع\s+الكهرباء\s*$/, '');
+    return shortenStationName(name, '');
   }
 
   getTypeIcon(type: string): string {

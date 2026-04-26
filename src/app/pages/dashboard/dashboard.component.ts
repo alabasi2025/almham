@@ -9,6 +9,7 @@ import { EmployeeService } from '../../services/employee.service';
 import { TaskService } from '../../services/task.service';
 import { FuelService } from '../../services/fuel.service';
 import { Task } from '../../models/task.model';
+import { shortenStationName } from '../../utils/station-name';
 
 @Component({
   selector: 'app-dashboard',
@@ -88,12 +89,7 @@ export class DashboardComponent {
   }
 
   shortName(name: string): string {
-    if (!name) return '';
-    return name
-      .replace(/^محطة\s+/, '')
-      .replace(/\s+لتوليد\s+و?توزيع\s+الكهرباء\s*$/, '')
-      .replace(/\s+لتوليد\s+الكهرباء\s*$/, '')
-      .replace(/\s+لتوزيع\s+الكهرباء\s*$/, '');
+    return shortenStationName(name, '');
   }
 
   // ---------- Charts ----------

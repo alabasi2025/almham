@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { UserService, UserRow } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { StationService } from '../../services/station.service';
+import { shortenStationName } from '../../utils/station-name';
 
 type RoleFilter = 'all' | 'admin' | 'accountant' | 'station_manager' | 'technician' | 'cashier' | 'pending_pw';
 type ViewMode = 'cards' | 'table';
@@ -103,12 +104,7 @@ export class UsersComponent implements OnInit {
   }
 
   shortStation(name: string | null): string {
-    if (!name) return '—';
-    return name
-      .replace(/^محطة\s+/, '')
-      .replace(/\s+لتوليد\s+و?توزيع\s+الكهرباء\s*$/, '')
-      .replace(/\s+لتوليد\s+الكهرباء\s*$/, '')
-      .replace(/\s+لتوزيع\s+الكهرباء\s*$/, '');
+    return shortenStationName(name);
   }
 
   formatDate(iso: string | null): string {

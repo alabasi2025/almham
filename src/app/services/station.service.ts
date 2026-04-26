@@ -18,15 +18,9 @@ export class StationService {
   }
 
   loadAll(): void {
-    console.log('🔄 جاري جلب المحطات من:', this.apiUrl);
     this.http.get<Station[]>(this.apiUrl).subscribe({
-      next: (data) => {
-        console.log('✅ تم استلام المحطات:', data);
-        this.stations.set(data);
-      },
-      error: (err) => {
-        console.error('❌ خطأ في جلب المحطات:', err);
-      },
+      next: (data) => this.stations.set(data),
+      error: (err) => console.error('خطأ في جلب المحطات:', err),
     });
   }
 

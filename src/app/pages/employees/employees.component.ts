@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { EmployeeService } from '../../services/employee.service';
 import { StationService } from '../../services/station.service';
 import { Employee } from '../../models/employee.model';
+import { shortenStationName } from '../../utils/station-name';
 
 type StationFilter = 'all' | 'hq' | string;
 type ViewMode = 'cards' | 'table';
@@ -86,12 +87,7 @@ export class EmployeesComponent {
   }
 
   shortName(name: string): string {
-    if (!name) return '';
-    return name
-      .replace(/^محطة\s+/, '')
-      .replace(/\s+لتوليد\s+و?توزيع\s+الكهرباء\s*$/, '')
-      .replace(/\s+لتوليد\s+الكهرباء\s*$/, '')
-      .replace(/\s+لتوزيع\s+الكهرباء\s*$/, '');
+    return shortenStationName(name, '');
   }
 
   initials(name: string): string {

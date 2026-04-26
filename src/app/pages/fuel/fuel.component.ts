@@ -8,6 +8,7 @@ import { StationService } from '../../services/station.service';
 import { EmployeeService } from '../../services/employee.service';
 import { FuelService } from '../../services/fuel.service';
 import { Tank, TankRole, TankMaterial, Pump, PumpChannel, Generator, FuelReceipt, FuelTransfer, GeneratorConsumption } from '../../models/fuel.model';
+import { shortenStationName } from '../../utils/station-name';
 
 interface TankForm {
   id?: string;
@@ -700,11 +701,7 @@ export class FuelComponent implements OnInit {
   });
 
   shortStationName(name: string): string {
-    if (!name) return '';
-    return name
-      .replace('محطة ', '')
-      .replace(' لتوليد وتوزيع الكهرباء', '')
-      .trim();
+    return shortenStationName(name, '');
   }
 
   stationManager = computed(() => {
