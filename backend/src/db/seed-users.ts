@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { and, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { db } from './index.js';
 import { stations, employees, users } from './schema.js';
 import { hashPassword } from '../lib/password.js';
@@ -14,42 +14,14 @@ interface Person {
   phone?: string;
 }
 
-const DEFAULT_PASSWORD = 'almham2026';
+const RESET_PASSWORDS = process.env['SEED_RESET_USER_PASSWORDS'] === 'true';
+const SEED_PASSWORD = process.env['SEED_DEFAULT_USER_PASSWORD'];
 
 const PEOPLE: Person[] = [
-  // الإدارة العليا
   { name: 'محمد العباسي', role: 'admin', username: 'admin' },
-  { name: 'علي محمد الصعدي', role: 'accountant', username: 'ali.saadi' },
-
-  // مدراء المحطات
-  { name: 'علي أحمد المجهلي', role: 'station_manager', station: 'الصبالية', username: 'ali.almajhali' },
-  { name: 'رائد العباسي', role: 'station_manager', station: 'الدهمية', username: 'raed.abbasi' },
-  { name: 'قايد حسين العباسي', role: 'station_manager', station: 'جمال', username: 'qaid.hussein' },
-  { name: 'قايد حسن العباسي', role: 'station_manager', station: 'غليل', username: 'qaid.hassan' },
-
-  // فنّيو الصبالية
-  { name: 'محمد إبراهيم', role: 'technician', station: 'الصبالية', username: 'mohammed.ibrahim' },
-  { name: 'خالد أبو الرجال', role: 'technician', station: 'الصبالية', username: 'khaled.rijal' },
-  { name: 'محمد صغير', role: 'technician', station: 'الصبالية', username: 'mohammed.saghir' },
-
-  // فنّيو الدهمية
-  { name: 'إبراهيم فارع', role: 'technician', station: 'الدهمية', username: 'ibrahim.farea' },
-  { name: 'سلطان الريمي', role: 'technician', station: 'الدهمية', username: 'sultan.rimi' },
-  { name: 'حسن فهد', role: 'technician', station: 'الدهمية', username: 'hassan.fahd' },
-  { name: 'محمد عبدالله بقشة', role: 'technician', station: 'الدهمية', username: 'mohammed.baqsha' },
-  { name: 'علاء الصعدي', role: 'technician', station: 'الدهمية', username: 'alaa.saadi' },
-
-  // فنّيو جمال
-  { name: 'عبدالخالف المزعقي', role: 'technician', station: 'جمال', username: 'abdulkhalef.mazaqi' },
-  { name: 'وائل بشر', role: 'technician', station: 'جمال', username: 'wael.basher' },
-
-  // فنّيو غليل
-  { name: 'معين العباسي', role: 'technician', station: 'غليل', username: 'moin.abbasi' },
-  { name: 'مهند العباسي', role: 'technician', station: 'غليل', username: 'muhannad.abbasi' },
-  { name: 'أحمد المغربي', role: 'technician', station: 'غليل', username: 'ahmad.maghrabi' },
-  { name: 'مراد جريب', role: 'technician', station: 'غليل', username: 'murad.jarib' },
-  { name: 'سامي الحرازي', role: 'technician', station: 'غليل', username: 'sami.harazi' },
 ];
+
+const OFFICIAL_USERNAMES = new Set(PEOPLE.map((person) => person.username));
 
 async function findStationIdByKey(key: string): Promise<string | null> {
   const rows = await db.select().from(stations);
@@ -61,32 +33,32 @@ async function upsertEmployee(
   name: string,
   role: Role,
   stationId: string | null,
-): Promise<string> {
+): Promise<{ id: string; created: boolean }> {
   const existing = await db.select().from(employees).where(eq(employees.name, name)).limit(1);
   if (existing[0]) {
-    return existing[0].id;
+    await db
+      .update(employees)
+      .set({
+        role: roleLabel(role),
+        stationId,
+        status: 'active',
+      })
+      .where(eq(employees.id, existing[0].id));
+    return { id: existing[0].id, created: false };
   }
-  const roleLabel =
-    role === 'admin'
-      ? 'مدير تنفيذي'
-      : role === 'accountant'
-      ? 'محاسب'
-      : role === 'station_manager'
-      ? 'مدير محطة'
-      : 'فنّي';
 
   const [row] = await db
     .insert(employees)
     .values({
       name,
-      role: roleLabel,
+      role: roleLabel(role),
       phone: '',
       email: '',
       stationId,
       status: 'active',
     })
     .returning();
-  return row.id;
+  return { id: row.id, created: true };
 }
 
 async function upsertUser(
@@ -94,31 +66,90 @@ async function upsertUser(
   employeeId: string,
   role: Role,
   stationId: string | null,
-  passwordHash: string,
-): Promise<boolean> {
+  passwordHashForNewUser: string,
+): Promise<'created' | 'updated'> {
   const existing = await db.select().from(users).where(eq(users.username, username)).limit(1);
   if (existing[0]) {
-    return false;
+    const shouldResetPassword = RESET_PASSWORDS && SEED_PASSWORD;
+    await db
+      .update(users)
+      .set({
+        employeeId,
+        role,
+        stationId,
+        isActive: true,
+        ...(shouldResetPassword
+          ? { passwordHash: await hashPassword(SEED_PASSWORD), mustChangePassword: true }
+          : {}),
+      })
+      .where(eq(users.id, existing[0].id));
+    return 'updated';
   }
   await db.insert(users).values({
     username,
     employeeId,
     role,
     stationId,
-    passwordHash,
+    passwordHash: passwordHashForNewUser,
     isActive: true,
     mustChangePassword: true,
   });
-  return true;
+  return 'created';
+}
+
+function roleLabel(role: Role): string {
+  if (role === 'admin') return 'مدير تنفيذي';
+  if (role === 'accountant') return 'محاسب';
+  if (role === 'station_manager') return 'مدير محطة';
+  return 'فنّي';
+}
+
+async function resolvePasswordHashForNewUsers(): Promise<string> {
+  if (SEED_PASSWORD) {
+    if (SEED_PASSWORD.length < 8) {
+      throw new Error('SEED_DEFAULT_USER_PASSWORD يجب أن تكون 8 أحرف على الأقل');
+    }
+    return hashPassword(SEED_PASSWORD);
+  }
+
+  const [adminUser] = await db
+    .select({ passwordHash: users.passwordHash })
+    .from(users)
+    .where(eq(users.username, 'admin'))
+    .limit(1);
+
+  if (adminUser) {
+    console.log('🔐 لا توجد كلمة مرور seed في البيئة؛ سيتم استخدام كلمة مرور admin الحالية للحسابات الجديدة.');
+    return adminUser.passwordHash;
+  }
+
+  throw new Error('ضع SEED_DEFAULT_USER_PASSWORD في البيئة لإنشاء أول مستخدمين للنظام');
+}
+
+async function deleteNonOfficialUsers(): Promise<number> {
+  const allUsers = await db.select({ id: users.id, username: users.username, isActive: users.isActive }).from(users);
+  let deleted = 0;
+
+  for (const user of allUsers) {
+    if (!OFFICIAL_USERNAMES.has(user.username)) {
+      await db.delete(users).where(eq(users.id, user.id));
+      deleted++;
+      console.log(`🗑️  حذف حساب مستخدم: ${user.username}`);
+    }
+  }
+
+  return deleted;
 }
 
 async function main() {
-  console.log('🌱 زرع الموظفين والمستخدمين...');
+  console.log('🌱 مزامنة حساب مدير النظام فقط...');
   console.log('');
 
-  const passwordHash = await hashPassword(DEFAULT_PASSWORD);
+  const passwordHashForNewUsers = await resolvePasswordHashForNewUsers();
   let createdEmployees = 0;
+  let updatedEmployees = 0;
   let createdUsers = 0;
+  let updatedUsers = 0;
 
   for (const person of PEOPLE) {
     const stationId = person.station ? await findStationIdByKey(person.station) : null;
@@ -127,28 +158,30 @@ async function main() {
       continue;
     }
 
-    const employeeId = await upsertEmployee(person.name, person.role, stationId);
-    const empExisted = (await db.select().from(employees).where(eq(employees.id, employeeId))).length > 0;
-    if (empExisted) {
-      // check was it freshly created this run — heuristic: count before
-    }
-    createdEmployees++;
+    const employee = await upsertEmployee(person.name, person.role, stationId);
+    if (employee.created) createdEmployees++;
+    else updatedEmployees++;
 
-    const userCreated = await upsertUser(person.username, employeeId, person.role, stationId, passwordHash);
-    if (userCreated) {
+    const userStatus = await upsertUser(person.username, employee.id, person.role, stationId, passwordHashForNewUsers);
+    if (userStatus === 'created') {
       createdUsers++;
       console.log(`✅ ${person.username.padEnd(25)} — ${person.name} (${person.role}${person.station ? ', ' + person.station : ''})`);
     } else {
-      console.log(`➖ ${person.username.padEnd(25)} — موجود مسبقاً`);
+      updatedUsers++;
+      console.log(`🔄 ${person.username.padEnd(25)} — تحديث الربط والصلاحية`);
     }
   }
 
+  const deletedUsers = await deleteNonOfficialUsers();
+
   console.log('');
-  console.log(`📊 موظفون تمّ التحقّق منهم: ${createdEmployees}`);
+  console.log(`📊 موظفون جدد: ${createdEmployees}`);
+  console.log(`📊 موظفون تم تحديثهم: ${updatedEmployees}`);
   console.log(`👤 حسابات جديدة: ${createdUsers}`);
+  console.log(`👤 حسابات تم تحديثها: ${updatedUsers}`);
+  console.log(`🗑️  حسابات مستخدمين تم حذفها: ${deletedUsers}`);
   console.log('');
-  console.log('🔑 كلمة السر الافتراضية للجميع: ' + DEFAULT_PASSWORD);
-  console.log('⚠️  يجب على كل مستخدم تغييرها عند أول تسجيل دخول.');
+  console.log('✅ شاشة الدخول ستعرض مدير النظام فقط.');
   console.log('');
   process.exit(0);
 }

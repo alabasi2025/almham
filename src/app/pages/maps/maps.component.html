@@ -69,21 +69,34 @@
 
       <div class="points-list">
         @for (p of filteredPoints(); track p.id) {
-          <button
-            class="point-item"
+          <article
+            class="point-row"
             [class.selected]="selectedPointId() === p.id"
             [class.station]="p.kind === 'stations'"
-            [class.supplier]="p.kind === 'suppliers'"
-            (click)="focusPoint(p)">
-            <div class="point-icon">
-              <mat-icon>{{ pointIcon(p) }}</mat-icon>
-            </div>
-            <div class="point-body">
-              <strong>{{ p.title }}</strong>
-              <span>{{ p.subtitle }}</span>
-            </div>
-            <mat-icon class="go">chevron_left</mat-icon>
-          </button>
+            [class.supplier]="p.kind === 'suppliers'">
+            <button
+              type="button"
+              class="point-item"
+              (click)="focusPoint(p)">
+              <div class="point-icon">
+                <mat-icon>{{ pointIcon(p) }}</mat-icon>
+              </div>
+              <div class="point-body">
+                <strong>{{ p.title }}</strong>
+                <span>{{ p.subtitle }}</span>
+              </div>
+              <mat-icon class="go">chevron_left</mat-icon>
+            </button>
+
+            <button
+              type="button"
+              class="point-edit"
+              [attr.aria-label]="'تعديل موقع ' + p.title"
+              (click)="startEditPoint(p)"
+              matTooltip="تعديل الموقع">
+              <mat-icon>edit_location_alt</mat-icon>
+            </button>
+          </article>
         } @empty {
           <p class="empty-hint">
             <mat-icon>info</mat-icon>

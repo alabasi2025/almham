@@ -1,0 +1,15 @@
+bin/
+obj/
+**/bin/
+**/obj/
+*.user
+*.suo
+*.tmp
+legacy-source/backups/*.bak
+node_modules/
+dist/
+tauri-billing/node_modules/
+tauri-billing/dist/
+tauri-billing/src-tauri/target/
+tauri-billing/src-tauri/binaries/*
+!tauri-billing/src-tauri/binaries/.gitkeep

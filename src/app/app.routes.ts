@@ -51,6 +51,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'stations/network-map',
+        loadComponent: () =>
+          import('./pages/stations/network-map/network-map.component').then(
+            (m) => m.NetworkMapComponent,
+          ),
+      },
+      {
         path: 'employees',
         loadComponent: () =>
           import('./pages/employees/employees.component').then(

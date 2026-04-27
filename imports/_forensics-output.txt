@@ -1,0 +1,250 @@
+╪د┘╪ص╪ش┘à: 137.4 MB
+
+╪د╪│╪ز╪«╪▒╪د╪ش ┘â┘ ╪د┘╪│┘╪د╪│┘...
+╪د┘┘à╪ش┘à┘ê╪╣: 834991
+
+ظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـ
+≡اô 1. ┘à┘╪╖┘é╪ر mypassword4lonin / Administrator (0x2cdcd0)
+ظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـ
+  [0x2cdcb0] "Administrator" ظ Administrator
+  [0x2cdcd0] "mypassword4lonin" ظ ≡ا»≡ا»≡ا» PASSWORD
+  [0x2cdd60] "SOFTWARE\Microsoft\Shared Tools Location"
+  [0x2cddb8] "MSINFO"
+  [0x2cddcc] "SOFTWARE\Microsoft\Shared Tools\MSINFO"
+  [0x2cde20] "PATH"
+  [0x2cde30] "TheSameNameOf:vCurrentDB_Name"
+  [0x2cdf18] "SELECT zTableInfo.* FROM zTableInfo WHERE (((zTableInfo.Tbl_SyncImpBrnDBSortNo) > 0)) ORDER BY zTableInfo.Tbl_SyncImpBrnDBSortNo;"
+  [0x2ce020] "Microsoft Base Cryptographic Provider v1.0"
+  [0x2ce0f4] "SELECT zTableInfo.* FROM zTableInfo WHERE (((zTableInfo.Tbl_SyncImpSysDBSortNo) > 0)) ORDER BY zTableInfo.Tbl_SyncImpSysDBSortNo;"
+  [0x2ce238] "API-Guide test program"
+  [0x2ce26c] "http://checkip.dyndns.org/"
+
+ظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـ
+≡اô 2. ┘à┘╪╖┘é╪ر zuakha033 / CheckData (0x2d1dec)
+ظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـ
+  [0x2d1b64] " InitializeData"
+  [0x2d1b88] "SELECT * FROM UserData WHERE Us_ID = "
+  [0x2d1be0] "gfDtsAPI"
+  [0x2d1c40] "      "
+  [0x2d1d8c] " ..."
+  [0x2d1dd0] " CheckData"
+  [0x2d1dec] "zuakha033" ظ ≡ا» zuakha033
+  [0x2d1e04] "##0.00"
+
+ظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـ
+≡اô 3. ╪│┘╪│┘╪ر connection string (sa password leak)
+ظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـ
+[0x3cd938] "Provider=SQLOLEdb.1;Persist Security Info=False;Data Source=YemenID-PC10;Initial Catalog=Ecas9220;User ID=sa;Password=123"
+[0x3cc0cc] "Provider=SQLOLEdb.1;Data Source=SQL5005.site4now.net,1433;Initial Catalog=DB_A61228_EcasNet;User ID=DB_A61228_EcasNet_admin;Password=LitN3wYnet_123;"
+[0x446070] "Provider=SQLOLEdb.1;Persist Security Info=False;Data Source=YemenID-PC10;Initial Catalog= Ecas9982 ;User ID=sa;Password=123"
+
+ظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـ
+≡اô 4. ┘â┘ ╪ز╪│╪▒┘è╪ذ╪د╪ز ┘â┘┘à╪د╪ز ╪│╪▒ SQL Server
+ظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـ
+  [0x2e6da8]
+    ";Password="
+  [0x3cc0cc]
+    "Provider=SQLOLEdb.1;Data Source=SQL5005.site4now.net,1433;Initial Catalog=DB_A61228_EcasNet;User ID=DB_A61228_EcasNet_admin;Password=LitN3wYnet_123;"
+  [0x3cd938]
+    "Provider=SQLOLEdb.1;Persist Security Info=False;Data Source=YemenID-PC10;Initial Catalog=Ecas9220;User ID=sa;Password=123"
+  [0x3cdcd0]
+    "Provider=MSDASQL.1;Persist Security Info=False;User ID=a61228_ecasnet;Extended Properties='DRIVER={MySQL ODBC 5.1 Driver};DATABASE=db_a61228_EcasNet;SERVER=mysql5027.site4now.net;UID=a61228_ecasnet;PASSWORD=LitN3wYnet_123;';OPTION=16427;PORT=3306;"
+  [0x3ce474]
+    "PASSWORD="
+  [0x446070]
+    "Provider=SQLOLEdb.1;Persist Security Info=False;Data Source=YemenID-PC10;Initial Catalog= Ecas9982 ;User ID=sa;Password=123"
+  [0x4d48d0]
+    "Data Source=srv;Initial Catalog=pubs;User ID=sa;Password=; "
+  [0x531e00]
+    "] WITH PASSWORD=N'"
+  [0x58dad0]
+    "http://starsyementechnology.com/YemenID/SMSGetWay.aspx?User_ID=12363358&Password=Y8p6D1x3E7m5N7i4D2y6D3u6T3m&Mobile_No="
+  [0x58dc60]
+    "&password="
+  [0x58dcb4]
+    "http://starsyementechnology.com/RyaamPower/SMSGetWay.aspx?User_ID=12365141&Password=Rfrbvislnbydeosgzixf4ptvmjwyqzlpbxidb8mtaolvrsxjpqheiynPwr&Mobile_No=%D8%B1%D9%82%D9%85%20%D8%A7%D9%84%D9%85%D9%88%D8%A8%D8%A7%D9%8A%D9%84&TextMessage=%D9%86%D8%B5%20%D8%A7%D9%84%D8%B1%D8%B3%D8%A7%D9%84%D8%A9%20%3Cbr%20target="
+  [0x58df28]
+    "http://starsyementechnology.com/RyaamPower/SMSGetWay.aspx?User_ID=12365141&Password=Rfrbvislnbydeosgzixf4ptvmjwyqzlpbxidb8mtaolvrsxjpqheiynPwr&Mobile_No="
+  [0x58e10c]
+    "http://starsyementechnology.com/RyaamPower/SMSGetWay.aspx?User_ID=12365141&Password=Rfrbvislnbydeosgzixf4ptvmjwyqzlpbxidb8mtaolvrsxjpqheiynPwr&Mobile_No=777707971&TextMessage="
+  [0x58e724]
+    "&Password="
+  [0x6d65ac]
+    "Provider=SQLOLEDB.1;Persist Security Info=True;Data Source=YemenID-PC11;Initial Catalog=Ecas1012;User ID=sa;Password=Ecas@123;"
+  [0x6da7ec]
+    "Data Source=kamaran.yedns.org,38160;User Id=zuc9982;Password='Ecas@9982.zuc';Initial Catalog=Ecas9982"
+  [0x6da9c8]
+    "Provider=SQLOLEDB;Persist Security Info=False;Data Source=kamaran.yedns.org,38160;Initial Catalog=Ecas9982;User ID=zuc9982;Password=Ecas@9982.zuc;"
+  [0x6dac88]
+    "Provider=SQLOLEDB;Persist Security Info=False;Data Source=(local);Initial Catalog=Ecas9982;User ID=sa;Password=Ecas@123;"
+  [0x6dda20]
+    "Initial Catalog=Ecas9982;User ID=zuc9982;Password=Ecas@9982.zuc;"
+  [0xac3388]
+    "Provider=SQLOLEDB.1;Password=Ecas@123;Persist Security Info=True;User ID=sa;Initial Catalog=Ecas9982;Data Source=(local);Use Procedure for Prepare=1;Auto Translate=True;Packet Size=4096;Workstation ID=YEMENID-PC11;Use Encryption for Data=False;Tag with column collation when possible=False"
+
+ظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـ
+≡اô 5. ┘â┘ ┘é┘è┘à MD5 hash (32 hex chars)
+ظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـ
+╪╣╪»╪» ╪د┘┘ç╪د╪┤╪د╪ز: 120
+  [0x2f1cb4] d4d72d3962451070e75b3c8e8cecb639  ظ ┘é╪ذ┘┘ç╪د: "Lit_Yemen-ID_$_Ecas_0000@255"
+  [0x2f1d8c] 13bfb5093c640fc9812d5f0896dead8a  ظ ┘é╪ذ┘┘ç╪د: "NewPowerNNB"
+  [0x2f1f58] c8ac05e1be2fa0275b08418f3b2296ac  ظ ┘é╪ذ┘┘ç╪د: "mghrbi"
+  [0x2f21bc] f3d6ea4915c966f8d5ca0ed528c5d837  ظ ┘é╪ذ┘┘ç╪د: "Lit_ALAmin-Ele_$_0771@255"
+  [0x2f2204] b3e720620af24817a2e4e30a044e8231  ظ ┘é╪ذ┘┘ç╪د: "f3d6ea4915c966f8d5ca0ed528c5d837"
+  [0x2f224c] 1211993306d81bcc68774664e2e7b75f  ظ ┘é╪ذ┘┘ç╪د: "b3e720620af24817a2e4e30a044e8231"
+  [0x2f2300] 15a9c8f6514eef8f9d2d0d85fc4011dc  ظ ┘é╪ذ┘┘ç╪د: "Lit_BaghdadElec_$_0772@255"
+  [0x2f2348] 967177fbb38d0bef83fbbb4d94344ac5  ظ ┘é╪ذ┘┘ç╪د: "15a9c8f6514eef8f9d2d0d85fc4011dc"
+  [0x2f23e8] 25f1e33c4217bdb37b28ce898d7139f4  ظ ┘é╪ذ┘┘ç╪د: "Lit_BorjStation_$_0773@255"
+  [0x2f2430] aad83935142003af5178c4fe8957154b  ظ ┘é╪ذ┘┘ç╪د: "25f1e33c4217bdb37b28ce898d7139f4"
+  [0x2f24d0] 59cd603449dfae7af3225a14dcda51f3  ظ ┘é╪ذ┘┘ç╪د: "Lit_BorjMadynah_$_0774@255"
+  [0x2f2570] ac65494c91c81e5a4463ddf30746cfc8  ظ ┘é╪ذ┘┘ç╪د: "Lit_AboAmmarElc_$_0775@255"
+  [0x2f25b8] c33dffd1568e310c15e633059c2acdef  ظ ┘é╪ذ┘┘ç╪د: "ac65494c91c81e5a4463ddf30746cfc8"
+  [0x2f2654] f0a676a7f0f91aa51497793978821d50  ظ ┘é╪ذ┘┘ç╪د: "Lit_ComIbbElec_$_0776@255"
+  [0x2f269c] 1375b0f6fb17aa13977dd626fb4bc652  ظ ┘é╪ذ┘┘ç╪د: "f0a676a7f0f91aa51497793978821d50"
+  [0x2f2734] 3ba20ccb32fb48b10c20686bef80bd7a  ظ ┘é╪ذ┘┘ç╪د: "Lit_NshwanPwr_$_0777@255"
+  [0x2f27d8] 3c894f63387a71c00873a0e3fe3a7fd2  ظ ┘é╪ذ┘┘ç╪د: "Lit_ComrIndsElec_$_0779@255"
+  [0x2f2820] 34703e29f4be2654eae6cc42330756e1  ظ ┘é╪ذ┘┘ç╪د: "3c894f63387a71c00873a0e3fe3a7fd2"
+  [0x2f28a4] ffc37d4c935ef37b55951b5b49f3f344  ظ ┘é╪ذ┘┘ç╪د: "Lit_IEG_AL-Lewa_$_0780@255"
+  [0x2f28ec] 19c80e8e2c714c919a19aee9a3b1ce49  ظ ┘é╪ذ┘┘ç╪د: "ffc37d4c935ef37b55951b5b49f3f344"
+  [0x2f298c] 9dfde3b79f5152c7ad84d5f8ab37f818  ظ ┘é╪ذ┘┘ç╪د: "Lit_IEG_SamaIBB_$_0781@255"
+  [0x2f29d4] 7122cdb3b858242f5ba7459aa02feaff  ظ ┘é╪ذ┘┘ç╪د: "9dfde3b79f5152c7ad84d5f8ab37f818"
+  [0x2f2a74] 616def150ad9ec5fb8aab0b0d4375507  ظ ┘é╪ذ┘┘ç╪د: "Lit_IEG_ALMonir_$_0782@255"
+  [0x2f2abc] 6f699725ee0535133018519168d5cea9  ظ ┘é╪ذ┘┘ç╪د: "616def150ad9ec5fb8aab0b0d4375507"
+  [0x2f2b58] 0c5f9d1da1fc231cc8582b5c7ca2c4fe  ظ ┘é╪ذ┘┘ç╪د: "Lit_KhaeerElec_$_0783@255"
+  [0x2f2ba0] 39a154102a410eeb3bfccd529104a2b2  ظ ┘é╪ذ┘┘ç╪د: "0c5f9d1da1fc231cc8582b5c7ca2c4fe"
+  [0x2f2c3c] 53648d6ff1de0786f9dde5f6331ef553  ظ ┘é╪ذ┘┘ç╪د: "Lit_Al-Assemah_$_1123@255"
+  [0x2f2cdc] dc6999cfb92dd8a1f9d4d675543deba0  ظ ┘é╪ذ┘┘ç╪د: "Lit_Qadsiah-Elc_$_2113@255"
+  [0x2f2d24] c4202173df5f5eb467b51770f6147c7b  ظ ┘é╪ذ┘┘ç╪د: "dc6999cfb92dd8a1f9d4d675543deba0"
+  [0x2f2d6c] 61a81cc33ddacc619780fed5589c0c9b  ظ ┘é╪ذ┘┘ç╪د: "c4202173df5f5eb467b51770f6147c7b"
+  [0x2f2e64] a414c014f4bc856bf0146dbababe195c  ظ ┘é╪ذ┘┘ç╪د: "LitJamalElctrcEcas2662@255"
+  [0x2f2f04] f1aaa9a4887ddffbd319d0c8bf796b5c  ظ ┘é╪ذ┘┘ç╪د: "Lit_MamonJeblah_$_2666@255"
+  [0x2f2fa4] 264dd0a8375329ddf005d1a744e3ca16  ظ ┘é╪ذ┘┘ç╪د: "Lit_SabalyahEle_$_2668@255"
+  [0x2f2fec] df4711872d5f7d280a369020794b611d  ظ ┘é╪ذ┘┘ç╪د: "264dd0a8375329ddf005d1a744e3ca16"
+  [0x2f308c] a7b26ba4105bcb352a27e751823e806b  ظ ┘é╪ذ┘┘ç╪د: "Lit_AlTwfiq-Ele_$_2670@255"
+  [0x2f3128] 1fc1ff8e31bee843c16bb2b94ecc6617  ظ ┘é╪ذ┘┘ç╪د: "Lit_Gholil-Ele_$_2672@255"
+  [0x2f3170] acaa1b3722b5786a6dcbe4a2ca4887a9  ظ ┘é╪ذ┘┘ç╪د: "1fc1ff8e31bee843c16bb2b94ecc6617"
+  [0x2f3210] 2f20d9c4f1e929360e8d97715a405534  ظ ┘é╪ذ┘┘ç╪د: "Lit_Dohmyah-Ele_$_2673@255"
+  [0x2f3258] aacc5860a1cb3c21263107cc26559603  ظ ┘é╪ذ┘┘ç╪د: "2f20d9c4f1e929360e8d97715a405534"
+  [0x2f32f8] a6ebd14399bea1f4dc7bdf45fe37ca1d  ظ ┘é╪ذ┘┘ç╪د: "Lit_NewPowerSQB_$_3133@255"
+
+ظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـ
+≡اô 6. ┘┘à╪╖ Lit_*@255 (╪▒╪ذ┘à╪د ╪ز╪╖╪ذ┘è┘é Vigen├ذre/XOR ╪╣┘┘ë ╪د╪│┘à ╪د┘┘à╪┤╪▒┘ê╪╣)
+ظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـ
+╪╣╪»╪»: 8
+  [0x2f1eac] "LitYID-User1@255"
+  [0x2f1eec] "LitYID-User2@255"
+  [0x2f20c8] "LitPowerMetYm2Ecas9105@255"
+  [0x2f2dd0] "LitDeltaEnergyEcas2114@255"
+  [0x2f2e28] "LitJamalElctrcEcas2662@255"
+  [0x2f51d4] "LitPower_LightEcas9147@255"
+  [0x58da34] "LitYidSMS@123"
+  [0x58e810] "LitAkrmHathrmyEcas9443@255"
+
+ظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـ
+≡اô 7. ╪ش┘à┘è╪╣ ┘â┘┘à╪د╪ز ╪د┘╪│╪▒ ╪د┘┘à╪ص╪ز┘à┘╪ر ┘┘è ╪د┘┘ exe
+ظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـ
+┘â┘┘à╪د╪ز ┘╪▒┘è╪»╪ر: 644
+
+╪ث┘ê┘ّ┘ 100 ┘à╪▒╪┤┘┘ّ╪ص (╪د┘╪ث┘é┘┘ّ ╪ز┘â╪▒╪د╪▒╪د┘ï = ╪د┘╪ث┘â╪س╪▒ ╪ز╪┤╪د╪ذ┘ç╪د┘ï ┘à╪╣ ┘â┘┘à╪ر ╪│╪▒):
+  YIDedCheckLicnce07710114   ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2cd094)
+  mypassword4lonin           ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2cdcd0)
+  Litmam4CmprsFile           ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2d09b8)
+  Litmam4DeCmprsFile         ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2d11a4)
+  zuakha033                  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2d1dec)
+  Rmot_MustGiveGPS4Pay       ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2ecfc8)
+  Rmot_MustGiveGPS4Read      ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2ed174)
+  Rmot_ValidRangeGPS4Read    ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2ed1d8)
+  Rmot_Restricted4MH         ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2ed3ec)
+  sMs_tID2                   ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2eebf4)
+  sMs_tID3                   ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2eec0c)
+  smsc2.awaltech.net         ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2eec4c)
+  sMs_WaitTime4SendNextMsg   ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2eee10)
+  WtsAp_tID2                 ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f11ec)
+  WtsAp_tID3                 ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f1208)
+  YID-User1                  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f1e94)
+  LitYID-User1@255           ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f1eac)
+  YID-User2                  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f1ed4)
+  LitYID-User2@255           ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f1eec)
+  u_WaqedyPower@255          ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f2018)
+  Ymax@123                   ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f2050)
+  US-ye@255                  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f2078)
+  YemenID@555                ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f2090)
+  PowerMetYm2                ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f20ac)
+  Lit_ALAmin-Ele_$_0771@255  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f2184)
+  Lit_ComIbbElec_$_0776@255  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f261c)
+  Lit_NshwanPwr_$_0777@255   ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f26fc)
+  Lit_KhaeerElec_$_0783@255  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f2b20)
+  Lit_Al-Assemah_$_1123@255  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f2c04)
+  Lit_Gholil-Ele_$_2672@255  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f30f0)
+  Lit_Amran-Elec_$_4141@255  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f33e0)
+  Lit_AnwarDoran_$_4442@255  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f347c)
+  Lit_AanesPower_$_4668@255  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f351c)
+  Lit_JawzyGroup_$_9102@255  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f381c)
+  Lit_AdhwaAlam_$_9105@255   ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f3a10)
+  mghrbi@255                 ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f3b98)
+  Lit_KnanEnergy_$_9113@255  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f3e58)
+  Lit_ThahbanPwr_$_9115@255  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f3ef4)
+  Lit_QiyadaElec_$_9121@255  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f438c)
+  Lit_QiyadaElec_$_9221@255  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f43e0)
+  Lit_QalisiPwr_$_9122@255   ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f44c0)
+  Lit_GhamdanPwr_$_9123@255  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f455c)
+  Lit_TaipaElec_$_9126@255   ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f46a4)
+  Lit_ArmakPower_$_9128@255  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f4740)
+  Lit_BahrmElec_$_9129@255   ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f4820)
+  Lit_AT_Station_$_9134@255  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f4b24)
+  Lit_AnwarPower_$_9135@255  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f4bc0)
+  Lit_ThoreyaElc_$_9136@255  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f4c5c)
+  Lit_SuperLight_$_9137@255  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f4cf8)
+  ATWAAlregam@123321         ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f4d94)
+  Lit_RadheyElec_$_9138@255  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f4e24)
+  Lit_SehlolElec_$_9139@255  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f4e78)
+  Lit_RyaamPower_$_9140@255  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f4f7c)
+  Ma3berPwr                  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f5090)
+  Lit_Ma3berPwr_$_9143@255   ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f50a8)
+  Lit_EzzLights_$_9148@255   ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f5228)
+  Lit_RobaPower_$_9151@255   ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f5384)
+  Lit_StarPower_$_9153@255   ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f541c)
+  Lit_ALTaawoun_$_9154@255   ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f5500)
+  Lit_MansoorElc_$_9155@255  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f559c)
+  Lit_TaizOneElc_$_9157@255  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f5634)
+  Lit_TaizTowElc_$_9158@255  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f56d0)
+  Admin@206                  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f577c)
+  ALOsemeTow@277             ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f5864)
+  ALOsemeElc@277             ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f58ec)
+  H2-Power                   ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f5910)
+  Lit_H2-Power_$_9161@255    ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f5928)
+  AkrmHathrmyDmtB01          ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f59d4)
+  AkrmHathrmyDmtB01@255      ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f59fc)
+  AkrmHathrmyRdmhB03         ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f5b14)
+  AkrmHathrmyRdmhB03@255     ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f5b40)
+  AkrmHathrmyJobnB04         ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f5b74)
+  AkrmHathrmyJobnB04@255     ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f5ba0)
+  AkrmHathrmyHajajB05        ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f5bd4)
+  AkrmHathrmyHajajB05@55     ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f5c00)
+  Lit_ALNoorElec_$_9460@255  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f5c50)
+  Kamaran24                  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f5ea8)
+  Lit_Kamaran24_$_9982@255   ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f5ec0)
+  wKamaran24                 ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f5f88)
+  Lit_MohafaDhah_$_9983@255  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f608c)
+  Lit_NjmStation_$_9990@255  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f61c8)
+  TwEA_3Result               ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f9d2c)
+  TwEA_3Note                 ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f9d4c)
+  TwEA_4Note                 ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2f9d68)
+  TwEA_3ErrorRsomService     ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2fa2ec)
+  TwEA_3CorrectRsomService   ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2fa320)
+  TwEA_2TaswihValue          ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2fa518)
+  TwEA_2Note                 ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2fa6f8)
+  TwEA_1CorrectTsmID         ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2fabec)
+  TwEA_1ErrorTsmID           ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2fac18)
+  TwEA_1Note                 ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2fac40)
+  TwEA_2ErrorConsumeValue    ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2fac5c)
+  TwEA_2CorrectConsumeValue  ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2fac90)
+  TwER_1Note                 ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2fd104)
+  TwER_1Result               ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2fd28c)
+  TwER_1ErrorRead            ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2fd2ac)
+  TwER_1CorrectRead          ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2fd2d0)
+  TwER_1Value                ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2fd2f8)
+  TwER_2ActualConsume        ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2fd314)
+  TwER_2ActualRead           ╪ز┘â╪▒╪د╪▒: 1  (╪ث┘ê┘ّ┘: 0x2fd340)
+
+ظ£à ╪ز┘é╪▒┘è╪▒ ┘â╪د┘à┘ ┘┘è: imports/_deep-forensics.txt

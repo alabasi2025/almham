@@ -435,6 +435,18 @@ export class MapsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.map?.flyTo([p.lat, p.lng], 14, { duration: 1.1 });
   }
 
+  startEditPoint(p: MapPoint) {
+    this.selectedPointId.set(p.id);
+    this.map?.flyTo([p.lat, p.lng], Math.max(this.map?.getZoom() ?? 14, 14), { duration: 0.8 });
+
+    if (p.kind === 'stations') {
+      this.startEditStation(p.raw as Station);
+      return;
+    }
+
+    this.startEditSite(p.raw as SupplierSite & { supplierName?: string });
+  }
+
   setTileStyle(style: TileStyle) {
     this.tileStyle.set(style);
     this.applyTileStyle();

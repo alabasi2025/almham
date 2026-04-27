@@ -1,0 +1,247 @@
+<div class="expenses-page">
+
+  <!-- ============ HERO ============ -->
+  <header class="page-hero">
+    <div class="hero-bg-grid"></div>
+    <div class="hero-bg-orb orb-1"></div>
+
+    <div class="hero-top">
+      <div class="hero-title">
+        <a routerLink="/treasury" class="back-btn" title="رجوع">
+          <mat-icon>arrow_back</mat-icon>
+        </a>
+        <div class="hero-icon">
+          <mat-icon>receipt_long</mat-icon>
+        </div>
+        <div class="hero-text">
+          <h1>المصاريف</h1>
+          <p>كل مصروفات الشركة — رواتب، ديزل، إيجار، قطع غيار...</p>
+        </div>
+      </div>
+
+      <div class="hero-actions">
+        <button class="btn-primary" (click)="openForm()">
+          <mat-icon>add</mat-icon>
+          <span>تسجيل مصروف</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="hero-kpis">
+      <div class="k-card">
+        <div class="k-icon"><mat-icon>receipt</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ totals().count }}</span>
+          <span class="k-label">بند مصروف</span>
+        </div>
+      </div>
+      <div class="k-card big">
+        <div class="k-icon"><mat-icon>payments</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ treasury.formatMoney(totals().total) }}</span>
+          <span class="k-label">الإجمالي</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ TOOLBAR ============ -->
+  <div class="toolbar">
+    <div class="search-box">
+      <mat-icon>search</mat-icon>
+      <input
+        type="text"
+        placeholder="ابحث في الوصف أو التصنيف أو الصندوق..."
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)"
+      />
+      @if (searchQuery()) {
+        <button class="search-clear" (click)="searchQuery.set('')">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+
+    <div class="filter-group">
+      <label class="filter-label">التصنيف:</label>
+      <select [ngModel]="categoryFilter()" (ngModelChange)="categoryFilter.set($event)" title="التصنيف">
+        <option value="all">كل التصنيفات</option>
+        @for (c of treasury.categories(); track c.id) {
+          <option [value]="c.id">{{ c.name }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label class="filter-label">المحطة:</label>
+      <select [ngModel]="stationFilter()" (ngModelChange)="stationFilter.set($event)" title="المحطة">
+        <option value="all">الكل</option>
+        @for (s of stationService.stations(); track s.id) {
+          <option [value]="s.id">{{ treasury.shortStation(s.name) }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <!-- ============ TABLE ============ -->
+  @if (filtered().length > 0) {
+    <div class="table-wrap">
+      <table class="expenses-table">
+        <thead>
+          <tr>
+            <th>التاريخ</th>
+            <th>التصنيف</th>
+            <th>الوصف</th>
+            <th>المحطة</th>
+            <th>من الصندوق</th>
+            <th class="num">المبلغ</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (e of filtered(); track e.id) {
+            <tr>
+              <td class="date-cell">{{ formatDate(e.occurredAt) }}</td>
+              <td>
+                @if (e.categoryName) {
+                  <span class="cat-chip" [style.background]="e.categoryColor + '22'" [style.color]="e.categoryColor">
+                    @if (e.categoryIcon) {
+                      <mat-icon>{{ e.categoryIcon }}</mat-icon>
+                    }
+                    {{ e.categoryName }}
+                  </span>
+                } @else {
+                  <span class="muted">—</span>
+                }
+              </td>
+              <td class="desc">{{ e.description }}</td>
+              <td>{{ e.stationName ? treasury.shortStation(e.stationName) : 'الإدارة' }}</td>
+              <td>{{ e.cashboxName || '—' }}</td>
+              <td class="num amount">{{ treasury.formatMoney(e.amount, e.currency) }}</td>
+              <td>
+                @if (auth.isAdmin() || auth.user()?.id === e.userId) {
+                  <button class="icon-btn danger" (click)="remove(e.id)" title="حذف">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <div class="empty-state">
+      <div class="empty-icon"><mat-icon>receipt_long</mat-icon></div>
+      @if (treasury.expenses().length === 0) {
+        <h3>لا توجد مصاريف بعد</h3>
+        <p>سجّل أوّل مصروف تشغيلي</p>
+      } @else {
+        <h3>لا توجد نتائج</h3>
+        <p>جرّب تعديل الفلاتر</p>
+      }
+      <button class="btn-primary" (click)="openForm()">
+        <mat-icon>add</mat-icon> تسجيل مصروف
+      </button>
+    </div>
+  }
+</div>
+
+<!-- ============ FORM MODAL ============ -->
+@if (showForm()) {
+  <div class="modal-overlay" (click)="closeForm()"></div>
+  <div class="form-panel">
+    <header class="form-header">
+      <div class="form-title">
+        <mat-icon>receipt_long</mat-icon>
+        <h3>مصروف جديد</h3>
+      </div>
+      <button class="close-btn" (click)="closeForm()" title="إغلاق">
+        <mat-icon>close</mat-icon>
+      </button>
+    </header>
+
+    <form class="form-body" (ngSubmit)="save()">
+      <label class="section-label">التصنيف</label>
+      <div class="category-grid">
+        @for (cat of treasury.categories(); track cat.id) {
+          <button
+            type="button"
+            class="cat-tab"
+            [class.active]="form.categoryId === cat.id"
+            [style.--cat-color]="cat.color || '#059669'"
+            (click)="form.categoryId = cat.id">
+            @if (cat.icon) { <mat-icon>{{ cat.icon }}</mat-icon> }
+            <span>{{ cat.name }}</span>
+          </button>
+        }
+      </div>
+
+      <div class="field-grid">
+        <div class="field full">
+          <label>الوصف *</label>
+          <input
+            type="text"
+            [(ngModel)]="form.description"
+            name="description"
+            placeholder="مثال: راتب الفني محمد إبراهيم لشهر أبريل"
+            required
+          />
+        </div>
+
+        <div class="field">
+          <label>المبلغ (ريال) *</label>
+          <input
+            type="number"
+            min="1"
+            step="any"
+            [(ngModel)]="form.amount"
+            name="amount"
+            dir="ltr"
+            placeholder="0"
+            required
+          />
+        </div>
+
+        <div class="field">
+          <label>من الصندوق *</label>
+          <select [(ngModel)]="form.cashboxId" name="cashboxId" required title="الصندوق">
+            <option value="">اختر الصندوق</option>
+            @for (c of treasury.cashboxes(); track c.id) {
+              <option [value]="c.id">{{ c.name }} ({{ treasury.formatMoney(c.currentBalance, c.currency) }})</option>
+            }
+          </select>
+        </div>
+
+        <div class="field full">
+          <label>المحطة (اختياري)</label>
+          <select [(ngModel)]="form.stationId" name="stationId" title="المحطة">
+            <option [ngValue]="null">الإدارة العامة</option>
+            @for (s of stationService.stations(); track s.id) {
+              <option [value]="s.id">{{ treasury.shortStation(s.name) }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      @if (errorMsg()) {
+        <div class="error-box">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ errorMsg() }}</span>
+        </div>
+      }
+    </form>
+
+    <footer class="form-footer">
+      <button type="button" class="btn-ghost" (click)="closeForm()" [disabled]="saving()">إلغاء</button>
+      <button type="button" class="btn-primary" (click)="save()" [disabled]="saving()">
+        @if (saving()) {
+          <span>جاري الحفظ...</span>
+        } @else {
+          <mat-icon>save</mat-icon>
+          <span>حفظ المصروف</span>
+        }
+      </button>
+    </footer>
+  </div>
+}

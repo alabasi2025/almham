@@ -26,8 +26,26 @@ export function getAuthCookieName(): string {
   return COOKIE_NAME;
 }
 
+function canProceedWithPendingPasswordChange(path: string): boolean {
+  return (
+    path === '/api/auth/me' ||
+    path === '/api/auth/logout' ||
+    path === '/api/auth/change-password'
+  );
+}
+
+function getBearerToken(c: Context<HonoEnv>): string | null {
+  const header = c.req.header('authorization');
+  if (!header) return null;
+
+  const [scheme, token] = header.split(' ');
+  if (scheme?.toLowerCase() !== 'bearer' || !token) return null;
+
+  return token.trim();
+}
+
 export async function requireAuth(c: Context<HonoEnv>, next: Next) {
-  const token = getCookie(c, COOKIE_NAME);
+  const token = getCookie(c, COOKIE_NAME) ?? getBearerToken(c);
   if (!token) {
     return c.json({ error: 'يجب تسجيل الدخول' }, 401);
   }
@@ -84,6 +102,16 @@ export async function requireAuth(c: Context<HonoEnv>, next: Next) {
     },
     tokenId: payload.tid,
   } satisfies AuthContext);
+
+  if (user.mustChangePassword && !canProceedWithPendingPasswordChange(c.req.path)) {
+    return c.json(
+      {
+        error: 'يجب تغيير كلمة السر قبل متابعة استخدام النظام',
+        code: 'PASSWORD_CHANGE_REQUIRED',
+      },
+      403,
+    );
+  }
 
   await next();
 }

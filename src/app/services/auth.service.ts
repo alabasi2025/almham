@@ -11,6 +11,14 @@ export interface AuthUser {
   mustChangePassword: boolean;
 }
 
+export interface LoginUserOption {
+  id: string;
+  username: string;
+  role: string;
+  stationId: string | null;
+  employeeName: string | null;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private http = inject(HttpClient);
@@ -41,6 +49,21 @@ export class AuthService {
     } finally {
       this._loading.set(false);
     }
+  }
+
+  async listStationsForLogin(): Promise<{ id: string; code: string; name: string }[]> {
+    return firstValueFrom(
+      this.http.get<{ id: string; code: string; name: string }[]>(
+        `${this.api}/stations-for-login`,
+      ),
+    );
+  }
+
+  async listUsersForLogin(stationId?: string): Promise<LoginUserOption[]> {
+    const url = stationId
+      ? `${this.api}/users-for-login?stationId=${encodeURIComponent(stationId)}`
+      : `${this.api}/users-for-login`;
+    return firstValueFrom(this.http.get<LoginUserOption[]>(url));
   }
 
   async login(username: string, password: string): Promise<AuthUser> {

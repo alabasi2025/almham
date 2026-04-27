@@ -1,0 +1,28 @@
+{
+  "name": "ecas-legacy-billing-tauri",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 1420",
+    "build": "tsc && vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 1420",
+    "api": "dotnet run --project ..\\src\\EcasLegacyBilling.Api\\EcasLegacyBilling.Api.csproj",
+    "prepare:sidecar": "powershell -NoProfile -ExecutionPolicy Bypass -File ..\\scripts\\publish-tauri-sidecar.ps1",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "npm run prepare:sidecar && tauri build"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "latest",
+    "react": "latest",
+    "react-dom": "latest"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "@vitejs/plugin-react": "latest",
+    "typescript": "latest",
+    "vite": "latest"
+  }
+}

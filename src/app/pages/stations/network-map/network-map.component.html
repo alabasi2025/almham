@@ -1,0 +1,294 @@
+<div class="network-map-page" [class.editing]="editMode() !== null" [class.drawing]="drawMode() || drawSegmentMode()">
+
+  <!-- ========== SIDE PANEL ========== -->
+  <aside class="side-panel">
+    <!-- Header -->
+    <div class="panel-head">
+      <div class="brand">
+        <div class="brand-icon">
+          <mat-icon>cable</mat-icon>
+        </div>
+        <div>
+          <h2>خريطة الشبكة</h2>
+          <p>الفيدرات والطبلات والمحطات</p>
+        </div>
+      </div>
+
+      <div class="quick-stats">
+        <div class="qs on">
+          <span class="dot" style="background:#8b5cf6; box-shadow:0 0 8px #8b5cf6"></span>
+          <span class="v">{{ stations().length }}</span>
+          <span class="l">محطة</span>
+        </div>
+        <div class="qs on">
+          <span class="dot" style="background:#3b82f6; box-shadow:0 0 8px #3b82f6"></span>
+          <span class="v">{{ networkService.feeders().length }}</span>
+          <span class="l">فيدر</span>
+        </div>
+        <div class="qs on">
+          <span class="dot" style="background:#10b981; box-shadow:0 0 8px #10b981"></span>
+          <span class="v">{{ networkService.panels().length }}</span>
+          <span class="l">طبلة</span>
+        </div>
+        <div class="qs on">
+          <span class="dot" style="background:#f59e0b; box-shadow:0 0 8px #f59e0b"></span>
+          <span class="v">{{ mappedPercent() }}%</span>
+          <span class="l">محددة الموقع</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Station Filter -->
+    <div class="panel-filter">
+      <mat-icon>filter_alt</mat-icon>
+      <select [ngModel]="selectedStationId()" (ngModelChange)="selectedStationId.set($event)">
+        <option value="">كل المحطات</option>
+        @for (s of stations(); track s.id) {
+          <option [value]="s.id">{{ s.name }}</option>
+        }
+      </select>
+    </div>
+
+    <!-- Layer toggles -->
+    <div class="layers">
+      <button
+        class="layer-btn"
+        [class.active]="showStations()"
+        [style.--lc]="'#8b5cf6'"
+        (click)="showStations.set(!showStations()); redrawAll()">
+        <mat-icon>shield</mat-icon>
+        <span>المحطات</span>
+        <span class="spacer"></span>
+        <mat-icon>{{ showStations() ? 'visibility' : 'visibility_off' }}</mat-icon>
+      </button>
+      <button
+        class="layer-btn"
+        [class.active]="showFeeders()"
+        [style.--lc]="'#3b82f6'"
+        (click)="showFeeders.set(!showFeeders()); redrawAll()">
+        <mat-icon>cable</mat-icon>
+        <span>الفيدرات</span>
+        <span class="spacer"></span>
+        <mat-icon>{{ showFeeders() ? 'visibility' : 'visibility_off' }}</mat-icon>
+      </button>
+      <button
+        class="layer-btn"
+        [class.active]="showSegments()"
+        [style.--lc]="'#f59e0b'"
+        (click)="showSegments.set(!showSegments()); redrawAll()">
+        <mat-icon>timeline</mat-icon>
+        <span>المقاطع</span>
+        <span class="spacer"></span>
+        <mat-icon>{{ showSegments() ? 'visibility' : 'visibility_off' }}</mat-icon>
+      </button>
+      <button
+        class="layer-btn"
+        [class.active]="showPanels()"
+        [style.--lc]="'#10b981'"
+        (click)="showPanels.set(!showPanels()); redrawAll()">
+        <mat-icon>electric_meter</mat-icon>
+        <span>الطبلات</span>
+        <span class="spacer"></span>
+        <mat-icon>{{ showPanels() ? 'visibility' : 'visibility_off' }}</mat-icon>
+      </button>
+    </div>
+
+    <!-- Feeders list -->
+    <div class="list-section">
+      <div class="sec-head">
+        <h4>
+          <mat-icon>cable</mat-icon>
+          الفيدرات
+        </h4>
+        <span class="count">{{ filteredFeeders().length }}</span>
+      </div>
+      <div class="items-list">
+        @for (f of filteredFeeders(); track f.id) {
+          <div class="item-row" [style.--item-color]="getStationColor(f.stationId)">
+            <button class="item-main" (click)="focusFeeder(f)">
+              <div class="item-icon">
+                <mat-icon>cable</mat-icon>
+              </div>
+              <div class="item-body">
+                <strong>{{ f.name }}</strong>
+                <span>{{ f.stationName }} · {{ f.panelsCount }} طبلة</span>
+              </div>
+              <mat-icon class="route-status" [class.mapped]="f.routeCoordinates && f.routeCoordinates.length > 0">
+                {{ f.routeCoordinates && f.routeCoordinates.length > 0 ? 'route' : 'timeline' }}
+              </mat-icon>
+            </button>
+            <button class="item-action" (click)="startDrawRoute(f)" matTooltip="رسم مسار الفيدر (قديم)">
+              <mat-icon>edit_road</mat-icon>
+            </button>
+            <button class="item-action segment-draw-btn" (click)="startDrawSegment(f, 'main')" matTooltip="رسم مقطع رئيسي">
+              <mat-icon>timeline</mat-icon>
+            </button>
+          </div>
+        } @empty {
+          <p class="empty-hint">
+            <mat-icon>info</mat-icon>
+            لا توجد فيدرات
+          </p>
+        }
+      </div>
+    </div>
+
+    <!-- Unmapped panels -->
+    @if (unmappedPanels().length > 0) {
+      <div class="unmapped-section">
+        <div class="sec-head">
+          <h4>
+            <mat-icon>edit_location_alt</mat-icon>
+            طبلات بدون موقع
+          </h4>
+          <span class="count warn">{{ unmappedPanels().length }}</span>
+        </div>
+        <div class="items-list">
+          @for (p of unmappedPanels(); track p.id) {
+            <button class="unmapped-item" (click)="startEditPanelLocation(p)" [style.--item-color]="getStationColor(p.stationId)">
+              <mat-icon>electric_meter</mat-icon>
+              <span>
+                {{ p.name }}
+                <small>{{ p.feederName || p.stationName }}</small>
+              </span>
+              <mat-icon class="add">add_location</mat-icon>
+            </button>
+          }
+        </div>
+      </div>
+    }
+  </aside>
+
+  <!-- ========== MAP ========== -->
+  <main class="map-area">
+
+    <!-- Floating toolbar -->
+    <div class="map-toolbar">
+      <div class="toolbar-group">
+        <button
+          [class.active]="tileStyle() === 'dark'"
+          (click)="setTileStyle('dark')"
+          matTooltip="ليلي">
+          <mat-icon>dark_mode</mat-icon>
+        </button>
+        <button
+          [class.active]="tileStyle() === 'streets'"
+          (click)="setTileStyle('streets')"
+          matTooltip="شوارع">
+          <mat-icon>map</mat-icon>
+        </button>
+        <button
+          [class.active]="tileStyle() === 'satellite'"
+          (click)="setTileStyle('satellite')"
+          matTooltip="قمر صناعي">
+          <mat-icon>satellite_alt</mat-icon>
+        </button>
+      </div>
+
+      <button class="toolbar-btn" (click)="fitToAll()" matTooltip="عرض كل النقاط">
+        <mat-icon>zoom_out_map</mat-icon>
+      </button>
+    </div>
+
+    <!-- Edit mode banner (panel location) -->
+    @if (editMode(); as mode) {
+      <div class="edit-banner">
+        <mat-icon class="pulse">touch_app</mat-icon>
+        <div>
+          <strong>تحديد موقع الطبلة</strong>
+          <span>اضغط على الخريطة لتعيين موقع "{{ mode.name }}"</span>
+        </div>
+        <button mat-button (click)="cancelEdit()">
+          <mat-icon>close</mat-icon> إلغاء
+        </button>
+      </div>
+    }
+
+    <!-- Draw mode toolbar -->
+    @if (drawMode(); as mode) {
+      <div class="draw-toolbar">
+        <mat-icon class="pulse">edit_road</mat-icon>
+        <div class="draw-info">
+          <strong>رسم مسار "{{ mode.feederName }}"</strong>
+          <span>اضغط على الخريطة لإضافة نقاط المسار ({{ drawPoints().length }} نقطة)</span>
+        </div>
+        <div class="draw-actions">
+          <button class="draw-btn undo" (click)="undoLastPoint()" [disabled]="drawPoints().length === 0" matTooltip="تراجع عن آخر نقطة">
+            <mat-icon>undo</mat-icon>
+          </button>
+          <button class="draw-btn clear" (click)="clearDrawPoints()" [disabled]="drawPoints().length === 0" matTooltip="مسح المسار">
+            <mat-icon>delete_sweep</mat-icon>
+          </button>
+          <button class="draw-btn save" (click)="saveRoute()" [disabled]="drawPoints().length < 2" matTooltip="حفظ المسار">
+            <mat-icon>save</mat-icon>
+            حفظ
+          </button>
+          <button class="draw-btn cancel" (click)="cancelDraw()" matTooltip="إلغاء">
+            <mat-icon>close</mat-icon>
+            إلغاء
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- Draw segment mode toolbar -->
+    @if (drawSegmentMode(); as segMode) {
+      <div class="draw-toolbar segment-draw-toolbar">
+        <mat-icon class="pulse">timeline</mat-icon>
+        <div class="draw-info">
+          <strong>رسم مقطع "{{ segMode.feederName }}"</strong>
+          <span>{{ segMode.segmentType === 'main' ? 'رئيسي' : 'تفريعة' }} — اضغط على الخريطة ({{ drawSegmentPoints().length }} نقطة)</span>
+        </div>
+        <div class="draw-actions">
+          <select class="cable-type-select" [ngModel]="selectedDrawCableTypeId()" (ngModelChange)="selectedDrawCableTypeId.set($event)" title="نوع الكابل">
+            <option [ngValue]="null">بدون نوع كابل</option>
+            @for (ct of networkService.cableTypes(); track ct.id) {
+              <option [ngValue]="ct.id">{{ ct.name }}</option>
+            }
+          </select>
+          <button class="draw-btn undo" (click)="undoLastSegmentPoint()" [disabled]="drawSegmentPoints().length === 0" matTooltip="تراجع">
+            <mat-icon>undo</mat-icon>
+          </button>
+          <button class="draw-btn clear" (click)="clearDrawSegmentPoints()" [disabled]="drawSegmentPoints().length === 0" matTooltip="مسح">
+            <mat-icon>delete_sweep</mat-icon>
+          </button>
+          <button class="draw-btn save" (click)="saveSegmentRoute()" [disabled]="drawSegmentPoints().length < 2" matTooltip="حفظ">
+            <mat-icon>save</mat-icon>
+            حفظ
+          </button>
+          <button class="draw-btn cancel" (click)="cancelDrawSegment()" matTooltip="إلغاء">
+            <mat-icon>close</mat-icon>
+            إلغاء
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- Leaflet map -->
+    <div #mapEl class="map-el"></div>
+
+    <!-- Legend -->
+    <div class="legend">
+      <div class="legend-item">
+        <span class="leg-dot" style="background:#8b5cf6"></span>
+        <span>محطة</span>
+      </div>
+      <div class="legend-item">
+        <span class="leg-line" style="background:#3b82f6"></span>
+        <span>فيدر</span>
+      </div>
+      <div class="legend-item">
+        <span class="leg-line thick" style="background:#f59e0b"></span>
+        <span>مقطع رئيسي</span>
+      </div>
+      <div class="legend-item">
+        <span class="leg-line dashed" style="background:#a78bfa"></span>
+        <span>تفريعة</span>
+      </div>
+      <div class="legend-item">
+        <span class="leg-dot small" style="background:#10b981"></span>
+        <span>طبلة</span>
+      </div>
+    </div>
+  </main>
+</div>

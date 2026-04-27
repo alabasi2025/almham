@@ -1,0 +1,178 @@
+
+════════════════════════════════════════════════════════════════════════════════
+📦  Ecas2673 — الدهمية
+════════════════════════════════════════════════════════════════════════════════
+
+📋 أعمدة UserData:
+   - RU_ID (tinyint)
+   - RW_ID (tinyint)
+   - Us_ID (smallint)
+   - Us_Name (varchar)
+   - Us_PassWord (varchar)
+   - Us_PassWordHint (varchar)
+   - Dev_Serl (varchar)
+   - Us_UpDateDate (datetime)
+   - Us_HaveRestrictedSomeID (bit)
+
+👥 عدد السجلات: 6
+
+   ╭─ USER -1 ─────────────────────────────
+   │ RU_ID                    : 1
+   │ RW_ID                    : 0
+   │ Us_ID                    : -1
+   │ Us_Name                  : Administrator
+   │ Us_PassWord              : nullandnotempty  →  "��ejwg�צ��"
+   │ Us_PassWordHint          : System PassWord
+   │ Dev_Serl                 : —
+   │ Us_UpDateDate            : 2021-06-17 03:27
+   │ Us_HaveRestrictedSomeID  : false
+   ╰──────────────────────────────────────────
+
+   ╭─ USER 1 ─────────────────────────────
+   │ RU_ID                    : 2
+   │ RW_ID                    : 1
+   │ Us_ID                    : 1
+   │ Us_Name                  : مدير النظام
+   │ Us_PassWord              : 2023  →  "�M�"
+   │ Us_PassWordHint          : 2222
+   │ Dev_Serl                 : —
+   │ Us_UpDateDate            : 2022-12-26 23:33
+   │ Us_HaveRestrictedSomeID  : false
+   ╰──────────────────────────────────────────
+
+   ╭─ USER 2 ─────────────────────────────
+   │ RU_ID                    : 7
+   │ RW_ID                    : 2
+   │ Us_ID                    : 2
+   │ Us_Name                  : رايد العباسي
+   │ Us_PassWord              : 424666  →  "�n:�"
+   │ Us_PassWordHint          : 666
+   │ Dev_Serl                 : —
+   │ Us_UpDateDate            : 2022-03-13 02:27
+   │ Us_HaveRestrictedSomeID  : false
+   ╰──────────────────────────────────────────
+
+   ╭─ USER 30003 ─────────────────────────────
+   │ RU_ID                    : 203
+   │ RW_ID                    : 1
+   │ Us_ID                    : 30003
+   │ Us_Name                  : مستخدمي نظام الجوال
+   │ Us_PassWord              : —
+   │ Us_PassWordHint          : —
+   │ Dev_Serl                 : —
+   │ Us_UpDateDate            : 2021-06-17 17:29
+   │ Us_HaveRestrictedSomeID  : false
+   ╰──────────────────────────────────────────
+
+   ╭─ USER 30004 ─────────────────────────────
+   │ RU_ID                    : 204
+   │ RW_ID                    : 1
+   │ Us_ID                    : 30004
+   │ Us_Name                  : مستخدمي نظام المحفظات
+   │ Us_PassWord              : —
+   │ Us_PassWordHint          : —
+   │ Dev_Serl                 : —
+   │ Us_UpDateDate            : 2023-06-10 00:44
+   │ Us_HaveRestrictedSomeID  : false
+   ╰──────────────────────────────────────────
+
+   ╭─ USER 30005 ─────────────────────────────
+   │ RU_ID                    : 205
+   │ RW_ID                    : 1
+   │ Us_ID                    : 30005
+   │ Us_Name                  : مستخدمي يرنامج المدير
+   │ Us_PassWord              : —
+   │ Us_PassWordHint          : —
+   │ Dev_Serl                 : —
+   │ Us_UpDateDate            : 2025-10-06 01:01
+   │ Us_HaveRestrictedSomeID  : false
+   ╰──────────────────────────────────────────
+
+════════════════════════════════════════════════════════════════════════════════
+📦  Ecas2668 — مجموعة الصبالية
+════════════════════════════════════════════════════════════════════════════════
+
+📋 أعمدة UserData:
+   - RU_ID (tinyint)
+   - RW_ID (tinyint)
+   - Us_ID (smallint)
+   - Us_Name (varchar)
+   - Us_PassWord (varchar)
+   - Us_PassWordHint (varchar)
+   - Dev_Serl (varchar)
+   - Us_UpDateDate (datetime)
+   - Us_HaveRestrictedSomeID (bit)
+
+👥 عدد السجلات: 6
+
+   ╭─ USER -1 ─────────────────────────────
+   │ RU_ID                    : 1
+   │ RW_ID                    : 0
+   │ Us_ID                    : -1
+   │ Us_Name                  : Administrator
+   │ Us_PassWord              : nullandnotempty  →  "��ejwg�צ��"
+   │ Us_PassWordHint          : System PassWord
+   │ Dev_Serl                 : —
+   │ Us_UpDateDate            : 2021-06-17 03:27
+   │ Us_HaveRestrictedSomeID  : false
+   ╰──────────────────────────────────────────
+
+   ╭─ USER 1 ─────────────────────────────
+   │ RU_ID                    : 2
+   │ RW_ID                    : 1
+   │ Us_ID                    : 1
+   │ Us_Name                  : مدير النظام
+   │ Us_PassWord              : 123  →  "�m"
+   │ Us_PassWordHint          : 13
+   │ Dev_Serl                 : —
+   │ Us_UpDateDate            : 2025-10-13 13:55
+   │ Us_HaveRestrictedSomeID  : false
+   ╰──────────────────────────────────────────
+
+   ╭─ USER 2 ─────────────────────────────
+   │ RU_ID                    : 3
+   │ RW_ID                    : 1
+   │ Us_ID                    : 2
+   │ Us_Name                  : علي الصعدي
+   │ Us_PassWord              : 10120101  →  "�Mv�]5"
+   │ Us_PassWordHint          : 1
+   │ Dev_Serl                 : —
+   │ Us_UpDateDate            : 2022-11-22 01:02
+   │ Us_HaveRestrictedSomeID  : false
+   ╰──────────────────────────────────────────
+
+   ╭─ USER 30003 ─────────────────────────────
+   │ RU_ID                    : 203
+   │ RW_ID                    : 1
+   │ Us_ID                    : 30003
+   │ Us_Name                  : مستخدمي نظام الجوال
+   │ Us_PassWord              : —
+   │ Us_PassWordHint          : —
+   │ Dev_Serl                 : —
+   │ Us_UpDateDate            : 2021-06-17 17:28
+   │ Us_HaveRestrictedSomeID  : false
+   ╰──────────────────────────────────────────
+
+   ╭─ USER 30004 ─────────────────────────────
+   │ RU_ID                    : 204
+   │ RW_ID                    : 1
+   │ Us_ID                    : 30004
+   │ Us_Name                  : مستخدمي نظام المحفظات
+   │ Us_PassWord              : —
+   │ Us_PassWordHint          : —
+   │ Dev_Serl                 : —
+   │ Us_UpDateDate            : 2023-06-10 00:43
+   │ Us_HaveRestrictedSomeID  : false
+   ╰──────────────────────────────────────────
+
+   ╭─ USER 30005 ─────────────────────────────
+   │ RU_ID                    : 205
+   │ RW_ID                    : 1
+   │ Us_ID                    : 30005
+   │ Us_Name                  : مستخدمي يرنامج المدير
+   │ Us_PassWord              : —
+   │ Us_PassWordHint          : —
+   │ Dev_Serl                 : —
+   │ Us_UpDateDate            : 2025-10-06 01:00
+   │ Us_HaveRestrictedSomeID  : false
+   ╰──────────────────────────────────────────

@@ -1,0 +1,193 @@
+.billing-shell {
+  min-height: 100vh;
+  padding: 24px;
+  background: #f5f7fb;
+}
+
+.topbar,
+.summary-band,
+.work-area {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+
+  h1 {
+    margin: 4px 0 0;
+    font-size: 28px;
+    font-weight: 800;
+    color: #172033;
+  }
+}
+
+.eyebrow {
+  margin: 0;
+  color: #5f6f8a;
+  font-size: 14px;
+}
+
+.refresh-btn,
+.action-grid button {
+  min-height: 40px;
+  border: 1px solid #cad3e3;
+  background: #ffffff;
+  color: #172033;
+  border-radius: 6px;
+  padding: 0 16px;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+}
+
+.summary-band {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+
+  article {
+    background: #ffffff;
+    border: 1px solid #e1e7f0;
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  span {
+    display: block;
+    color: #65738b;
+    margin-bottom: 8px;
+  }
+
+  strong {
+    font-size: 24px;
+    color: #172033;
+  }
+}
+
+.status {
+  max-width: 1180px;
+  margin: 0 auto 16px;
+  background: #eef4ff;
+  border: 1px solid #c8dcff;
+  color: #1b4f92;
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.status.error {
+  background: #fff1f1;
+  border-color: #ffc9c9;
+  color: #a12828;
+}
+
+.work-area {
+  display: grid;
+  grid-template-columns: minmax(250px, 320px) minmax(0, 1fr);
+  gap: 16px;
+}
+
+.stations-panel,
+.station-detail {
+  background: #ffffff;
+  border: 1px solid #e1e7f0;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.stations-panel h2,
+.station-detail h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.station-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+
+  button {
+    width: 100%;
+    border: 1px solid #e1e7f0;
+    background: #f9fbfe;
+    color: #172033;
+    border-radius: 6px;
+    padding: 12px;
+    text-align: right;
+    cursor: pointer;
+  }
+
+  button.active {
+    border-color: #1976d2;
+    background: #edf6ff;
+  }
+
+  span,
+  small {
+    display: block;
+  }
+
+  small {
+    margin-top: 5px;
+    color: #65738b;
+  }
+}
+
+.detail-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+
+  p {
+    margin: 0 0 6px;
+    color: #65738b;
+  }
+}
+
+.station-code {
+  border-radius: 999px;
+  background: #e9f2ff;
+  color: #15599d;
+  padding: 6px 10px;
+  font-weight: 700;
+}
+
+.action-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.empty-state {
+  min-height: 180px;
+  display: grid;
+  place-items: center;
+  color: #65738b;
+}
+
+@media (max-width: 760px) {
+  .billing-shell {
+    padding: 14px;
+  }
+
+  .topbar,
+  .work-area {
+    display: grid;
+  }
+
+  .summary-band,
+  .work-area,
+  .action-grid {
+    grid-template-columns: 1fr;
+  }
+}

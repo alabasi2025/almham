@@ -1,0 +1,1 @@
+ALTER TYPE "public"."billing_ecas_db" ADD VALUE 'Ecas2672';

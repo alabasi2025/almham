@@ -25,6 +25,44 @@ export const attendanceSourceEnum = pgEnum('attendance_source', ['mobile', 'zkte
 export const attendanceEventStatusEnum = pgEnum('attendance_event_status', ['accepted', 'rejected']);
 export const feederStatusEnum = pgEnum('feeder_status', ['active', 'off', 'maintenance', 'overloaded']);
 export const panelTypeEnum = pgEnum('panel_type', ['sync', 'main_distribution', 'meter_box']);
+export const segmentTypeEnum = pgEnum('segment_type', ['main', 'branch']);
+export const cablePhaseConfigEnum = pgEnum('cable_phase_config', [
+  'single_phase_earth',
+  'two_phase_earth',
+  'three_phase_earth',
+  'earth_only',
+  'other',
+]);
+export const earthModeEnum = pgEnum('earth_mode', ['insulated', 'bare', 'none']);
+export const monitoringTargetTypeEnum = pgEnum('monitoring_target_type', [
+  'generator',
+  'sync_panel',
+  'feeder_panel',
+  'feeder',
+  'main_segment',
+  'branch_segment',
+  'panel',
+]);
+export const monitoringMeterKindEnum = pgEnum('monitoring_meter_kind', [
+  'production',
+  'distribution',
+  'consumption',
+  'load',
+  'voltage',
+  'loss_check',
+]);
+export const monitoringMeterStatusEnum = pgEnum('monitoring_meter_status', [
+  'active',
+  'inactive',
+  'maintenance',
+  'alarm',
+]);
+export const feederPanelBusbarLayoutEnum = pgEnum('feeder_panel_busbar_layout', ['right', 'left', 'both']);
+export const feederPanelBreakerLayoutEnum = pgEnum('feeder_panel_breaker_layout', ['right', 'left', 'both']);
+export const feederPanelBreakerSideEnum = pgEnum('feeder_panel_breaker_side', ['right', 'left']);
+export const feederPanelBreakerStatusEnum = pgEnum('feeder_panel_breaker_status', ['active', 'inactive', 'maintenance']);
+export const busbarPositionEnum = pgEnum('busbar_position', ['right', 'left', 'middle']);
+export const busbarRoleEnum = pgEnum('busbar_role', ['phase_a', 'phase_b', 'phase_c', 'neutral', 'earth', 'spare', 'other']);
 
 export const stations = pgTable('stations', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -522,9 +560,44 @@ export const feeders = pgTable('feeders', {
   lengthMeters: integer('length_meters'),
   status: feederStatusEnum('status').notNull().default('active'),
   notes: text('notes'),
+  routeCoordinates: jsonb('route_coordinates'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 }, (t) => ({
   stationIdx: index('feeders_station_idx').on(t.stationId),
+}));
+
+export const cableTypes = pgTable('cable_types', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  name: varchar('name', { length: 128 }).notNull(),
+  sizeMm: numeric('size_mm', { precision: 6, scale: 1 }),
+  material: varchar('material', { length: 64 }),
+  phaseConfig: cablePhaseConfigEnum('phase_config').notNull().default('single_phase_earth'),
+  earthMode: earthModeEnum('earth_mode').notNull().default('insulated'),
+  maxAmps: integer('max_amps'),
+  color: varchar('color', { length: 7 }).default('#6b7280'),
+  description: text('description'),
+  isActive: boolean('is_active').notNull().default(true),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const feederSegments = pgTable('feeder_segments', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  feederId: uuid('feeder_id').notNull().references(() => feeders.id, { onDelete: 'cascade' }),
+  parentSegmentId: uuid('parent_segment_id').references((): any => feederSegments.id, { onDelete: 'set null' }),
+  cableTypeId: uuid('cable_type_id').references(() => cableTypes.id, { onDelete: 'set null' }),
+  segmentType: segmentTypeEnum('segment_type').notNull().default('main'),
+  phaseConfig: cablePhaseConfigEnum('phase_config').notNull().default('single_phase_earth'),
+  earthMode: earthModeEnum('earth_mode').notNull().default('insulated'),
+  orderIndex: integer('order_index').notNull().default(0),
+  label: varchar('label', { length: 255 }),
+  lengthMeters: numeric('length_meters', { precision: 8, scale: 1 }),
+  routePoints: jsonb('route_points'),
+  notes: text('notes'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (t) => ({
+  feederIdx: index('feeder_segments_feeder_idx').on(t.feederId),
+  parentIdx: index('feeder_segments_parent_idx').on(t.parentSegmentId),
+  cableTypeIdx: index('feeder_segments_cable_type_idx').on(t.cableTypeId),
 }));
 
 export const panels = pgTable('panels', {
@@ -536,6 +609,10 @@ export const panels = pgTable('panels', {
   type: panelTypeEnum('type').notNull().default('meter_box'),
   controllerType: varchar('controller_type', { length: 128 }),
   capacityAmps: integer('capacity_amps'),
+  busbarLayout: feederPanelBusbarLayoutEnum('busbar_layout').notNull().default('right'),
+  breakerLayout: feederPanelBreakerLayoutEnum('breaker_layout').notNull().default('both'),
+  busbarMaterial: varchar('busbar_material', { length: 64 }).default('نحاس'),
+  busbarRatingAmps: integer('busbar_rating_amps'),
   poleNumber: varchar('pole_number', { length: 64 }),
   maxSlots: integer('max_slots'),
   latitude: numeric('latitude', { precision: 10, scale: 7 }),
@@ -547,4 +624,72 @@ export const panels = pgTable('panels', {
   stationIdx: index('panels_station_idx').on(t.stationId),
   feederIdx: index('panels_feeder_idx').on(t.feederId),
   typeIdx: index('panels_type_idx').on(t.type),
+}));
+
+export const feederPanelBreakers = pgTable('feeder_panel_breakers', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  panelId: uuid('panel_id').notNull().references(() => panels.id, { onDelete: 'cascade' }),
+  feederId: uuid('feeder_id').references(() => feeders.id, { onDelete: 'set null' }),
+  breakerNumber: varchar('breaker_number', { length: 64 }).notNull(),
+  side: feederPanelBreakerSideEnum('side').notNull().default('right'),
+  ratingAmps: integer('rating_amps'),
+  breakerType: varchar('breaker_type', { length: 128 }),
+  status: feederPanelBreakerStatusEnum('status').notNull().default('active'),
+  notes: text('notes'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (t) => ({
+  panelIdx: index('feeder_panel_breakers_panel_idx').on(t.panelId),
+  feederIdx: index('feeder_panel_breakers_feeder_idx').on(t.feederId),
+  sideIdx: index('feeder_panel_breakers_side_idx').on(t.side),
+}));
+
+export const busbarTypes = pgTable('busbar_types', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  name: varchar('name', { length: 128 }).notNull(),
+  material: varchar('material', { length: 64 }).default('نحاس'),
+  widthMm: numeric('width_mm', { precision: 8, scale: 2 }),
+  thicknessMm: numeric('thickness_mm', { precision: 8, scale: 2 }),
+  ratingAmps: integer('rating_amps'),
+  notes: text('notes'),
+  isActive: boolean('is_active').notNull().default(true),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const feederPanelBusbars = pgTable('feeder_panel_busbars', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  panelId: uuid('panel_id').notNull().references(() => panels.id, { onDelete: 'cascade' }),
+  busbarTypeId: uuid('busbar_type_id').references(() => busbarTypes.id, { onDelete: 'set null' }),
+  label: varchar('label', { length: 128 }).notNull(),
+  role: busbarRoleEnum('role').notNull().default('other'),
+  position: busbarPositionEnum('position').notNull().default('right'),
+  orderIndex: integer('order_index').notNull().default(0),
+  notes: text('notes'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (t) => ({
+  panelIdx: index('feeder_panel_busbars_panel_idx').on(t.panelId),
+  typeIdx: index('feeder_panel_busbars_type_idx').on(t.busbarTypeId),
+  positionIdx: index('feeder_panel_busbars_position_idx').on(t.position),
+}));
+
+export const monitoringMeters = pgTable('monitoring_meters', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  stationId: uuid('station_id').notNull().references(() => stations.id, { onDelete: 'cascade' }),
+  name: varchar('name', { length: 255 }).notNull(),
+  code: varchar('code', { length: 64 }),
+  targetType: monitoringTargetTypeEnum('target_type').notNull(),
+  targetId: uuid('target_id'),
+  kind: monitoringMeterKindEnum('kind').notNull().default('load'),
+  lastVoltage: numeric('last_voltage', { precision: 10, scale: 2 }),
+  lastCurrent: numeric('last_current', { precision: 10, scale: 2 }),
+  lastKwh: numeric('last_kwh', { precision: 14, scale: 2 }),
+  lastPowerKw: numeric('last_power_kw', { precision: 10, scale: 2 }),
+  loadPercent: integer('load_percent'),
+  status: monitoringMeterStatusEnum('status').notNull().default('active'),
+  lastReadAt: timestamp('last_read_at'),
+  notes: text('notes'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (t) => ({
+  stationIdx: index('monitoring_meters_station_idx').on(t.stationId),
+  targetIdx: index('monitoring_meters_target_idx').on(t.targetType, t.targetId),
+  statusIdx: index('monitoring_meters_status_idx').on(t.status),
 }));

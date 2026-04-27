@@ -1,7 +1,7 @@
 import 'dotenv/config';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { db } from './index.js';
-import { stations, cashboxes, expenseCategories } from './schema.js';
+import { stations, cashboxes, expenseCategories, billingSystems, billingSystemAccounts } from './schema.js';
 
 const EXPENSE_CATEGORIES = [
   { name: 'ديزل', icon: 'local_gas_station', color: '#f59e0b' },
@@ -134,14 +134,115 @@ async function main() {
   }
 
   console.log('');
+  console.log('🧾 أنظمة الفوترة:');
+
+  // 5) Billing systems — one primary billing account per station + Hexcell + Manual
+  const allStations2 = await db.select().from(stations);
+  for (const st of allStations2) {
+    const shortName = st.name
+      .replace(/^محطة\s+/, '')
+      .replace(/\s+لتوليد\s+و?توزيع\s+الكهرباء\s*$/, '')
+      .replace(/\s+لتوليد\s+الكهرباء\s*$/, '')
+      .replace(/\s+لتوزيع\s+الكهرباء\s*$/, '');
+    const name = `نظام الفوترة الأساسي - ${shortName}`;
+    const existing = await db.select().from(billingSystems).where(eq(billingSystems.name, name)).limit(1);
+    if (!existing[0]) {
+      await db.insert(billingSystems).values({
+        name,
+        code: `PRIMARY_${shortName}`,
+        type: 'other',
+        stationId: st.id,
+        icon: 'storage',
+        color: '#2563eb',
+        notes: `حساب نظام الفوترة الأساسي لمحطة ${shortName}`,
+      });
+      console.log(`  + ${name}`);
+    } else {
+      console.log(`  ➖ ${name} (موجود)`);
+    }
+  }
+
+  const crossSystems = [
+    {
+      name: 'Hexcell',
+      code: 'HEXCELL',
+      type: 'hexcell' as const,
+      icon: 'qr_code_2',
+      color: '#2563eb',
+      notes: 'نظام Hexcell لبيع الكودات المدفوعة مسبقاً',
+    },
+    {
+      name: 'تحصيل يدوي',
+      code: 'MANUAL',
+      type: 'manual' as const,
+      icon: 'edit_note',
+      color: '#64748b',
+      notes: 'تحصيل من دفتر يدوي أو عمليات خارج الأنظمة',
+    },
+  ];
+  for (const bs of crossSystems) {
+    const existing = await db.select().from(billingSystems).where(eq(billingSystems.name, bs.name)).limit(1);
+    if (!existing[0]) {
+      await db.insert(billingSystems).values({
+        name: bs.name,
+        code: bs.code,
+        type: bs.type,
+        icon: bs.icon,
+        color: bs.color,
+        notes: bs.notes,
+      });
+      console.log(`  + ${bs.name}`);
+    } else {
+      console.log(`  ➖ ${bs.name} (موجود)`);
+    }
+  }
+
+  console.log('');
+  console.log('🧾 حسابات أنظمة الفوترة:');
+
+  const accountTemplates = [
+    { type: 'collection' as const, name: 'حساب التحصيل', suffix: 'COLLECTION', notes: 'الحساب الذي تُسجّل عليه تحصيلات المتحصلين اليومية' },
+    { type: 'sales' as const, name: 'حساب المبيعات', suffix: 'SALES', notes: 'الحساب الذي ستُسجّل عليه مبيعات نظام الفوترة لاحقاً' },
+    { type: 'settlement' as const, name: 'حساب التسويات', suffix: 'SETTLEMENT', notes: 'الحساب المخصص للفروقات والتسويات بين الفوترة والخزينة' },
+  ];
+
+  const allBillingSystems = await db.select().from(billingSystems);
+  for (const system of allBillingSystems) {
+    const baseCode = system.code || system.id.slice(0, 8).toUpperCase();
+    for (const account of accountTemplates) {
+      const existing = await db
+        .select()
+        .from(billingSystemAccounts)
+        .where(and(eq(billingSystemAccounts.billingSystemId, system.id), eq(billingSystemAccounts.type, account.type)))
+        .limit(1);
+      if (!existing[0]) {
+        await db.insert(billingSystemAccounts).values({
+          billingSystemId: system.id,
+          name: account.name,
+          code: `${baseCode}_${account.suffix}`.slice(0, 64),
+          type: account.type,
+          notes: account.notes,
+        });
+        console.log(`  + ${system.name} / ${account.name}`);
+      } else {
+        console.log(`  ➖ ${system.name} / ${account.name} (موجود)`);
+      }
+    }
+  }
+
+  console.log('');
   console.log('🎉 تمّت زراعة بيانات الخزينة!');
 
   const counts = {
     cashboxes: (await db.select().from(cashboxes)).length,
     categories: (await db.select().from(expenseCategories)).length,
+    billing: (await db.select().from(billingSystems)).length,
+    billingAccounts: (await db.select().from(billingSystemAccounts)).length,
   };
   console.log(`📊 الصناديق: ${counts.cashboxes}`);
   console.log(`📊 تصنيفات المصاريف: ${counts.categories}`);
+  console.log(`📊 أنظمة الفوترة: ${counts.billing}`);
+  console.log(`📊 حسابات أنظمة الفوترة: ${counts.billingAccounts}`);
 
   process.exit(0);
 }

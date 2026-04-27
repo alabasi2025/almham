@@ -1,0 +1,755 @@
+<div class="treasury-page">
+
+  <!-- ============ HERO HEADER ============ -->
+  <header class="treasury-hero">
+    <div class="hero-bg-grid"></div>
+    <div class="hero-bg-orb orb-1"></div>
+    <div class="hero-bg-orb orb-2"></div>
+
+    <div class="hero-top">
+      <div class="hero-title">
+        <div class="hero-icon">
+          <mat-icon>savings</mat-icon>
+        </div>
+        <div class="hero-text">
+          <h1>الخزينة والتحصيل</h1>
+          <p>الإيرادات والمصاريف والصناديق والمحافظ الرقمية</p>
+        </div>
+      </div>
+
+      <div class="hero-actions">
+        <a routerLink="/treasury/collections" class="btn-primary">
+          <mat-icon>add_card</mat-icon>
+          <span>تسجيل تحصيل</span>
+        </a>
+        <a routerLink="/treasury/expenses" class="btn-ghost">
+          <mat-icon>receipt_long</mat-icon>
+          <span>مصروف</span>
+        </a>
+        <button class="btn-ghost" (click)="openClosureForm()">
+          <mat-icon>event_available</mat-icon>
+          <span>إقفال اليوم</span>
+        </button>
+        <button class="btn-ghost icon-only" (click)="refresh()" title="تحديث">
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    @if (treasury.summary(); as s) {
+      <!-- Daily summary KPIs -->
+      <div class="hero-kpis">
+        <div class="k-card income">
+          <div class="k-icon"><mat-icon>trending_up</mat-icon></div>
+          <div class="k-content">
+            <span class="k-value">{{ treasury.formatMoney(s.totalCollections) }}</span>
+            <span class="k-label">إيراد اليوم ({{ s.collectionsCount }} سند)</span>
+          </div>
+        </div>
+
+        <div class="k-card expense">
+          <div class="k-icon"><mat-icon>trending_down</mat-icon></div>
+          <div class="k-content">
+            <span class="k-value">{{ treasury.formatMoney(s.totalExpenses) }}</span>
+            <span class="k-label">مصروف اليوم ({{ s.expensesCount }} بند)</span>
+          </div>
+        </div>
+
+        <div class="k-card net" [class.negative]="s.net < 0">
+          <div class="k-icon"><mat-icon>account_balance</mat-icon></div>
+          <div class="k-content">
+            <span class="k-value">{{ treasury.formatMoney(s.net) }}</span>
+            <span class="k-label">صافي اليوم</span>
+          </div>
+        </div>
+
+        <div class="k-card total">
+          <div class="k-icon"><mat-icon>wallet</mat-icon></div>
+          <div class="k-content">
+            <span class="k-value">{{ treasury.formatMoney(treasury.totalBalance()) }}</span>
+            <span class="k-label">إجمالي أرصدة الصناديق</span>
+          </div>
+        </div>
+      </div>
+    }
+  </header>
+
+  <!-- ============ STATIONS PERFORMANCE ============ -->
+  @if (treasury.summary(); as s) {
+    @if (s.perStation.length > 0) {
+      <section class="stations-perf">
+        <h2 class="section-title">
+          <mat-icon>electric_bolt</mat-icon>
+          <span>إيراد اليوم لكل محطة</span>
+        </h2>
+
+        <div class="stations-grid">
+          @for (st of s.perStation; track st.stationId) {
+            <div class="station-card">
+              <div class="station-name">{{ treasury.shortStation(st.stationName) }}</div>
+              <div class="station-amount">{{ treasury.formatMoney(st.collectionsTotal) }}</div>
+              <div class="station-bar">
+                <div
+                  class="fill"
+                  [style.width.%]="
+                    s.totalCollections > 0 ? (st.collectionsTotal / s.totalCollections) * 100 : 0
+                  "
+                ></div>
+              </div>
+              <div class="station-count">{{ st.collectionsCount }} سند تحصيل</div>
+            </div>
+          }
+        </div>
+      </section>
+    }
+  }
+
+  <!-- ============ MAIN TABS ============ -->
+  <div class="main-tabs">
+    <button
+      class="main-tab"
+      [class.active]="activeTab() === 'cashboxes'"
+      (click)="activeTab.set('cashboxes')">
+      <mat-icon>account_balance_wallet</mat-icon>
+      <span>الصناديق والمحافظ</span>
+      <span class="tab-count">{{ treasury.cashboxes().length }}</span>
+    </button>
+    <button
+      class="main-tab"
+      [class.active]="activeTab() === 'closures'"
+      (click)="activeTab.set('closures')">
+      <mat-icon>fact_check</mat-icon>
+      <span>إقفال اليوم</span>
+      <span class="tab-count">{{ treasury.dailyClosures().length }}</span>
+    </button>
+    <button
+      class="main-tab"
+      [class.active]="activeTab() === 'billing'"
+      (click)="activeTab.set('billing')">
+      <mat-icon>receipt_long</mat-icon>
+      <span>أنظمة الفوترة</span>
+      <span class="tab-count">{{ treasury.billingSystemsList().length }}</span>
+    </button>
+  </div>
+
+  <!-- ============ CASHBOXES TAB ============ -->
+  @if (activeTab() === 'cashboxes') {
+  <section class="cashboxes-section">
+    <div class="section-header">
+      <h2 class="section-title">
+        <mat-icon>account_balance_wallet</mat-icon>
+        <span>الصناديق والمحافظ</span>
+      </h2>
+
+      <div class="filter-chips">
+        <button
+          class="chip"
+          [class.active]="typeFilter() === 'all'"
+          (click)="typeFilter.set('all')">
+          <mat-icon>apps</mat-icon> الكل
+          <span class="count">{{ treasury.cashboxes().length }}</span>
+        </button>
+        <button
+          class="chip chip-station"
+          [class.active]="typeFilter() === 'station'"
+          (click)="typeFilter.set('station')">
+          <mat-icon>electric_bolt</mat-icon> المحطات
+          <span class="count">{{ countByType('station') }}</span>
+        </button>
+        <button
+          class="chip chip-exchange"
+          [class.active]="typeFilter() === 'exchange'"
+          (click)="typeFilter.set('exchange')">
+          <mat-icon>store</mat-icon> الصرّافون
+          <span class="count">{{ countByType('exchange') }}</span>
+        </button>
+        <button
+          class="chip chip-wallet"
+          [class.active]="typeFilter() === 'wallet'"
+          (click)="typeFilter.set('wallet')">
+          <mat-icon>smartphone</mat-icon> المحافظ
+          <span class="count">{{ countByType('wallet') }}</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="cashboxes-grid">
+      @for (c of filtered(); track c.id) {
+        <article class="cashbox-card" [class.is-inactive]="!c.isActive">
+          <header class="card-head" [style.background]="cashboxGradient(c)">
+            <div class="card-icon">
+              <mat-icon>{{ cashboxIcon(c) }}</mat-icon>
+            </div>
+            <div class="card-title">
+              <h3>{{ c.name }}</h3>
+              <span class="card-type">
+                @if (c.type === 'station' && c.stationName) {
+                  {{ treasury.shortStation(c.stationName) }}
+                } @else if (c.type === 'wallet') {
+                  {{ treasury.walletLabel(c.walletProvider) }}
+                } @else {
+                  {{ treasury.typeLabel(c.type) }}
+                }
+              </span>
+            </div>
+          </header>
+
+          <div class="card-body">
+            <div class="balance">
+              <span class="balance-label">الرصيد الحالي</span>
+              <span class="balance-value">{{ treasury.formatMoney(c.currentBalance, c.currency) }}</span>
+            </div>
+
+            <div class="stats">
+              <div class="stat stat-in">
+                <mat-icon>arrow_downward</mat-icon>
+                <div>
+                  <span class="stat-label">داخل</span>
+                  <span class="stat-value">{{ treasury.formatMoney(c.totalIn, c.currency) }}</span>
+                </div>
+              </div>
+              <div class="stat stat-out">
+                <mat-icon>arrow_upward</mat-icon>
+                <div>
+                  <span class="stat-label">خارج</span>
+                  <span class="stat-value">{{ treasury.formatMoney(c.totalOut, c.currency) }}</span>
+                </div>
+              </div>
+            </div>
+
+            @if (c.accountNumber) {
+              <div class="meta-row">
+                <mat-icon>phone</mat-icon>
+                <span dir="ltr">{{ c.accountNumber }}</span>
+              </div>
+            }
+            @if (c.accountHolder) {
+              <div class="meta-row">
+                <mat-icon>person</mat-icon>
+                <span>{{ c.accountHolder }}</span>
+              </div>
+            }
+            @if (c.notes) {
+              <div class="notes">{{ c.notes }}</div>
+            }
+          </div>
+        </article>
+      }
+    </div>
+
+    @if (filtered().length === 0) {
+      <div class="empty-state">
+        <mat-icon>search_off</mat-icon>
+        <p>لا توجد صناديق في هذا التصنيف</p>
+      </div>
+    }
+  </section>
+  }
+
+  <!-- ============ DAILY CLOSURES TAB ============ -->
+  @if (activeTab() === 'closures') {
+  <section class="closure-section">
+    <div class="section-header">
+      <h2 class="section-title">
+        <mat-icon>fact_check</mat-icon>
+        <span>إقفال التحصيل اليومي</span>
+      </h2>
+
+      <button class="btn-add" (click)="openClosureForm()">
+        <mat-icon>event_available</mat-icon>
+        <span>إقفال يوم</span>
+      </button>
+    </div>
+
+    <div class="closures-grid">
+      @for (row of treasury.dailyClosures(); track row.id) {
+        <article class="closure-card" [class.is-approved]="row.status === 'approved'">
+          <header class="closure-head">
+            <div>
+              <h3>{{ treasury.shortStation(row.stationName) }}</h3>
+              <span>{{ formatDate(row.closureDate) }}</span>
+            </div>
+            <span class="closure-status" [class.approved]="row.status === 'approved'">
+              {{ treasury.closureStatusLabel(row.status) }}
+            </span>
+          </header>
+
+          <div class="closure-metrics">
+            <div class="metric">
+              <span>المتوقع</span>
+              <strong>{{ treasury.formatMoney(row.expectedTotal) }}</strong>
+            </div>
+            <div class="metric">
+              <span>الفعلي</span>
+              <strong>{{ treasury.formatMoney(row.actualTotal) }}</strong>
+            </div>
+            <div class="metric" [class.negative]="isNegativeAmount(row.variance)">
+              <span>الفرق</span>
+              <strong>{{ treasury.formatMoney(row.variance) }}</strong>
+            </div>
+          </div>
+
+          <div class="closure-breakdown">
+            <span><mat-icon>payments</mat-icon> نقدي {{ treasury.formatMoney(row.totalCash) }}</span>
+            <span><mat-icon>account_balance_wallet</mat-icon> محافظ {{ treasury.formatMoney(row.totalWallet) }}</span>
+            <span><mat-icon>qr_code_2</mat-icon> Hexcell {{ treasury.formatMoney(row.totalHexcell) }}</span>
+          </div>
+
+          @if (row.notes) {
+            <p class="closure-notes">{{ row.notes }}</p>
+          }
+
+          <footer class="closure-foot">
+            <span>
+              <mat-icon>person</mat-icon>
+              {{ row.managerUsername || 'غير محدد' }}
+            </span>
+            @if (auth.canManageUsers() && row.status !== 'approved') {
+              <button class="mini-action" (click)="approveClosure(row.id)">
+                <mat-icon>verified</mat-icon>
+                <span>اعتماد</span>
+              </button>
+            }
+          </footer>
+        </article>
+      }
+    </div>
+
+    @if (treasury.dailyClosures().length === 0) {
+      <div class="empty-state">
+        <mat-icon>fact_check</mat-icon>
+        <p>لا توجد إقفالات يومية بعد</p>
+        <button class="btn-add" (click)="openClosureForm()">
+          <mat-icon>event_available</mat-icon> إقفال أول يوم
+        </button>
+      </div>
+    }
+  </section>
+  }
+
+  <!-- ============ BILLING SYSTEMS TAB ============ -->
+  @if (activeTab() === 'billing') {
+  <section class="billing-section">
+    <div class="section-header">
+      <h2 class="section-title">
+        <mat-icon>receipt_long</mat-icon>
+        <span>أنظمة الفوترة</span>
+      </h2>
+
+      <button class="btn-add" (click)="openBillingForm()">
+        <mat-icon>add</mat-icon>
+        <span>نظام جديد</span>
+      </button>
+    </div>
+
+    <p class="section-hint">
+      <mat-icon>info</mat-icon>
+      هذه الأنظمة وحساباتها داخل الخزينة: حساب التحصيل لتسجيل مبالغ المتحصلين،
+      وحساب المبيعات والتسويات للمطابقة اللاحقة.
+    </p>
+
+    <div class="billing-summary-strip">
+      <div>
+        <mat-icon>storage</mat-icon>
+        <span>أنظمة</span>
+        <strong>{{ treasury.billingSystemsList().length }}</strong>
+      </div>
+      <div>
+        <mat-icon>account_tree</mat-icon>
+        <span>حسابات</span>
+        <strong>{{ billingAccountCount() }}</strong>
+      </div>
+      <a routerLink="/treasury/collections">
+        <mat-icon>add_card</mat-icon>
+        <span>تسجيل تحصيل</span>
+      </a>
+    </div>
+
+    <!-- Group by type -->
+    @for (typeKey of billingTypeKeys; track typeKey) {
+      @if (billingByType()[typeKey].length > 0) {
+        <div class="billing-group">
+          <h3 class="group-title">
+            <span class="dot" [style.background]="billingGroupColor(typeKey)"></span>
+            {{ treasury.billingSystemTypeLabel(typeKey) }}
+            <span class="group-count">({{ billingByType()[typeKey].length }})</span>
+          </h3>
+
+          <div class="billing-grid">
+            @for (bs of billingByType()[typeKey]; track bs.id) {
+              <article class="billing-card" [class.is-inactive]="!bs.isActive">
+                <div class="bc-head" [style.background]="billingColor(bs)">
+                  <div class="bc-icon"><mat-icon>{{ billingIcon(bs) }}</mat-icon></div>
+                  <div class="bc-title">
+                    <h4>{{ bs.name }}</h4>
+                    @if (bs.code) { <span class="bc-code" dir="ltr">{{ bs.code }}</span> }
+                  </div>
+
+                  <div class="bc-actions">
+                    <button class="mini-btn" (click)="openBillingForm(bs)" title="تعديل">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button class="mini-btn" (click)="openBillingAccountForm(bs)" title="إضافة حساب">
+                      <mat-icon>account_tree</mat-icon>
+                    </button>
+                    <button class="mini-btn" (click)="toggleBillingActive(bs)" [title]="bs.isActive ? 'تعطيل' : 'تفعيل'">
+                      <mat-icon>{{ bs.isActive ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+                    </button>
+                    <button class="mini-btn danger" (click)="removeBillingSystem(bs)" title="حذف">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="bc-body">
+                  @if (bs.stationName) {
+                    <div class="meta-row">
+                      <mat-icon>electric_bolt</mat-icon>
+                      <span>{{ treasury.shortStation(bs.stationName) }}</span>
+                    </div>
+                  }
+                  @if (bs.notes) {
+                    <div class="bc-notes">{{ bs.notes }}</div>
+                  }
+                  <div class="billing-accounts-list">
+                    @for (account of billingAccountsFor(bs.id); track account.id) {
+                      <div class="billing-account-pill" [class.is-inactive]="!account.isActive">
+                        <mat-icon>{{ accountTypeIcon(account.type) }}</mat-icon>
+                        <div>
+                          <strong>{{ account.name }}</strong>
+                          <span>{{ accountTypeLabel(account.type) }}</span>
+                        </div>
+                        <button class="account-mini-btn" (click)="openBillingAccountForm(bs, account)" title="تعديل الحساب">
+                          <mat-icon>edit</mat-icon>
+                        </button>
+                        <button class="account-mini-btn" (click)="toggleBillingAccountActive(account)" [title]="account.isActive ? 'تعطيل الحساب' : 'تفعيل الحساب'">
+                          <mat-icon>{{ account.isActive ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+                        </button>
+                      </div>
+                    } @empty {
+                      <button class="add-account-inline" (click)="openBillingAccountForm(bs)">
+                        <mat-icon>add</mat-icon>
+                        <span>إضافة حساب التحصيل/المبيعات/التسويات</span>
+                      </button>
+                    }
+                  </div>
+                  @if (!bs.isActive) {
+                    <div class="inactive-badge">
+                      <mat-icon>block</mat-icon>
+                      <span>معطّل</span>
+                    </div>
+                  }
+                </div>
+              </article>
+            }
+          </div>
+        </div>
+      }
+    }
+
+    @if (treasury.billingSystemsList().length === 0) {
+      <div class="empty-state">
+        <mat-icon>receipt_long</mat-icon>
+        <p>لا توجد أنظمة فوترة بعد</p>
+        <button class="btn-add" (click)="openBillingForm()">
+          <mat-icon>add</mat-icon> أضف أول نظام
+        </button>
+      </div>
+    }
+  </section>
+  }
+</div>
+
+<!-- ============ BILLING FORM MODAL ============ -->
+@if (showBillingForm()) {
+  <div class="modal-overlay" (click)="closeBillingForm()"></div>
+  <div class="billing-form-panel">
+    <header class="form-header">
+      <div class="form-title">
+        <mat-icon>{{ editingBilling() ? 'edit' : 'add' }}</mat-icon>
+        <h3>{{ editingBilling() ? 'تعديل نظام الفوترة' : 'نظام فوترة جديد' }}</h3>
+      </div>
+      <button class="close-btn" (click)="closeBillingForm()" title="إغلاق">
+        <mat-icon>close</mat-icon>
+      </button>
+    </header>
+
+    <div class="form-body">
+      <div class="field-grid">
+        <div class="field full">
+          <label>الاسم *</label>
+          <input type="text" [(ngModel)]="billingForm.name" placeholder="مثلاً: ECAS - الصبالية" required />
+        </div>
+
+        <div class="field">
+          <label>الكود</label>
+          <input type="text" [(ngModel)]="billingForm.code" dir="ltr" placeholder="اختياري" />
+        </div>
+
+        <div class="field">
+          <label>النوع *</label>
+          <select [(ngModel)]="billingForm.type" (ngModelChange)="onBillingTypeChange()" title="النوع">
+            <option value="ecas">ECAS</option>
+            <option value="hexcell">Hexcell</option>
+            <option value="manual">يدوي</option>
+            <option value="other">أخرى</option>
+          </select>
+        </div>
+
+        <div class="field full">
+          <label>المحطة (اختياري)</label>
+          <select [(ngModel)]="billingForm.stationId" title="المحطة">
+            <option [ngValue]="null">كل المحطات</option>
+            @for (s of stationService.stations(); track s.id) {
+              <option [value]="s.id">{{ treasury.shortStation(s.name) }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="field">
+          <label>الأيقونة</label>
+          <input type="text" [(ngModel)]="billingForm.icon" dir="ltr" placeholder="storage" />
+        </div>
+
+        <div class="field">
+          <label>اللون</label>
+          <input type="color" [(ngModel)]="billingForm.color" title="اللون" />
+        </div>
+
+        <div class="field full">
+          <label>ملاحظات</label>
+          <textarea [(ngModel)]="billingForm.notes" rows="2" placeholder="وصف النظام أو ملاحظات تشغيلية"></textarea>
+        </div>
+
+        <div class="field full">
+          <label class="check-row">
+            <input type="checkbox" [(ngModel)]="billingForm.isActive" />
+            <span>نشط (يظهر في قائمة التحصيل)</span>
+          </label>
+        </div>
+      </div>
+
+      @if (billingError()) {
+        <div class="error-box">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ billingError() }}</span>
+        </div>
+      }
+    </div>
+
+    <footer class="form-footer">
+      <button type="button" class="btn-ghost" (click)="closeBillingForm()" [disabled]="savingBilling()">إلغاء</button>
+      <button type="button" class="btn-primary" (click)="saveBillingSystem()" [disabled]="savingBilling()">
+        @if (savingBilling()) {
+          <span>جاري الحفظ...</span>
+        } @else {
+          <mat-icon>save</mat-icon>
+          <span>{{ editingBilling() ? 'تحديث' : 'حفظ' }}</span>
+        }
+      </button>
+    </footer>
+  </div>
+}
+
+<!-- ============ BILLING ACCOUNT FORM MODAL ============ -->
+@if (showBillingAccountForm()) {
+  <div class="modal-overlay" (click)="closeBillingAccountForm()"></div>
+  <div class="billing-form-panel">
+    <header class="form-header">
+      <div class="form-title">
+        <mat-icon>{{ editingBillingAccount() ? 'edit' : 'account_tree' }}</mat-icon>
+        <h3>{{ editingBillingAccount() ? 'تعديل حساب فوترة' : 'حساب فوترة جديد' }}</h3>
+      </div>
+      <button class="close-btn" (click)="closeBillingAccountForm()" title="إغلاق">
+        <mat-icon>close</mat-icon>
+      </button>
+    </header>
+
+    <div class="form-body">
+      <div class="field-grid">
+        <div class="field full">
+          <label>نظام الفوترة *</label>
+          <select [(ngModel)]="billingAccountForm.billingSystemId" title="نظام الفوترة">
+            <option value="">اختر النظام</option>
+            @for (bs of treasury.billingSystemsList(); track bs.id) {
+              <option [value]="bs.id">{{ bs.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="field">
+          <label>نوع الحساب *</label>
+          <select [(ngModel)]="billingAccountForm.type" (ngModelChange)="onBillingAccountTypeChange()" title="نوع الحساب">
+            <option value="collection">حساب التحصيل</option>
+            <option value="sales">حساب المبيعات</option>
+            <option value="settlement">حساب التسويات</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>الاسم *</label>
+          <input type="text" [(ngModel)]="billingAccountForm.name" placeholder="مثلاً: حساب التحصيل" required />
+        </div>
+
+        <div class="field">
+          <label>الكود</label>
+          <input type="text" [(ngModel)]="billingAccountForm.code" dir="ltr" placeholder="اختياري" />
+        </div>
+
+        <div class="field">
+          <label class="check-row">
+            <input type="checkbox" [(ngModel)]="billingAccountForm.isActive" />
+            <span>نشط</span>
+          </label>
+        </div>
+
+        <div class="field full">
+          <label>ملاحظات</label>
+          <textarea [(ngModel)]="billingAccountForm.notes" rows="2" placeholder="ملاحظة تشغيلية"></textarea>
+        </div>
+      </div>
+
+      @if (billingAccountError()) {
+        <div class="error-box">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ billingAccountError() }}</span>
+        </div>
+      }
+    </div>
+
+    <footer class="form-footer">
+      <button type="button" class="btn-ghost" (click)="closeBillingAccountForm()" [disabled]="savingBillingAccount()">إلغاء</button>
+      <button type="button" class="btn-primary" (click)="saveBillingAccount()" [disabled]="savingBillingAccount()">
+        @if (savingBillingAccount()) {
+          <span>جاري الحفظ...</span>
+        } @else {
+          <mat-icon>save</mat-icon>
+          <span>{{ editingBillingAccount() ? 'تحديث' : 'حفظ' }}</span>
+        }
+      </button>
+    </footer>
+  </div>
+}
+
+<!-- ============ DAILY CLOSURE MODAL ============ -->
+@if (showClosureForm()) {
+  <div class="modal-overlay" (click)="closeClosureForm()"></div>
+  <div class="closure-form-panel">
+    <header class="form-header">
+      <div class="form-title">
+        <mat-icon>event_available</mat-icon>
+        <h3>إقفال التحصيل اليومي</h3>
+      </div>
+      <button class="close-btn" (click)="closeClosureForm()" title="إغلاق">
+        <mat-icon>close</mat-icon>
+      </button>
+    </header>
+
+    <div class="form-body">
+      <div class="field-grid">
+        <div class="field">
+          <label>المحطة *</label>
+          <select [(ngModel)]="closureForm.stationId" (ngModelChange)="onClosureFilterChange()" title="المحطة">
+            @for (s of allowedStations(); track s.id) {
+              <option [value]="s.id">{{ treasury.shortStation(s.name) }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="field">
+          <label>التاريخ *</label>
+          <input type="date" [(ngModel)]="closureForm.closureDate" (ngModelChange)="onClosureFilterChange()" />
+        </div>
+
+        <div class="field">
+          <label>المبلغ الفعلي *</label>
+          <input type="number" [(ngModel)]="closureForm.actualTotal" min="0" inputmode="numeric" />
+        </div>
+
+        <div class="field">
+          <label>الفرق</label>
+          <div class="readonly-amount" [class.negative]="closureVariance() < 0">
+            {{ treasury.formatMoney(closureVariance()) }}
+          </div>
+        </div>
+
+        <div class="field full">
+          <label>ملاحظات</label>
+          <textarea [(ngModel)]="closureForm.notes" rows="2" placeholder="سبب فرق الصندوق أو ملاحظة نهاية اليوم"></textarea>
+        </div>
+      </div>
+
+      @if (loadingClosurePreview()) {
+        <div class="loading-box">
+          <mat-icon>sync</mat-icon>
+          <span>جاري حساب التحصيل...</span>
+        </div>
+      }
+
+      @if (closurePreview(); as p) {
+        <div class="closure-preview">
+          @if (p.existingClosure) {
+            <div class="warning-box">
+              <mat-icon>lock</mat-icon>
+              <span>هذا اليوم مقفل مسبقاً: {{ treasury.closureStatusLabel(p.existingClosure.status) }}</span>
+            </div>
+          }
+
+          <div class="preview-grid">
+            <div>
+              <span>نقدي</span>
+              <strong>{{ treasury.formatMoney(p.totalCash) }}</strong>
+            </div>
+            <div>
+              <span>محافظ</span>
+              <strong>{{ treasury.formatMoney(p.totalWallet) }}</strong>
+            </div>
+            <div>
+              <span>Hexcell</span>
+              <strong>{{ treasury.formatMoney(p.totalHexcell) }}</strong>
+            </div>
+            <div>
+              <span>أخرى</span>
+              <strong>{{ treasury.formatMoney(p.totalOther) }}</strong>
+            </div>
+          </div>
+
+          <div class="preview-total">
+            <span>{{ p.collectionsCount }} سند تحصيل</span>
+            <strong>{{ treasury.formatMoney(p.expectedTotal) }}</strong>
+          </div>
+        </div>
+      }
+
+      @if (closureError()) {
+        <div class="error-box">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ closureError() }}</span>
+        </div>
+      }
+
+      @if (closureSuccess()) {
+        <div class="success-box">
+          <mat-icon>check_circle</mat-icon>
+          <span>{{ closureSuccess() }}</span>
+        </div>
+      }
+    </div>
+
+    <footer class="form-footer">
+      <button type="button" class="btn-ghost" (click)="closeClosureForm()" [disabled]="savingClosure()">إلغاء</button>
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="saveClosure()"
+        [disabled]="savingClosure() || !closureForm.stationId || !!closurePreview()?.existingClosure">
+        @if (savingClosure()) {
+          <span>جاري الحفظ...</span>
+        } @else {
+          <mat-icon>save</mat-icon>
+          <span>حفظ الإقفال</span>
+        }
+      </button>
+    </footer>
+  </div>
+}

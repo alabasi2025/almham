@@ -1,0 +1,267 @@
+<div class="attendance-page" dir="rtl">
+  <header class="attendance-hero">
+    <div class="hero-bg-grid"></div>
+    <div class="hero-scan-line"></div>
+
+    <div class="hero-top">
+      <div class="hero-title">
+        <div class="hero-icon">
+          <span class="gps-ring ring-a"></span>
+          <span class="gps-ring ring-b"></span>
+          <mat-icon>fact_check</mat-icon>
+        </div>
+        <div class="hero-text">
+          <h1>الحضور والوردية</h1>
+          <p>تسجيل بداية العمل والمغادرة حسب نطاق المحطة</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-kpis" aria-label="ملخص الحضور">
+      <div class="k-card active">
+        <div class="k-icon"><mat-icon>groups</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ activeEmployees().length }}</span>
+          <span class="k-label">موظف نشط</span>
+        </div>
+      </div>
+
+      <div class="k-card location">
+        <div class="k-icon"><mat-icon>location_on</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ geofencedStationsCount() }}</span>
+          <span class="k-label">محطة بإحداثيات</span>
+        </div>
+      </div>
+
+      <div class="k-card hq">
+        <div class="k-icon"><mat-icon>domain</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ hqEmployeesCount() }}</span>
+          <span class="k-label">الإدارة العامة</span>
+        </div>
+      </div>
+
+      <div class="k-card shifts">
+        <div class="k-icon"><mat-icon>pending_actions</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ attendance.openSessionsCount() }}</span>
+          <span class="k-label">وردية مفتوحة</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="toolbar attendance-toolbar">
+    <label>
+      <span>الموظف</span>
+      <select [ngModel]="selectedEmployeeId()" (ngModelChange)="selectedEmployeeId.set($event)">
+        <option value="">اختر موظف</option>
+        @for (employee of activeEmployees(); track employee.id) {
+          <option [value]="employee.id">{{ employee.name }} — {{ employeeStationLabel(employee) }}</option>
+        }
+      </select>
+    </label>
+
+    <label>
+      <span>المحطة</span>
+      <select [ngModel]="selectedStationId()" (ngModelChange)="selectedStationId.set($event)">
+        <option value="">اختر محطة</option>
+        @for (station of stationService.stations(); track station.id) {
+          <option [value]="station.id">{{ shortStationName(station.name) }}</option>
+        }
+      </select>
+    </label>
+
+    <label class="radius-field">
+      <span>النطاق</span>
+      <input
+        type="number"
+        dir="ltr"
+        min="25"
+        max="1000"
+        [ngModel]="radiusMeters()"
+        (ngModelChange)="radiusMeters.set(+$event || 100)"
+      />
+    </label>
+
+    <button class="btn-primary" type="button" [disabled]="!canCheckLocation()" (click)="checkLocation()">
+      <mat-icon>gps_fixed</mat-icon>
+      <span>{{ locationStatus() === 'checking' ? 'جاري الفحص' : 'فحص الموقع' }}</span>
+    </button>
+
+    <button class="btn-secondary" type="button" [disabled]="attendance.loading()" (click)="refreshDashboard()">
+      <mat-icon [class.spin]="attendance.loading()">sync</mat-icon>
+      <span>{{ attendance.loading() ? 'جاري التحديث' : 'تحديث اللوحة' }}</span>
+    </button>
+  </section>
+
+  <section class="content-grid">
+    <article class="section-card check-card">
+      <div class="section-head">
+        <h2><mat-icon>my_location</mat-icon> نتيجة فحص الموقع</h2>
+        <span class="status-chip" [class]="locationStatus()">
+          <span class="pulse-dot"></span>
+          {{ statusLabel() }}
+        </span>
+      </div>
+
+      <div class="location-result" [class]="locationStatus()">
+        <div class="result-icon">
+          <mat-icon>
+            {{ locationStatus() === 'inside' ? 'check_circle' : locationStatus() === 'outside' ? 'warning' : 'info' }}
+          </mat-icon>
+        </div>
+        <div>
+          <strong>{{ locationMessage() }}</strong>
+          @if (checkedDistance() !== null) {
+            <span>المسافة المحسوبة: {{ checkedDistance() }} متر</span>
+          }
+          @if (currentAccuracy() !== null) {
+            <span>دقة GPS: {{ currentAccuracy() }} متر</span>
+          }
+        </div>
+      </div>
+    </article>
+
+    <article class="section-card">
+      <div class="section-head">
+        <h2><mat-icon>work_history</mat-icon> الورديات المفتوحة</h2>
+        <span class="status-chip checking">{{ openSessions().length }}</span>
+      </div>
+
+      @if (attendance.error()) {
+        <div class="alert-state">
+          <mat-icon>cloud_off</mat-icon>
+          <span>{{ attendance.error() }}</span>
+        </div>
+      } @else if (openSessions().length > 0) {
+        <div class="open-session-list">
+          @for (session of openSessions(); track session.id) {
+            <article class="open-session-card">
+              <div class="session-main">
+                <strong>{{ session.employeeName }}</strong>
+                <span>{{ shortStationName(session.stationName) }} — {{ sessionDuration(session) }}</span>
+              </div>
+              <div class="session-meta">
+                <span><mat-icon>login</mat-icon>{{ formatDateTime(session.startedAt) }}</span>
+                @if (session.lastPoint) {
+                  <span><mat-icon>near_me</mat-icon>آخر نقطة {{ formatDateTime(session.lastPoint.recordedAt) }}</span>
+                } @else {
+                  <span><mat-icon>location_disabled</mat-icon>لا توجد نقاط مسار بعد</span>
+                }
+              </div>
+            </article>
+          }
+        </div>
+      } @else {
+        <div class="empty-state compact">
+          <div class="empty-icon"><mat-icon>event_available</mat-icon></div>
+          <h3>لا توجد ورديات مفتوحة حالياً</h3>
+          <p>ستظهر هنا الوردية بعد تسجيل الحضور من تطبيق الجوال</p>
+        </div>
+      }
+    </article>
+  </section>
+
+  <section class="section-card">
+    <div class="section-head">
+      <h2><mat-icon>receipt_long</mat-icon> آخر أحداث الحضور</h2>
+      <div class="event-summary">
+        <span class="accepted">مقبول اليوم: {{ attendance.todayAcceptedEventsCount() }}</span>
+        <span class="rejected">مرفوض اليوم: {{ attendance.todayRejectedEventsCount() }}</span>
+      </div>
+    </div>
+
+    @if (recentEvents().length > 0) {
+      <div class="event-list">
+        @for (event of recentEvents(); track event.id) {
+          <article class="event-item" [class.rejected]="event.status === 'rejected'">
+            <div class="event-type">
+              <mat-icon>{{ event.type === 'check_in' ? 'login' : 'logout' }}</mat-icon>
+              <span>{{ eventTypeLabel(event.type) }}</span>
+            </div>
+            <div class="event-body">
+              <strong>{{ event.employeeName }}</strong>
+              <span>{{ shortStationName(event.stationName) }} — {{ eventSourceLabel(event.source) }}</span>
+              @if (event.rejectionReason) {
+                <small>{{ event.rejectionReason }}</small>
+              }
+            </div>
+            <div class="event-meta">
+              <span class="ready-pill" [class.ready]="event.status === 'accepted'">{{ eventStatusLabel(event.status) }}</span>
+              <time>{{ formatDateTime(event.recordedAt) }}</time>
+            </div>
+          </article>
+        }
+      </div>
+    } @else {
+      <div class="empty-state compact">
+        <div class="empty-icon"><mat-icon>history</mat-icon></div>
+        <h3>لا توجد أحداث حضور بعد</h3>
+        <p>أول حضور من التطبيق سيظهر هنا مباشرة</p>
+      </div>
+    }
+  </section>
+
+  <section class="section-card station-section">
+    <div class="section-head">
+      <h2><mat-icon>map</mat-icon> نطاقات المحطات</h2>
+    </div>
+
+    <div class="table-wrap">
+      <table class="attendance-table">
+        <thead>
+          <tr>
+            <th>المحطة</th>
+            <th>الموظفون</th>
+            <th>وردية مفتوحة</th>
+            <th>النطاق</th>
+            <th>إحداثيات GPS</th>
+            <th>الحالة</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of stationRows(); track row.station.id) {
+            <tr>
+              <td>{{ row.shortName }}</td>
+              <td>{{ row.employeesCount }}</td>
+              <td>{{ row.openSessionsCount }}</td>
+              <td>{{ row.radiusMeters }} متر / كل {{ row.trackingIntervalMinutes }} د</td>
+              <td dir="ltr">
+                @if (row.hasCoordinates) {
+                  {{ row.station.latitude }}, {{ row.station.longitude }}
+                } @else {
+                  -
+                }
+              </td>
+              <td>
+                <span class="ready-pill" [class.ready]="row.hasCoordinates">
+                  {{ row.hasCoordinates ? 'جاهزة' : 'تحتاج تحديد موقع' }}
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section-card">
+    <div class="section-head">
+      <h2><mat-icon>fingerprint</mat-icon> أجهزة ZKTeco</h2>
+    </div>
+
+    <div class="device-grid">
+      @for (row of stationRows(); track row.station.id) {
+        <article class="device-card">
+          <div class="device-icon"><mat-icon>computer</mat-icon></div>
+          <div>
+            <h3>{{ row.shortName }}</h3>
+            <span>غير مربوط</span>
+          </div>
+        </article>
+      }
+    </div>
+  </section>
+</div>

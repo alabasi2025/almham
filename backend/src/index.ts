@@ -15,6 +15,7 @@ import treasuryRoute from './routes/treasury.js';
 import attendanceRoute from './routes/attendance.js';
 import billingRoute from './routes/billing.js';
 import networkRoute from './routes/network.js';
+import cableTypesRoute from './routes/cable-types.js';
 
 
 const app = new Hono();
@@ -59,6 +60,7 @@ app.route('/api/reset', resetRoute);
 app.route('/api/fuel', fuelRoute);
 app.route('/api/attendance', attendanceRoute);
 app.route('/api/network', networkRoute);
+app.route('/api/cable-types', cableTypesRoute);
 
 const port = Number(process.env['PORT']) || 3000;
 

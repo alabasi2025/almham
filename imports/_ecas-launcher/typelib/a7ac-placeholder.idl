@@ -1,0 +1,150 @@
+[
+  uuid(A7AC8459-490C-40B1-B475-3A380430718B),
+  version(1.0),
+  control,
+  helpstring("ECAS Placeholder Type Library")
+]
+library EcasPlaceholderLib
+{
+  importlib("stdole2.tlb");
+
+  [
+    uuid(876D612A-BF9C-4153-B44D-FFF8A0BAA4AE),
+    helpstring("Synthetic type 1")
+  ]
+  dispinterface TypeInfo1
+  {
+    properties:
+    methods:
+      [id(1)] void Placeholder();
+  };
+
+  [
+    uuid(1644B3C6-41C8-42B3-B27F-9C7B42FE8F35),
+    helpstring("Synthetic type 2")
+  ]
+  dispinterface TypeInfo2
+  {
+    properties:
+    methods:
+      [id(1)] void Placeholder();
+  };
+
+  [
+    uuid(853FA949-990B-4B78-B14E-45C868D97D09),
+    helpstring("Synthetic type 3")
+  ]
+  dispinterface TypeInfo3
+  {
+    properties:
+    methods:
+      [id(1)] void Placeholder();
+  };
+
+  [
+    uuid(3EA9B6F0-E719-4129-B346-4493BD4B27C4),
+    helpstring("Synthetic type 4")
+  ]
+  dispinterface TypeInfo4
+  {
+    properties:
+    methods:
+      [id(1)] void Placeholder();
+  };
+
+  [
+    uuid(F07B44EC-0B46-43FC-8078-48418F599FE9),
+    helpstring("Synthetic type 5")
+  ]
+  dispinterface TypeInfo5
+  {
+    properties:
+    methods:
+      [id(1)] void Placeholder();
+  };
+
+  [
+    uuid(F89C485C-E093-4426-A2AA-87261EE11482),
+    helpstring("Synthetic type 6")
+  ]
+  dispinterface TypeInfo6
+  {
+    properties:
+    methods:
+      [id(1)] void Placeholder();
+  };
+
+  [
+    uuid(1BAA1C5A-2EB1-4FF1-AD70-D1C4AB5184FB),
+    helpstring("Synthetic type 7")
+  ]
+  dispinterface TypeInfo7
+  {
+    properties:
+    methods:
+      [id(1)] void Placeholder();
+  };
+
+  [
+    uuid(A6F48147-C8FF-4002-8BD8-79A0EDEA8BB6),
+    helpstring("Synthetic type 8")
+  ]
+  dispinterface TypeInfo8
+  {
+    properties:
+    methods:
+      [id(1)] void Placeholder();
+  };
+
+  [
+    uuid(E6E94312-4447-4822-B5FC-84264F97104B),
+    helpstring("Synthetic type 9")
+  ]
+  dispinterface TypeInfo9
+  {
+    properties:
+    methods:
+      [id(1)] void Placeholder();
+  };
+
+  [
+    uuid(9F1A8D32-1D28-48B6-8A80-A7E05EE6DD44),
+    helpstring("Requested placeholder dispatch"),
+    version(1.0),
+    hidden,
+    dual,
+    nonextensible,
+    oleautomation
+  ]
+  interface _EcasRequestedClass : IDispatch
+  {
+    [id(1)] HRESULT Placeholder();
+  };
+
+  [
+    uuid(74086D3F-A3AA-4370-838E-DA3688F5E4F6),
+    helpstring("Requested placeholder events"),
+    version(1.0),
+    hidden,
+    nonextensible
+  ]
+  dispinterface __EcasRequestedClass
+  {
+    properties:
+    methods:
+      [id(1)] void PlaceholderEvent();
+  };
+
+  [
+    uuid(4BC3367A-4FA5-4FC1-943A-F0ECDA7A5677),
+    helpstring("Requested ECAS placeholder control"),
+    version(1.0),
+    noncreatable,
+    control
+  ]
+  coclass EcasRequestedClass
+  {
+    [default] interface _EcasRequestedClass;
+    [default, source] dispinterface __EcasRequestedClass;
+  };
+}

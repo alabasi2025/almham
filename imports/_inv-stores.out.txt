@@ -1,0 +1,135 @@
+ظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـ
+≡اôخ Ecas2668
+ظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـ
+
+ظ¤ظ¤ InvStoresData ظ¤ظ¤
+  ╪ث╪╣┘à╪»╪ر: Strg_ID(tinyint), Strg_Name(varchar), Strg_EngName(varchar), Strg_Location(varchar), Strg_IsPrimaryStorages(bit), Strg_AdminName(varchar), Strg_PhoneNo(varchar), Strg_FaxNo(varchar)
+  ╪╣╪»╪» ╪د┘╪│╪ش┘╪د╪ز: 1
+    {"Strg_ID":1,"Strg_Name":"╪د┘┘à╪«╪▓┘ ╪د┘╪▒╪خ┘è╪│┘è","Strg_EngName":"Main Storag","Strg_Location":"╪د┘╪ص┘ê╪┤","Strg_IsPrimaryStorages":true,"Strg_AdminName":"╪ث┘à┘è┘ ╪د┘┘à╪«╪▓┘ ╪د┘╪▒╪خ┘è╪│┘è","Strg_PhoneNo":"00967","Strg_FaxNo":"00967"}
+
+ظ¤ظ¤ InvStoreCategories ظ¤ظ¤
+  ╪ث╪╣┘à╪»╪ر: Ctg_ID(int), Strg_ID(tinyint), StrCtg_OpenQty(float), StrCtg_OpenPrice(float), StrCtg_InQty(float), StrCtg_InPrice(float), StrCtg_OutQty(float), StrCtg_OutPrice(float), StrCtg_TswQty(float), StrCtg_TswPrice(float), StrCtg_CrntQty(float), StrCtg_CrntPrice(float), StrCtg_ClosQty(float), StrCtg_ClosPrice(float)
+  ╪╣╪»╪» ╪د┘╪│╪ش┘╪د╪ز: 0
+
+ظ¤ظ¤ InvStoreCategoriesHst ظ¤ظ¤
+  ╪ث╪╣┘à╪»╪ر: Yr_ID(smallint), Ctg_ID(int), Strg_ID(tinyint), StrCtg_OpenQty(float), StrCtg_OpenPrice(float), StrCtg_InQty(float), StrCtg_InPrice(float), StrCtg_OutQty(float), StrCtg_OutPrice(float), StrCtg_TswQty(float), StrCtg_TswPrice(float), StrCtg_CrntQty(float), StrCtg_CrntPrice(float), StrCtg_ClosQty(float), StrCtg_ClosPrice(float)
+  ╪╣╪»╪» ╪د┘╪│╪ش┘╪د╪ز: 0
+
+ظ¤ظ¤ ╪ذ╪ص╪س ╪╣┘ "admin" + "store" ┘┘è ┘â┘ ╪ش╪»┘ê┘ ظ¤ظ¤
+
+    ≡اôî PaymentDataHistorical (10 match):
+      {"PG_ID":"3191390029","Pay_Type":3,"Pay_No":1,"Pay_AutoDebentureID":"6800919100481","Cst_ID":68120447,"Pay_ManualDebentureID":-1,"Pay_Mony":2080,"Pay_Note":"╪╣╪ذ╪▒ ╪د┘╪ش┘ê╪د┘ - ╪╣╪ذ╪د╪▒╪ر ╪╣┘ ╪ز╪│╪»┘è╪» ╪ذ╪د┘é┘┘è ╪د┘┘à╪ذ┘╪║ ╪د┘┘à╪│╪ز╪ص┘é ╪╣┘┘è┘â┘à - ╪▒┘é┘à ╪د┘┘à╪▒╪ش╪╣= 126010603020440447","Dt_ID":2026011,"Cshr_ID":30,"Cshr_Name":"╪ص╪د╪│╪ذ ╪ش┘à╪د┘ 3","Pay_PaymentDate":"2026-01-06T00:00:00.000Z","Pay
+      {"PG_ID":"3191390029","Pay_Type":3,"Pay_No":2,"Pay_AutoDebentureID":"6800919100482","Cst_ID":68091433,"Pay_ManualDebentureID":-1,"Pay_Mony":20000,"Pay_Note":"╪╣╪ذ╪▒ ╪د┘╪ش┘ê╪د┘ - ╪╣╪ذ╪د╪▒╪ر ╪╣┘ ╪ز╪│╪»┘è╪» ╪د┘┘à╪ذ┘╪║ ╪د┘┘à╪│╪ز╪ص┘é ╪╣┘┘è┘â┘à ┘ê ╪»┘╪╣┘ç ┘à┘é╪»┘à┘ç ┘à┘ ╪ص╪│╪د╪ذ┘â┘à - ╪▒┘é┘à ╪د┘┘à╪▒╪ش╪╣= 126010603021591433","Dt_ID":2026011,"Cshr_ID":30,"Cshr_Name":"╪ص╪د╪│╪ذ ╪ش┘à╪د┘ 3","Pay_PaymentDate":"2026-01-06T0
+      {"PG_ID":"3191390029","Pay_Type":3,"Pay_No":3,"Pay_AutoDebentureID":"6800919100483","Cst_ID":68050708,"Pay_ManualDebentureID":-1,"Pay_Mony":1542,"Pay_Note":"╪╣╪ذ╪▒ ╪د┘╪ش┘ê╪د┘ - ╪╣╪ذ╪د╪▒╪ر ╪╣┘ ╪ز╪│╪»┘è╪» ╪ذ╪د┘é┘┘è ╪د┘┘à╪ذ┘╪║ ╪د┘┘à╪│╪ز╪ص┘é ╪╣┘┘è┘â┘à - ╪▒┘é┘à ╪د┘┘à╪▒╪ش╪╣= 126010603022000708","Dt_ID":2026011,"Cshr_ID":30,"Cshr_Name":"╪ص╪د╪│╪ذ ╪ش┘à╪د┘ 3","Pay_PaymentDate":"2026-01-06T00:00:00.000Z","Pay
+      {"PG_ID":"3191390029","Pay_Type":3,"Pay_No":4,"Pay_AutoDebentureID":"6800919100484","Cst_ID":68050040,"Pay_ManualDebentureID":-1,"Pay_Mony":1050,"Pay_Note":"╪╣╪ذ╪▒ ╪د┘╪ش┘ê╪د┘ - ╪╣╪ذ╪د╪▒╪ر ╪╣┘ ╪ز╪│╪»┘è╪» ╪ذ╪د┘é┘┘è ╪د┘┘à╪ذ┘╪║ ╪د┘┘à╪│╪ز╪ص┘é ╪╣┘┘è┘â┘à - ╪▒┘é┘à ╪د┘┘à╪▒╪ش╪╣= 126010603022020040","Dt_ID":2026011,"Cshr_ID":30,"Cshr_Name":"╪ص╪د╪│╪ذ ╪ش┘à╪د┘ 3","Pay_PaymentDate":"2026-01-06T00:00:00.000Z","Pay
+      {"PG_ID":"3191390029","Pay_Type":3,"Pay_No":5,"Pay_AutoDebentureID":"6800919100485","Cst_ID":68120833,"Pay_ManualDebentureID":-1,"Pay_Mony":1390,"Pay_Note":"╪╣╪ذ╪▒ ╪د┘╪ش┘ê╪د┘ - ╪╣╪ذ╪د╪▒╪ر ╪╣┘ ╪ز╪│╪»┘è╪» ╪د┘┘à╪ذ┘╪║ ╪د┘┘à╪│╪ز╪ص┘é ╪╣┘┘è┘â┘à ┘ê ╪»┘╪╣┘ç ┘à┘é╪»┘à┘ç ┘à┘ ╪ص╪│╪د╪ذ┘â┘à - ╪▒┘é┘à ╪د┘┘à╪▒╪ش╪╣= 126010603022030833","Dt_ID":2026011,"Cshr_ID":30,"Cshr_Name":"╪ص╪د╪│╪ذ ╪ش┘à╪د┘ 3","Pay_PaymentDate":"2026-01-06T00
+      {"PG_ID":"3191390029","Pay_Type":3,"Pay_No":6,"Pay_AutoDebentureID":"6800919100486","Cst_ID":68070939,"Pay_ManualDebentureID":-1,"Pay_Mony":4640,"Pay_Note":"╪╣╪ذ╪▒ ╪د┘╪ش┘ê╪د┘ - ╪╣╪ذ╪د╪▒╪ر ╪╣┘ ╪ز╪│╪»┘è╪» ╪د┘┘à╪ذ┘╪║ ╪د┘┘à╪│╪ز╪ص┘é ╪╣┘┘è┘â┘à ┘ê ╪»┘╪╣┘ç ┘à┘é╪»┘à┘ç ┘à┘ ╪ص╪│╪د╪ذ┘â┘à - ╪▒┘é┘à ╪د┘┘à╪▒╪ش╪╣= 126010603022060939","Dt_ID":2026011,"Cshr_ID":30,"Cshr_Name":"╪ص╪د╪│╪ذ ╪ش┘à╪د┘ 3","Pay_PaymentDate":"2026-01-06T00
+      {"PG_ID":"3191390029","Pay_Type":3,"Pay_No":7,"Pay_AutoDebentureID":"6800919100487","Cst_ID":68091539,"Pay_ManualDebentureID":-1,"Pay_Mony":9100,"Pay_Note":"╪╣╪ذ╪▒ ╪د┘╪ش┘ê╪د┘ - ╪╣╪ذ╪د╪▒╪ر ╪╣┘ ╪ز╪│╪»┘è╪» ╪ذ╪د┘é┘┘è ╪د┘┘à╪ذ┘╪║ ╪د┘┘à╪│╪ز╪ص┘é ╪╣┘┘è┘â┘à - ╪▒┘é┘à ╪د┘┘à╪▒╪ش╪╣= 126010603022071539","Dt_ID":2026011,"Cshr_ID":30,"Cshr_Name":"╪ص╪د╪│╪ذ ╪ش┘à╪د┘ 3","Pay_PaymentDate":"2026-01-06T00:00:00.000Z","Pay
+      {"PG_ID":"3191390029","Pay_Type":3,"Pay_No":8,"Pay_AutoDebentureID":"6800919100488","Cst_ID":68060684,"Pay_ManualDebentureID":-1,"Pay_Mony":17000,"Pay_Note":"╪╣╪ذ╪▒ ╪د┘╪ش┘ê╪د┘ - ╪╣╪ذ╪د╪▒╪ر ╪╣┘ ╪ز╪│╪»┘è╪» ╪د┘┘à╪ذ┘╪║ ╪د┘┘à╪│╪ز╪ص┘é ╪╣┘┘è┘â┘à ┘ê ╪»┘╪╣┘ç ┘à┘é╪»┘à┘ç ┘à┘ ╪ص╪│╪د╪ذ┘â┘à - ╪▒┘é┘à ╪د┘┘à╪▒╪ش╪╣= 126010603022080684","Dt_ID":2026011,"Cshr_ID":30,"Cshr_Name":"╪ص╪د╪│╪ذ ╪ش┘à╪د┘ 3","Pay_PaymentDate":"2026-01-06T0
+      {"PG_ID":"3191390029","Pay_Type":3,"Pay_No":9,"Pay_AutoDebentureID":"6800919100489","Cst_ID":68031521,"Pay_ManualDebentureID":-1,"Pay_Mony":1300,"Pay_Note":"╪╣╪ذ╪▒ ╪د┘╪ش┘ê╪د┘ - ╪╣╪ذ╪د╪▒╪ر ╪╣┘ ╪ز╪│╪»┘è╪» ╪ذ╪د┘é┘┘è ╪د┘┘à╪ذ┘╪║ ╪د┘┘à╪│╪ز╪ص┘é ╪╣┘┘è┘â┘à - ╪▒┘é┘à ╪د┘┘à╪▒╪ش╪╣= 126010603022091521","Dt_ID":2026011,"Cshr_ID":30,"Cshr_Name":"╪ص╪د╪│╪ذ ╪ش┘à╪د┘ 3","Pay_PaymentDate":"2026-01-06T00:00:00.000Z","Pay
+      {"PG_ID":"3191390029","Pay_Type":3,"Pay_No":10,"Pay_AutoDebentureID":"6800919100490","Cst_ID":68091511,"Pay_ManualDebentureID":-1,"Pay_Mony":5750,"Pay_Note":"╪╣╪ذ╪▒ ╪د┘╪ش┘ê╪د┘ - ╪╣╪ذ╪د╪▒╪ر ╪╣┘ ╪ز╪│╪»┘è╪» ╪ذ╪د┘é┘┘è ╪د┘┘à╪ذ┘╪║ ╪د┘┘à╪│╪ز╪ص┘é ╪╣┘┘è┘â┘à - ╪▒┘é┘à ╪د┘┘à╪▒╪ش╪╣= 126010603022101511","Dt_ID":2026011,"Cshr_ID":30,"Cshr_Name":"╪ص╪د╪│╪ذ ╪ش┘à╪د┘ 3","Pay_PaymentDate":"2026-01-06T00:00:00.000Z","Pa
+
+    ≡اôî BARD_RaedHistorical (10 match):
+      {"Dt_ID":2021061,"Cst_ID":68010080,"BRD_Type":1,"BRD_ID":"6801005900041","Evn_Name":"╪ح╪╢╪د┘╪ر","BRD_EvnDate":"2021-06-17T03:39:33.000Z","BRD_LastRead":612,"BRD_CurrentRead":16,"BRD_ImgName":null,"BRD_MonthConsume":628,"BRD_ConsumePrice":5120,"BRD_ConsumeAddedPrice":0,"BRD_ConsumeValue":5120,"BRD_InsertDate":"2021-06-15T00:00:00.000Z","BRD_UpDateDate":
+      {"Dt_ID":2021061,"Cst_ID":68010144,"BRD_Type":1,"BRD_ID":"6801005900042","Evn_Name":"╪ح╪╢╪د┘╪ر","BRD_EvnDate":"2021-06-17T03:39:33.000Z","BRD_LastRead":333,"BRD_CurrentRead":0,"BRD_ImgName":null,"BRD_MonthConsume":333,"BRD_ConsumePrice":0,"BRD_ConsumeAddedPrice":0,"BRD_ConsumeValue":0,"BRD_InsertDate":"2021-06-15T00:00:00.000Z","BRD_UpDateDate":"2021-0
+      {"Dt_ID":2021061,"Cst_ID":68100432,"BRD_Type":1,"BRD_ID":"6801005900682","Evn_Name":"╪ح╪╢╪د┘╪ر","BRD_EvnDate":"2021-06-17T03:39:33.000Z","BRD_LastRead":188,"BRD_CurrentRead":0,"BRD_ImgName":null,"BRD_MonthConsume":188,"BRD_ConsumePrice":0,"BRD_ConsumeAddedPrice":0,"BRD_ConsumeValue":0,"BRD_InsertDate":"2021-06-15T00:00:00.000Z","BRD_UpDateDate":"2021-0
+      {"Dt_ID":2021061,"Cst_ID":68080891,"BRD_Type":1,"BRD_ID":"6801005900520","Evn_Name":"╪ح╪╢╪د┘╪ر","BRD_EvnDate":"2021-06-17T03:39:33.000Z","BRD_LastRead":0,"BRD_CurrentRead":25,"BRD_ImgName":null,"BRD_MonthConsume":25,"BRD_ConsumePrice":8000,"BRD_ConsumeAddedPrice":0,"BRD_ConsumeValue":8000,"BRD_InsertDate":"2021-06-15T00:00:00.000Z","BRD_UpDateDate":"20
+      {"Dt_ID":2021061,"Cst_ID":68090336,"BRD_Type":1,"BRD_ID":"6801005900598","Evn_Name":"╪ح╪╢╪د┘╪ر","BRD_EvnDate":"2021-06-17T03:39:33.000Z","BRD_LastRead":289,"BRD_CurrentRead":11,"BRD_ImgName":null,"BRD_MonthConsume":300,"BRD_ConsumePrice":3520,"BRD_ConsumeAddedPrice":0,"BRD_ConsumeValue":3520,"BRD_InsertDate":"2021-06-15T00:00:00.000Z","BRD_UpDateDate":
+      {"Dt_ID":2021061,"Cst_ID":68080263,"BRD_Type":1,"BRD_ID":"6801005900454","Evn_Name":"╪ح╪╢╪د┘╪ر","BRD_EvnDate":"2021-06-17T03:39:33.000Z","BRD_LastRead":1985,"BRD_CurrentRead":82,"BRD_ImgName":null,"BRD_MonthConsume":2067,"BRD_ConsumePrice":26240,"BRD_ConsumeAddedPrice":0,"BRD_ConsumeValue":26240,"BRD_InsertDate":"2021-06-15T00:00:00.000Z","BRD_UpDateDa
+      {"Dt_ID":2021061,"Cst_ID":68080264,"BRD_Type":1,"BRD_ID":"6801005900455","Evn_Name":"╪ح╪╢╪د┘╪ر","BRD_EvnDate":"2021-06-17T03:39:33.000Z","BRD_LastRead":1156,"BRD_CurrentRead":19,"BRD_ImgName":null,"BRD_MonthConsume":1175,"BRD_ConsumePrice":6080,"BRD_ConsumeAddedPrice":0,"BRD_ConsumeValue":6080,"BRD_InsertDate":"2021-06-15T00:00:00.000Z","BRD_UpDateDate
+      {"Dt_ID":2021061,"Cst_ID":68050675,"BRD_Type":1,"BRD_ID":"6801005900323","Evn_Name":"╪ح╪╢╪د┘╪ر","BRD_EvnDate":"2021-06-17T03:39:33.000Z","BRD_LastRead":389,"BRD_CurrentRead":22,"BRD_ImgName":null,"BRD_MonthConsume":411,"BRD_ConsumePrice":7040,"BRD_ConsumeAddedPrice":0,"BRD_ConsumeValue":7040,"BRD_InsertDate":"2021-06-15T00:00:00.000Z","BRD_UpDateDate":
+      {"Dt_ID":2021061,"Cst_ID":68050676,"BRD_Type":1,"BRD_ID":"6801005900324","Evn_Name":"╪ح╪╢╪د┘╪ر","BRD_EvnDate":"2021-06-17T03:39:33.000Z","BRD_LastRead":263,"BRD_CurrentRead":10,"BRD_ImgName":null,"BRD_MonthConsume":273,"BRD_ConsumePrice":3200,"BRD_ConsumeAddedPrice":0,"BRD_ConsumeValue":3200,"BRD_InsertDate":"2021-06-15T00:00:00.000Z","BRD_UpDateDate":
+      {"Dt_ID":2021061,"Cst_ID":68060187,"BRD_Type":1,"BRD_ID":"6801005900383","Evn_Name":"╪ح╪╢╪د┘╪ر","BRD_EvnDate":"2021-06-17T03:39:33.000Z","BRD_LastRead":35,"BRD_CurrentRead":0,"BRD_ImgName":null,"BRD_MonthConsume":35,"BRD_ConsumePrice":0,"BRD_ConsumeAddedPrice":0,"BRD_ConsumeValue":0,"BRD_InsertDate":"2021-06-15T00:00:00.000Z","BRD_UpDateDate":"2021-06-
+
+    ≡اôî BILLING_MANAGERS_USERS (2 match):
+      {"USER_NO":-2,"NAME":"Administrator2","P":"MTEyMjU1MTE","BRANCH_ID":"1","LAST_LOGIN":"2024-09-02T21:29:22.387Z","STATUS":2,"MOB_NO":777707971,"ISMANAGER":true,"SCODE":"Y","MOBSERL":"4161fbe0f94da0ed","ADD_DATE":"2024-09-02T21:29:22.387Z","ADJECTIVE":"┘à╪ذ╪▒┘à╪ش ╪د┘┘╪╕╪د┘à"}
+      {"USER_NO":-1,"NAME":"Administrator","P":"MTEyMjU1MTE","BRANCH_ID":"1","LAST_LOGIN":"2026-01-06T03:10:28.820Z","STATUS":2,"MOB_NO":777289900,"ISMANAGER":true,"SCODE":"Y","MOBSERL":"3647081526bc30c8","ADD_DATE":"2024-09-02T21:29:22.387Z","ADJECTIVE":"┘à╪ذ╪▒┘à╪ش ╪د┘┘╪╕╪د┘à"}
+
+    ≡اôî UserData (1 match):
+      {"RU_ID":1,"RW_ID":0,"Us_ID":-1,"Us_Name":"Administrator","Us_PassWord":"nullandnotempty","Us_PassWordHint":"System PassWord","Dev_Serl":null,"Us_UpDateDate":"2021-06-17T03:27:15.000Z","Us_HaveRestrictedSomeID":false}
+
+ظ¤ظ¤ ╪ث╪╣┘à╪»╪ر ╪ذ╪ث╪│┘à╪د╪ة ╪ز╪ص┘ê┘è admin ╪ث┘ê store ظ¤ظ¤
+    Area.Ar_MngCheckName (varchar)
+    Area.Ar_MngCommercialName (varchar)
+    Area.Ar_MngDptAccomptsName (varchar)
+    Area.Ar_MngDptReadersName (varchar)
+    Area.Ar_MngFiscalName (varchar)
+    Area.Ar_TopMngName (varchar)
+    Branch.Brn_MngName (varchar)
+    Branch.Brn_QMngName (varchar)
+    CompInfoAndSysOption.db_Period4Clear_ImgReadFiles (smallint)
+    InvStoresData.Strg_AdminName (varchar)
+    TransFormer.tMgr_ID (int)
+    TransFormerHst.tMgr_ID (int)
+    TransFormerHst.tMgr_Name (varchar)
+    TransManager.tMgr_ID (int)
+    TransManager.tMgr_Name (varchar)
+ظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـ
+≡اôخ Ecas2673
+ظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـ
+
+ظ¤ظ¤ InvStoresData ظ¤ظ¤
+  ╪ث╪╣┘à╪»╪ر: Strg_ID(tinyint), Strg_Name(varchar), Strg_EngName(varchar), Strg_Location(varchar), Strg_IsPrimaryStorages(bit), Strg_AdminName(varchar), Strg_PhoneNo(varchar), Strg_FaxNo(varchar)
+  ╪╣╪»╪» ╪د┘╪│╪ش┘╪د╪ز: 1
+    {"Strg_ID":1,"Strg_Name":"╪د┘┘à╪«╪▓┘ ╪د┘╪▒╪خ┘è╪│┘è","Strg_EngName":"Main Storag","Strg_Location":"╪د┘╪ص┘ê╪┤","Strg_IsPrimaryStorages":true,"Strg_AdminName":"╪ث┘à┘è┘ ╪د┘┘à╪«╪▓┘ ╪د┘╪▒╪خ┘è╪│┘è","Strg_PhoneNo":"00967","Strg_FaxNo":"00967"}
+
+ظ¤ظ¤ InvStoreCategories ظ¤ظ¤
+  ╪ث╪╣┘à╪»╪ر: Ctg_ID(int), Strg_ID(tinyint), StrCtg_OpenQty(float), StrCtg_OpenPrice(float), StrCtg_InQty(float), StrCtg_InPrice(float), StrCtg_OutQty(float), StrCtg_OutPrice(float), StrCtg_TswQty(float), StrCtg_TswPrice(float), StrCtg_CrntQty(float), StrCtg_CrntPrice(float), StrCtg_ClosQty(float), StrCtg_ClosPrice(float)
+  ╪╣╪»╪» ╪د┘╪│╪ش┘╪د╪ز: 0
+
+ظ¤ظ¤ InvStoreCategoriesHst ظ¤ظ¤
+  ╪ث╪╣┘à╪»╪ر: Yr_ID(smallint), Ctg_ID(int), Strg_ID(tinyint), StrCtg_OpenQty(float), StrCtg_OpenPrice(float), StrCtg_InQty(float), StrCtg_InPrice(float), StrCtg_OutQty(float), StrCtg_OutPrice(float), StrCtg_TswQty(float), StrCtg_TswPrice(float), StrCtg_CrntQty(float), StrCtg_CrntPrice(float), StrCtg_ClosQty(float), StrCtg_ClosPrice(float)
+  ╪╣╪»╪» ╪د┘╪│╪ش┘╪د╪ز: 0
+
+ظ¤ظ¤ ╪ذ╪ص╪س ╪╣┘ "admin" + "store" ┘┘è ┘â┘ ╪ش╪»┘ê┘ ظ¤ظ¤
+
+    ≡اôî UserEvent (1 match):
+      {"Frm_ID":3005,"Evn_ID":13,"UE_CurrentID":"C:\\Users\\Administrator\\Desktop\\2673\\2673.dbf","Us_ID":-1,"RU_ID":1,"RW_ID":0,"UE_ComputerName":"ABBASIYSERVER","tBrnIDForDelTempEvents":0,"UE_EventDate":"2021-07-11T00:00:00.000Z","UE_EventTime":"1970-01-01T19:08:18.000Z"}
+
+    ≡اôî PaymentDataHistorical (10 match):
+      {"PG_ID":"1093390001","Pay_Type":3,"Pay_No":1,"Pay_AutoDebentureID":"7300909300001","Cst_ID":73030941,"Pay_ManualDebentureID":-1,"Pay_Mony":7250,"Pay_Note":"╪╣╪ذ╪▒ ╪د┘╪ش┘ê╪د┘ - ╪╣╪ذ╪د╪▒╪ر ╪╣┘ ╪ز╪│╪»┘è╪» ╪د┘┘à╪ذ┘╪║ ╪د┘┘à╪│╪ز╪ص┘é ╪╣┘┘è┘â┘à ┘ê ╪»┘╪╣┘ç ┘à┘é╪»┘à┘ç ┘à┘ ╪ص╪│╪د╪ذ┘â┘à - ╪▒┘é┘à ╪د┘┘à╪▒╪ش╪╣= 121070900415393094","Dt_ID":2021071,"Cshr_ID":4,"Cshr_Name":"╪▒╪د╪خ╪» ╪د┘╪╣╪ذ╪د╪│┘è","Pay_PaymentDate":"2021-07-09T00
+      {"PG_ID":"1093390001","Pay_Type":3,"Pay_No":2,"Pay_AutoDebentureID":"7300909300002","Cst_ID":73080555,"Pay_ManualDebentureID":-1,"Pay_Mony":6000,"Pay_Note":"╪╣╪ذ╪▒ ╪د┘╪ش┘ê╪د┘ - ╪╣╪ذ╪د╪▒╪ر ╪╣┘ ╪ز╪│╪»┘è╪» ┘à╪ذ┘╪║ ┘à┘é╪»┘à ┘à┘ ╪ص╪│╪د╪ذ┘â┘à - ╪▒┘é┘à ╪د┘┘à╪▒╪ش╪╣= 121070900416268055","Dt_ID":2021071,"Cshr_ID":4,"Cshr_Name":"╪▒╪د╪خ╪» ╪د┘╪╣╪ذ╪د╪│┘è","Pay_PaymentDate":"2021-07-09T00:00:00.000Z","Pay_Insert
+      {"PG_ID":"1093390001","Pay_Type":3,"Pay_No":3,"Pay_AutoDebentureID":"7300909300003","Cst_ID":73130687,"Pay_ManualDebentureID":-1,"Pay_Mony":24000,"Pay_Note":"╪╣╪ذ╪▒ ╪د┘╪ش┘ê╪د┘ - ╪╣╪ذ╪د╪▒╪ر ╪╣┘ ╪ز╪│╪»┘è╪» ┘à╪ذ┘╪║ ┘à┘é╪»┘à ┘à┘ ╪ص╪│╪د╪ذ┘â┘à - ╪▒┘é┘à ╪د┘┘à╪▒╪ش╪╣= 121070900416273068","Dt_ID":2021071,"Cshr_ID":4,"Cshr_Name":"╪▒╪د╪خ╪» ╪د┘╪╣╪ذ╪د╪│┘è","Pay_PaymentDate":"2021-07-09T00:00:00.000Z","Pay_Inser
+      {"PG_ID":"1093390001","Pay_Type":3,"Pay_No":4,"Pay_AutoDebentureID":"7300909300004","Cst_ID":73130273,"Pay_ManualDebentureID":-1,"Pay_Mony":1000,"Pay_Note":"╪╣╪ذ╪▒ ╪د┘╪ش┘ê╪د┘ - ╪╣╪ذ╪د╪▒╪ر ╪╣┘ ╪ز╪│╪»┘è╪» ┘à╪ذ┘╪║ ┘à┘é╪»┘à ┘à┘ ╪ص╪│╪د╪ذ┘â┘à - ╪▒┘é┘à ╪د┘┘à╪▒╪ش╪╣= 121070900416403027","Dt_ID":2021071,"Cshr_ID":4,"Cshr_Name":"╪▒╪د╪خ╪» ╪د┘╪╣╪ذ╪د╪│┘è","Pay_PaymentDate":"2021-07-09T00:00:00.000Z","Pay_Insert
+      {"PG_ID":"1093390001","Pay_Type":3,"Pay_No":5,"Pay_AutoDebentureID":"7300909300005","Cst_ID":73000599,"Pay_ManualDebentureID":-1,"Pay_Mony":8750,"Pay_Note":"╪╣╪ذ╪▒ ╪د┘╪ش┘ê╪د┘ - ╪╣╪ذ╪د╪▒╪ر ╪╣┘ ╪ز╪│╪»┘è╪» ╪د┘┘à╪ذ┘╪║ ╪د┘┘à╪│╪ز╪ص┘é ╪╣┘┘è┘â┘à ┘ê ╪»┘╪╣┘ç ┘à┘é╪»┘à┘ç ┘à┘ ╪ص╪│╪د╪ذ┘â┘à - ╪▒┘é┘à ╪د┘┘à╪▒╪ش╪╣= 121070900416450059","Dt_ID":2021071,"Cshr_ID":4,"Cshr_Name":"╪▒╪د╪خ╪» ╪د┘╪╣╪ذ╪د╪│┘è","Pay_PaymentDate":"2021-07-09T00
+      {"PG_ID":"1093390001","Pay_Type":3,"Pay_No":6,"Pay_AutoDebentureID":"7300909300006","Cst_ID":73140876,"Pay_ManualDebentureID":-1,"Pay_Mony":3500,"Pay_Note":"╪╣╪ذ╪▒ ╪د┘╪ش┘ê╪د┘ - ╪╣╪ذ╪د╪▒╪ر ╪╣┘ ╪ز╪│╪»┘è╪» ╪د┘┘à╪ذ┘╪║ ╪د┘┘à╪│╪ز╪ص┘é ╪╣┘┘è┘â┘à ┘ê ╪»┘╪╣┘ç ┘à┘é╪»┘à┘ç ┘à┘ ╪ص╪│╪د╪ذ┘â┘à - ╪▒┘é┘à ╪د┘┘à╪▒╪ش╪╣= 121070900416503087","Dt_ID":2021071,"Cshr_ID":4,"Cshr_Name":"╪▒╪د╪خ╪» ╪د┘╪╣╪ذ╪د╪│┘è","Pay_PaymentDate":"2021-07-09T00
+      {"PG_ID":"1093390001","Pay_Type":3,"Pay_No":7,"Pay_AutoDebentureID":"7300909300007","Cst_ID":73011063,"Pay_ManualDebentureID":-1,"Pay_Mony":2000,"Pay_Note":"╪╣╪ذ╪▒ ╪د┘╪ش┘ê╪د┘ - ╪╣╪ذ╪د╪▒╪ر ╪╣┘ ╪ز╪│╪»┘è╪» ┘à╪ذ┘╪║ ┘à┘é╪»┘à ┘à┘ ╪ص╪│╪د╪ذ┘â┘à - ╪▒┘é┘à ╪د┘┘à╪▒╪ش╪╣= 121070900416511106","Dt_ID":2021071,"Cshr_ID":4,"Cshr_Name":"╪▒╪د╪خ╪» ╪د┘╪╣╪ذ╪د╪│┘è","Pay_PaymentDate":"2021-07-09T00:00:00.000Z","Pay_Insert
+      {"PG_ID":"1093390001","Pay_Type":3,"Pay_No":8,"Pay_AutoDebentureID":"7300909300008","Cst_ID":73081014,"Pay_ManualDebentureID":-1,"Pay_Mony":12500,"Pay_Note":"╪╣╪ذ╪▒ ╪د┘╪ش┘ê╪د┘ - ╪╣╪ذ╪د╪▒╪ر ╪╣┘ ╪ز╪│╪»┘è╪» ╪د┘┘à╪ذ┘╪║ ╪د┘┘à╪│╪ز╪ص┘é ╪╣┘┘è┘â┘à ┘ê ╪»┘╪╣┘ç ┘à┘é╪»┘à┘ç ┘à┘ ╪ص╪│╪د╪ذ┘â┘à - ╪▒┘é┘à ╪د┘┘à╪▒╪ش╪╣= 121070900416528101","Dt_ID":2021071,"Cshr_ID":4,"Cshr_Name":"╪▒╪د╪خ╪» ╪د┘╪╣╪ذ╪د╪│┘è","Pay_PaymentDate":"2021-07-09T0
+      {"PG_ID":"1093390001","Pay_Type":3,"Pay_No":9,"Pay_AutoDebentureID":"7300909300009","Cst_ID":73130280,"Pay_ManualDebentureID":-1,"Pay_Mony":39200,"Pay_Note":"╪╣╪ذ╪▒ ╪د┘╪ش┘ê╪د┘ - ╪╣╪ذ╪د╪▒╪ر ╪╣┘ ╪ز╪│╪»┘è╪» ┘à╪ذ┘╪║ ┘à┘é╪»┘à ┘à┘ ╪ص╪│╪د╪ذ┘â┘à - ╪▒┘é┘à ╪د┘┘à╪▒╪ش╪╣= 121070900416563028","Dt_ID":2021071,"Cshr_ID":4,"Cshr_Name":"╪▒╪د╪خ╪» ╪د┘╪╣╪ذ╪د╪│┘è","Pay_PaymentDate":"2021-07-09T00:00:00.000Z","Pay_Inser
+      {"PG_ID":"1093390001","Pay_Type":3,"Pay_No":10,"Pay_AutoDebentureID":"7300909300010","Cst_ID":73031012,"Pay_ManualDebentureID":-1,"Pay_Mony":27750,"Pay_Note":"╪╣╪ذ╪▒ ╪د┘╪ش┘ê╪د┘ - ╪╣╪ذ╪د╪▒╪ر ╪╣┘ ╪ز╪│╪»┘è╪» ┘à╪ذ┘╪║ ┘à┘é╪»┘à ┘à┘ ╪ص╪│╪د╪ذ┘â┘à - ╪▒┘é┘à ╪د┘┘à╪▒╪ش╪╣= 121070900417573101","Dt_ID":2021071,"Cshr_ID":4,"Cshr_Name":"╪▒╪د╪خ╪» ╪د┘╪╣╪ذ╪د╪│┘è","Pay_PaymentDate":"2021-07-09T00:00:00.000Z","Pay_Inse
+
+    ≡اôî BARD_RaedHistorical (10 match):
+      {"Dt_ID":2021061,"Cst_ID":73050417,"BRD_Type":1,"BRD_ID":"7301009000396","Evn_Name":"╪ح╪╢╪د┘╪ر","BRD_EvnDate":"2021-06-17T04:14:01.000Z","BRD_LastRead":4765,"BRD_CurrentRead":24,"BRD_ImgName":null,"BRD_MonthConsume":4789,"BRD_ConsumePrice":7680,"BRD_ConsumeAddedPrice":0,"BRD_ConsumeValue":7680,"BRD_InsertDate":"2021-06-14T00:00:00.000Z","BRD_UpDateDate
+      {"Dt_ID":2021061,"Cst_ID":73120659,"BRD_Type":1,"BRD_ID":"7301009000397","Evn_Name":"╪ح╪╢╪د┘╪ر","BRD_EvnDate":"2021-06-17T04:14:01.000Z","BRD_LastRead":5002,"BRD_CurrentRead":57,"BRD_ImgName":null,"BRD_MonthConsume":5059,"BRD_ConsumePrice":18240,"BRD_ConsumeAddedPrice":0,"BRD_ConsumeValue":18240,"BRD_InsertDate":"2021-06-14T00:00:00.000Z","BRD_UpDateDa
+      {"Dt_ID":2021061,"Cst_ID":73080769,"BRD_Type":1,"BRD_ID":"7301009000386","Evn_Name":"╪ح╪╢╪د┘╪ر","BRD_EvnDate":"2021-06-17T04:14:01.000Z","BRD_LastRead":981,"BRD_CurrentRead":10,"BRD_ImgName":null,"BRD_MonthConsume":991,"BRD_ConsumePrice":3200,"BRD_ConsumeAddedPrice":0,"BRD_ConsumeValue":3200,"BRD_InsertDate":"2021-06-14T00:00:00.000Z","BRD_UpDateDate":
+      {"Dt_ID":2021061,"Cst_ID":73080834,"BRD_Type":1,"BRD_ID":"7301009000387","Evn_Name":"╪ح╪╢╪د┘╪ر","BRD_EvnDate":"2021-06-17T04:14:01.000Z","BRD_LastRead":2451,"BRD_CurrentRead":114,"BRD_ImgName":null,"BRD_MonthConsume":2565,"BRD_ConsumePrice":36480,"BRD_ConsumeAddedPrice":0,"BRD_ConsumeValue":36480,"BRD_InsertDate":"2021-06-14T00:00:00.000Z","BRD_UpDateD
+      {"Dt_ID":2021061,"Cst_ID":73080760,"BRD_Type":1,"BRD_ID":"7301009000388","Evn_Name":"╪ح╪╢╪د┘╪ر","BRD_EvnDate":"2021-06-17T04:14:01.000Z","BRD_LastRead":547,"BRD_CurrentRead":41,"BRD_ImgName":null,"BRD_MonthConsume":588,"BRD_ConsumePrice":13120,"BRD_ConsumeAddedPrice":0,"BRD_ConsumeValue":13120,"BRD_InsertDate":"2021-06-14T00:00:00.000Z","BRD_UpDateDate
+      {"Dt_ID":2021063,"Cst_ID":73070117,"BRD_Type":1,"BRD_ID":"7301009200316","Evn_Name":"╪ح╪╢╪د┘╪ر","BRD_EvnDate":"2021-07-11T19:17:06.987Z","BRD_LastRead":2377,"BRD_CurrentRead":35,"BRD_ImgName":null,"BRD_MonthConsume":2412,"BRD_ConsumePrice":10500,"BRD_ConsumeAddedPrice":0,"BRD_ConsumeValue":10500,"BRD_InsertDate":"2021-07-08T00:00:00.000Z","BRD_UpDateDa
+      {"Dt_ID":2021063,"Cst_ID":73030341,"BRD_Type":1,"BRD_ID":"7301009200239","Evn_Name":"╪ح╪╢╪د┘╪ر","BRD_EvnDate":"2021-07-11T19:17:06.987Z","BRD_LastRead":3285,"BRD_CurrentRead":29,"BRD_ImgName":null,"BRD_MonthConsume":3314,"BRD_ConsumePrice":8700,"BRD_ConsumeAddedPrice":0,"BRD_ConsumeValue":8700,"BRD_InsertDate":"2021-07-08T00:00:00.000Z","BRD_UpDateDate
+      {"Dt_ID":2021061,"Cst_ID":73070152,"BRD_Type":1,"BRD_ID":"7301009000345","Evn_Name":"╪ح╪╢╪د┘╪ر","BRD_EvnDate":"2021-06-17T04:14:01.000Z","BRD_LastRead":1814,"BRD_CurrentRead":3,"BRD_ImgName":null,"BRD_MonthConsume":1817,"BRD_ConsumePrice":960,"BRD_ConsumeAddedPrice":0,"BRD_ConsumeValue":960,"BRD_InsertDate":"2021-06-14T00:00:00.000Z","BRD_UpDateDate":"
+      {"Dt_ID":2021063,"Cst_ID":73040382,"BRD_Type":1,"BRD_ID":"7301009200486","Evn_Name":"╪ح╪╢╪د┘╪ر","BRD_EvnDate":"2021-07-11T19:17:06.987Z","BRD_LastRead":843,"BRD_CurrentRead":24,"BRD_ImgName":null,"BRD_MonthConsume":867,"BRD_ConsumePrice":7200,"BRD_ConsumeAddedPrice":0,"BRD_ConsumeValue":7200,"BRD_InsertDate":"2021-07-08T00:00:00.000Z","BRD_UpDateDate":
+      {"Dt_ID":2021063,"Cst_ID":73050660,"BRD_Type":1,"BRD_ID":"7301009200582","Evn_Name":"╪ح╪╢╪د┘╪ر","BRD_EvnDate":"2021-07-11T19:17:06.987Z","BRD_LastRead":125,"BRD_CurrentRead":259,"BRD_ImgName":null,"BRD_MonthConsume":384,"BRD_ConsumePrice":75110,"BRD_ConsumeAddedPrice":0,"BRD_ConsumeValue":75110,"BRD_InsertDate":"2021-07-08T00:00:00.000Z","BRD_UpDateDat
+
+    ≡اôî BILLING_MANAGERS_USERS (2 match):
+      {"USER_NO":-2,"NAME":"Administrator2","P":"MTEyMjU1MTE","BRANCH_ID":"1","LAST_LOGIN":"2024-09-02T21:29:22.627Z","STATUS":2,"MOB_NO":777707971,"ISMANAGER":true,"SCODE":"Y","MOBSERL":"4161fbe0f94da0ed","ADD_DATE":"2024-09-02T21:29:22.627Z","ADJECTIVE":"┘à╪ذ╪▒┘à╪ش ╪د┘┘╪╕╪د┘à"}
+      {"USER_NO":-1,"NAME":"Administrator","P":"MTEyMjU1MTE","BRANCH_ID":"1","LAST_LOGIN":"2026-01-06T03:16:16.150Z","STATUS":2,"MOB_NO":777289900,"ISMANAGER":true,"SCODE":"Y","MOBSERL":"3647081526bc30c8","ADD_DATE":"2024-09-02T21:29:22.627Z","ADJECTIVE":"┘à╪ذ╪▒┘à╪ش ╪د┘┘╪╕╪د┘à"}
+
+    ≡اôî UserData (1 match):
+      {"RU_ID":1,"RW_ID":0,"Us_ID":-1,"Us_Name":"Administrator","Us_PassWord":"nullandnotempty","Us_PassWordHint":"System PassWord","Dev_Serl":null,"Us_UpDateDate":"2021-06-17T03:27:15.000Z","Us_HaveRestrictedSomeID":false}
+
+ظ¤ظ¤ ╪ث╪╣┘à╪»╪ر ╪ذ╪ث╪│┘à╪د╪ة ╪ز╪ص┘ê┘è admin ╪ث┘ê store ظ¤ظ¤
+    Area.Ar_MngCheckName (varchar)
+    Area.Ar_MngCommercialName (varchar)
+    Area.Ar_MngDptAccomptsName (varchar)
+    Area.Ar_MngDptReadersName (varchar)
+    Area.Ar_MngFiscalName (varchar)
+    Area.Ar_TopMngName (varchar)
+    Branch.Brn_MngName (varchar)
+    Branch.Brn_QMngName (varchar)
+    CompInfoAndSysOption.db_Period4Clear_ImgReadFiles (smallint)
+    InvStoresData.Strg_AdminName (varchar)
+    TransFormer.tMgr_ID (int)
+    TransFormerHst.tMgr_ID (int)
+    TransFormerHst.tMgr_Name (varchar)
+    TransManager.tMgr_ID (int)
+    TransManager.tMgr_Name (varchar)

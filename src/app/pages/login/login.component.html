@@ -1,34 +1,41 @@
 <div class="login-layout" dir="rtl">
   <div class="login-card">
     <div class="brand">
-      <div class="logo">
+      <div class="logo-big">
         <svg viewBox="0 0 24 24" fill="none">
           <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
       <h1>أنظمة العباسي المتخصصة</h1>
-      <p>منصّة إدارة متكاملة</p>
+      <p>اختر المستخدم وأدخل كلمة السر</p>
     </div>
 
-    <form (ngSubmit)="submit()" #f="ngForm" autocomplete="on">
+    <form (ngSubmit)="submit()" autocomplete="on">
       <label>
-        <span>اسم المستخدم</span>
-        <input
-          type="text"
-          name="username"
-          [ngModel]="username()"
-          (ngModelChange)="username.set($event)"
-          autocomplete="username"
-          dir="ltr"
-          placeholder="admin"
+        <span>المستخدم</span>
+        <select
+          name="userId"
+          [ngModel]="selectedUserId()"
+          (ngModelChange)="selectedUserId.set($event)"
           [disabled]="loading()"
-        />
+          class="user-select"
+        >
+          @if (usersList().length === 0) {
+            <option value="">— لا يوجد مستخدمون —</option>
+          }
+          @for (u of usersList(); track u.id) {
+            <option [value]="u.id">
+              {{ userDisplay(u) }} — {{ roleLabel(u.role) }}
+            </option>
+          }
+        </select>
       </label>
 
       <label>
         <span>كلمة السر</span>
         <div class="password-wrap">
           <input
+            id="login-password"
             [type]="showPassword() ? 'text' : 'password'"
             name="password"
             [ngModel]="password()"
@@ -36,6 +43,7 @@
             autocomplete="current-password"
             dir="ltr"
             [disabled]="loading()"
+            placeholder="••••••••"
           />
           <button
             type="button"
@@ -43,7 +51,7 @@
             (click)="showPassword.set(!showPassword())"
             [attr.aria-label]="showPassword() ? 'إخفاء' : 'إظهار'"
           >
-            {{ showPassword() ? '🙈' : '👁️' }}
+            {{ showPassword() ? 'إخفاء' : 'إظهار' }}
           </button>
         </div>
       </label>
@@ -52,17 +60,17 @@
         <div class="error-box">{{ error() }}</div>
       }
 
-      <button type="submit" class="submit-btn" [disabled]="loading()">
+      <button type="submit" class="submit-btn" [disabled]="loading() || !selectedUserId()">
         @if (loading()) {
           <span>جاري الدخول...</span>
         } @else {
-          <span>تسجيل الدخول</span>
+          <span>دخول</span>
         }
       </button>
     </form>
 
     <div class="footer-note">
-      <small>كلمة السر الافتراضية للحسابات الجديدة: <code>almham2026</code></small>
+      <small>أنظمة العباسي — محطات الدهمية، الصبالية، جمال، غليل</small>
     </div>
   </div>
 </div>

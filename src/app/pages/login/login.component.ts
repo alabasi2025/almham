@@ -1,8 +1,8 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
+import { AuthService, LoginUserOption } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -11,35 +11,75 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   private auth = inject(AuthService);
   private router = inject(Router);
 
-  username = signal('');
+  usersList = signal<LoginUserOption[]>([]);
+  selectedUserId = signal<string>('');
+
   password = signal('');
   error = signal<string | null>(null);
   loading = signal(false);
   showPassword = signal(false);
 
+  ngOnInit(): void {
+    void this.loadUsers();
+  }
+
+  private async loadUsers(): Promise<void> {
+    this.loading.set(true);
+    this.error.set(null);
+    try {
+      const list = await this.auth.listUsersForLogin();
+      this.usersList.set(list);
+      if (list.length > 0) {
+        this.selectedUserId.set(list[0].id);
+      }
+      setTimeout(() => {
+        const el = document.getElementById('login-password') as HTMLInputElement | null;
+        el?.focus();
+      }, 100);
+    } catch {
+      this.error.set('تعذّر تحميل قائمة المستخدمين');
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
   async submit(): Promise<void> {
-    const u = this.username().trim();
+    const userId = this.selectedUserId();
     const p = this.password();
-    if (!u || !p) {
-      this.error.set('أدخل اسم المستخدم وكلمة السر');
+    const user = this.usersList().find((u) => u.id === userId);
+
+    if (!user) {
+      this.error.set('اختر مستخدماً من القائمة');
+      return;
+    }
+    if (!p) {
+      this.error.set('أدخل كلمة السر');
       return;
     }
 
     this.loading.set(true);
     this.error.set(null);
     try {
-      await this.auth.login(u, p);
-      this.router.navigate(['/dashboard']);
+      const loggedInUser = await this.auth.login(user.username, p);
+      this.router.navigate([loggedInUser.mustChangePassword ? '/change-password' : '/dashboard']);
     } catch (err: unknown) {
-      const msg = this.extractError(err);
-      this.error.set(msg);
+      this.error.set(this.extractError(err));
     } finally {
       this.loading.set(false);
     }
+  }
+
+  userDisplay(u: LoginUserOption): string {
+    if (u.employeeName) return `${u.employeeName} (${u.username})`;
+    return u.username;
+  }
+
+  roleLabel(role: string): string {
+    return this.auth.roleLabel(role);
   }
 
   private extractError(err: unknown): string {

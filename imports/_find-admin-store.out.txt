@@ -1,0 +1,41 @@
+ظـظـظـ 1. ┘â┘ server logins ظـظـظـ
+   almham_reader                            [SQL_LOGIN] created=2026-04-20T21:31:01.947Z
+   sa                                       [SQL_LOGIN] created=2003-04-08T09:10:35.460Z
+
+ظـظـظـ 2. DB users ┘à╪▒╪ز╪ذ╪╖╪ر (┘à┘ master.sys.database_principals) ظـظـظـ
+
+ظ¤ظ¤ Ecas2664 ظ¤ظ¤
+   almham_reader                            [SQL_USER]
+   dbo                                      [SQL_USER]
+   guest                                    [SQL_USER]
+   INFORMATION_SCHEMA                       [SQL_USER]
+
+ظ¤ظ¤ Ecas2668 ظ¤ظ¤
+   almham_reader                            [SQL_USER]
+   dbo                                      [SQL_USER]
+   guest                                    [SQL_USER]
+   INFORMATION_SCHEMA                       [SQL_USER]
+
+ظ¤ظ¤ Ecas2670 ظ¤ظ¤
+   almham_reader                            [SQL_USER]
+   dbo                                      [SQL_USER]
+   guest                                    [SQL_USER]
+   INFORMATION_SCHEMA                       [SQL_USER]
+
+ظ¤ظ¤ Ecas2673 ظ¤ظ¤
+   almham_reader                            [SQL_USER]
+   dbo                                      [SQL_USER]
+   guest                                    [SQL_USER]
+   INFORMATION_SCHEMA                       [SQL_USER]
+
+ظ¤ظ¤ master ظ¤ظ¤
+   dbo                                      [SQL_USER]
+   guest                                    [SQL_USER]
+   INFORMATION_SCHEMA                       [SQL_USER]
+
+ظـظـظـ 3. ┘à╪ص╪د┘ê┘╪ر ╪د╪│╪ز╪«╪▒╪د╪ش password_hash ظـظـظـ
+
+   name: sa
+   hash: null
+
+ظـظـظـ 4. ╪ذ╪ص╪س ╪┤╪د┘à┘ ╪╣┘ Admin_Store ┘┘è ┘â┘ ┘é┘ê╪د╪╣╪» Ecas* ظـظـظـ

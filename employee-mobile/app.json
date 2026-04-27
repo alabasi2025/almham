@@ -1,0 +1,37 @@
+{
+  "expo": {
+    "name": "أنظمة العباسي المتخصصة",
+    "slug": "almham-employee-mobile",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "almhamemployee",
+    "userInterfaceStyle": "light",
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-sqlite",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "يستخدم التطبيق موقعك فقط أثناء الوردية لحفظ مسار العمل والحضور والانصراف.",
+          "locationWhenInUsePermission": "يستخدم التطبيق موقعك عند تسجيل الحضور والانصراف.",
+          "isAndroidBackgroundLocationEnabled": true
+        }
+      ]
+    ],
+    "android": {
+      "package": "com.alabbasi.employee",
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_LOCATION",
+        "POST_NOTIFICATIONS"
+      ]
+    },
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

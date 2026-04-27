@@ -1,0 +1,274 @@
+
+ظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـ
+≡اôخ  ┘é╪د╪╣╪»╪ر Ecas2673 ظ¤ ╪د┘╪»┘ç┘à┘è╪ر
+ظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـ
+
+≡ا¤ ╪ش╪»╪د┘ê┘ ┘┘è┘ç╪د (User/Login/Pass/Employee/Manager/Staff/Auth/Member):
+   - AccountGroup                                  (86 ╪│╪ش┘)
+   - AccountInfo                                   (71 ╪│╪ش┘)
+   - AccountRank                                   (5 ╪│╪ش┘)
+   - AccountReport                                 (2 ╪│╪ش┘)
+   - AccountReserve_BrnFncl                        (17 ╪│╪ش┘)
+   - AccountReserve_CtgryGrp                       (28 ╪│╪ش┘)
+   - AccountReserve_Data                           (31 ╪│╪ش┘)
+   - BILLING_MANAGERS_LOGIN_HST                    (201 ╪│╪ش┘)
+   - BILLING_MANAGERS_USERS                        (6 ╪│╪ش┘)
+   - FormRankUser                                  (518 ╪│╪ش┘)
+   - InvCategoryRank                               (4 ╪│╪ش┘)
+   - RankUser                                      (15 ╪│╪ش┘)
+   - RankWork                                      (4 ╪│╪ش┘)
+   - TransManager                                  (1 ╪│╪ش┘)
+   - UserData                                      (6 ╪│╪ش┘)
+   - UserEvent                                     (287755 ╪│╪ش┘)
+   - UserPrivileg                                  (1453 ╪│╪ش┘)
+   - UserRestrictedFormTable                       (10 ╪│╪ش┘)
+   - UserRestrictedSomeID                          (0 ╪│╪ش┘)
+   - UserWorkBoundary                              (48 ╪│╪ش┘)
+   - zTableRank                                    (5 ╪│╪ش┘)
+
+≡ا¤ ╪ث╪╣┘à╪»╪ر ┘┘è┘ç╪د (User/Pass/Login/PW/Code/Auth):
+   ≡اôî A___BillAndRaedData:
+      - BRD_RefUserName (varchar)
+   ≡اôî A__ReadWEBForImport:
+      - BRD_RefUserName (varchar)
+      - User_Name (varchar)
+   ≡اôî A_DatabaseLog:
+      - DatabaseUser (nvarchar)
+   ≡اôî BARD_RaedHistorical:
+      - BRD_RefUserName (varchar)
+      - BRD_UserName (varchar)
+      - User_Name (varchar)
+   ≡اôî BillAndRaedData:
+      - BRD_RefUserName (varchar)
+      - User_Name (varchar)
+   ≡اôî BillAndReadWEB:
+      - User_Name (varchar)
+   ≡اôî BillAndReadWebHst:
+      - User_Name (varchar)
+   ≡اôî BILLING_MANAGERS_LOGIN_HST:
+      - LOGIN_DATE (datetime)
+      - LOGIN_STATUS (smallint)
+      - USER_NO (smallint)
+   ≡اôî BILLING_MANAGERS_USERS:
+      - LAST_LOGIN (datetime)
+      - USER_NO (smallint)
+   ≡اôî Branch:
+      - Acc_RcptActlPwrSals (int)
+      - Acc_RcptEstmPwrSals (int)
+      - Acc_RcptRsomPwr (int)
+      - Brn_DBPassWord (varchar)
+   ≡اôî Casher_Info:
+      - LogIn_Date (datetime)
+   ≡اôî CashierData:
+      - Cshr_UseRestrictedTime (bit)
+      - Reset_Password (bit)
+   ≡اôî CompInfoAndSysOption:
+      - db_Period4Clear_UserEvents (smallint)
+      - nDB_UserName (varchar)
+      - nDB_UserPassWord (varchar)
+      - Rmot_UseRestrictedTime (bit)
+   ≡اôî CompInfosMsSetting:
+      - sMs_uPW (varchar)
+   ≡اôî CompInfoWhatsAppSetting:
+      - WtsAp_uPW (varchar)
+   ≡اôî CustomerFilds:
+      - Fld_Show4FnclUser (bit)
+      - Fld_Show4OtherUser (bit)
+      - Fld_Show4SubSysUser (bit)
+   ≡اôî Customers_Info:
+      - AD_UserID (bigint)
+      - UP_UserID (bigint)
+   ≡اôî CustomerUpdateDate:
+      - User_Name (varchar)
+   ≡اôî CustomerUpdateWEB:
+      - User_Name (varchar)
+   ≡اôî DB_And_Sys_Info:
+      - DB_PassWord (varchar)
+   ≡اôî InvDebentureDetails:
+      - DbnDtl_RefUserName (varchar)
+   ≡اôî InvDebentureDetails_Input:
+      - DbnDtl_RefUserName (varchar)
+   ≡اôî InvDebentureInfo:
+      - Dbn_RefUserName (varchar)
+      - Dbn_UserName (varchar)
+   ≡اôî ManualDebenturesInfo:
+      - MnlDbn_UserName (varchar)
+   ≡اôî ManualDebenturesInfo_tmp:
+      - MnlDbn_UserName (varchar)
+   ≡اôî MsgBalTransction:
+      - MBT_UserName (varchar)
+   ≡اôî Payment_Input:
+      - Pay_RefUserName (varchar)
+   ≡اôî Payment_Reading_GPS_Data:
+      - AD_UserID (bigint)
+   ≡اôî PaymentData:
+      - Pay_RefUserName (varchar)
+      - Pay_UserName (varchar)
+   ≡اôî PaymentDataHistorical:
+      - Pay_RefUserName (varchar)
+      - Pay_UserName (varchar)
+   ≡اôî PaymentGroup:
+      - Pay_RefUserName (varchar)
+      - Pay_UserName (varchar)
+   ≡اôî PaymentGroupHst:
+      - Pay_RefUserName (varchar)
+      - Pay_UserName (varchar)
+   ≡اôî tmp_4_Check_ManualDbnInfo_UnUsed:
+      - MnlDbn_UserName (varchar)
+   ≡اôî UserData:
+      - Us_PassWord (varchar)
+      - Us_PassWordHint (varchar)
+
+≡اôï ┘à╪ص╪ز┘ê┘ë RankUser (┘â╪د┘à┘):
+    {"RU_ID":1,"RU_Name":"DBA","SFID":3288480,"SEID":1678}
+    {"RU_ID":2,"RU_Name":"┘à╪»┘è╪▒ ╪د┘┘╪╕╪د┘à","SFID":3186115,"SEID":1531}
+    {"RU_ID":3,"RU_Name":"┘à╪│╪خ┘ê┘ ╪د┘╪ث┘╪╕┘à╪ر","SFID":814164,"SEID":410}
+    {"RU_ID":4,"RU_Name":"┘à╪│╪خ┘ê┘ ┘╪╕╪د┘à ╪د┘╪ز╪│┘ê┘è╪د╪ز","SFID":288715,"SEID":249}
+    {"RU_ID":5,"RU_Name":"┘à╪│╪خ┘ê┘ ╪د┘╪ح╪│╪ز╪╣┘╪د┘à╪د╪ز","SFID":217539,"SEID":39}
+    {"RU_ID":6,"RU_Name":"┘à╪│╪خ┘ê┘ ┘╪╕╪د┘à ╪د┘╪ذ┘╪د╪║╪د╪ز","SFID":147784,"SEID":62}
+    {"RU_ID":7,"RU_Name":"┘à╪│╪خ┘ê┘ ┘╪╕╪د┘à ╪د┘┘é╪▒╪د╪ة╪د╪ز","SFID":248073,"SEID":149}
+    {"RU_ID":8,"RU_Name":"┘à╪│╪خ┘ê┘ ┘╪╕╪د┘à ╪د┘╪ز╪│╪»┘è╪»╪د╪ز","SFID":79962,"SEID":39}
+    {"RU_ID":10,"RU_Name":"┘à╪│╪خ┘ê┘ ┘┘é╪╖╪ر ╪ز╪ص╪╡┘è┘","SFID":0,"SEID":0}
+    {"RU_ID":30,"RU_Name":"┘à╪│╪خ┘ê┘ ┘┘é╪╖╪ر ┘à╪ذ┘è╪╣╪د╪ز","SFID":0,"SEID":0}
+    {"RU_ID":203,"RU_Name":"┘à╪ز╪ص╪╡┘ ╪╣╪ذ╪▒ ╪د┘╪ش┘ê╪د┘","SFID":0,"SEID":0}
+    {"RU_ID":204,"RU_Name":"┘à╪ز╪ص╪╡┘ ╪╣╪ذ╪▒ ╪د┘┘à╪ص┘╪╕╪د╪ز","SFID":0,"SEID":0}
+    {"RU_ID":205,"RU_Name":"┘à╪│╪ز╪«╪»┘à ┘è╪▒┘╪د┘à╪ش ╪د┘┘à╪»┘è╪▒","SFID":0,"SEID":0}
+    {"RU_ID":254,"RU_Name":"┘à╪│╪ز╪«╪»┘à ┘à┘ê┘é┘ê┘ ╪╣┘ ╪د┘╪╣┘à┘ ┘à╪ج┘é╪ز╪د┘ï","SFID":0,"SEID":0}
+    {"RU_ID":255,"RU_Name":"┘à╪│╪ز╪«╪»┘à ┘à┘ê┘é┘ê┘ ╪╣┘ ╪د┘╪╣┘à┘ ┘┘ç╪د╪خ┘è╪د┘ï","SFID":0,"SEID":0}
+
+ظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـ
+≡اôخ  ┘é╪د╪╣╪»╪ر Ecas2668 ظ¤ ┘à╪ش┘à┘ê╪╣╪ر ╪د┘╪╡╪ذ╪د┘┘è╪ر
+ظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـ
+
+≡ا¤ ╪ش╪»╪د┘ê┘ ┘┘è┘ç╪د (User/Login/Pass/Employee/Manager/Staff/Auth/Member):
+   - AccountGroup                                  (86 ╪│╪ش┘)
+   - AccountInfo                                   (80 ╪│╪ش┘)
+   - AccountRank                                   (5 ╪│╪ش┘)
+   - AccountReport                                 (2 ╪│╪ش┘)
+   - AccountReserve_BrnFncl                        (17 ╪│╪ش┘)
+   - AccountReserve_CtgryGrp                       (28 ╪│╪ش┘)
+   - AccountReserve_Data                           (31 ╪│╪ش┘)
+   - BILLING_MANAGERS_LOGIN_HST                    (487 ╪│╪ش┘)
+   - BILLING_MANAGERS_USERS                        (8 ╪│╪ش┘)
+   - FormRankUser                                  (521 ╪│╪ش┘)
+   - InvCategoryRank                               (4 ╪│╪ش┘)
+   - RankUser                                      (15 ╪│╪ش┘)
+   - RankWork                                      (4 ╪│╪ش┘)
+   - TransManager                                  (1 ╪│╪ش┘)
+   - UserData                                      (6 ╪│╪ش┘)
+   - UserEvent                                     (299949 ╪│╪ش┘)
+   - UserPrivileg                                  (1491 ╪│╪ش┘)
+   - UserRestrictedFormTable                       (10 ╪│╪ش┘)
+   - UserRestrictedSomeID                          (0 ╪│╪ش┘)
+   - UserWorkBoundary                              (48 ╪│╪ش┘)
+   - zTableRank                                    (5 ╪│╪ش┘)
+
+≡ا¤ ╪ث╪╣┘à╪»╪ر ┘┘è┘ç╪د (User/Pass/Login/PW/Code/Auth):
+   ≡اôî A___BillAndRaedData:
+      - BRD_RefUserName (varchar)
+   ≡اôî A__ReadWEBForImport:
+      - BRD_RefUserName (varchar)
+      - User_Name (varchar)
+   ≡اôî A_DatabaseLog:
+      - DatabaseUser (nvarchar)
+   ≡اôî BARD_RaedHistorical:
+      - BRD_RefUserName (varchar)
+      - BRD_UserName (varchar)
+      - User_Name (varchar)
+   ≡اôî BillAndRaedData:
+      - BRD_RefUserName (varchar)
+      - User_Name (varchar)
+   ≡اôî BillAndReadWEB:
+      - User_Name (varchar)
+   ≡اôî BillAndReadWebHst:
+      - User_Name (varchar)
+   ≡اôî BILLING_MANAGERS_LOGIN_HST:
+      - LOGIN_DATE (datetime)
+      - LOGIN_STATUS (smallint)
+      - USER_NO (smallint)
+   ≡اôî BILLING_MANAGERS_USERS:
+      - LAST_LOGIN (datetime)
+      - USER_NO (smallint)
+   ≡اôî Branch:
+      - Acc_RcptActlPwrSals (int)
+      - Acc_RcptEstmPwrSals (int)
+      - Acc_RcptRsomPwr (int)
+      - Brn_DBPassWord (varchar)
+   ≡اôî Casher_Info:
+      - LogIn_Date (datetime)
+   ≡اôî CashierData:
+      - Cshr_UseRestrictedTime (bit)
+      - Reset_Password (bit)
+   ≡اôî CompInfoAndSysOption:
+      - db_Period4Clear_UserEvents (smallint)
+      - nDB_UserName (varchar)
+      - nDB_UserPassWord (varchar)
+      - Rmot_UseRestrictedTime (bit)
+   ≡اôî CompInfosMsSetting:
+      - sMs_uPW (varchar)
+   ≡اôî CompInfoWhatsAppSetting:
+      - WtsAp_uPW (varchar)
+   ≡اôî CustomerFilds:
+      - Fld_Show4FnclUser (bit)
+      - Fld_Show4OtherUser (bit)
+      - Fld_Show4SubSysUser (bit)
+   ≡اôî Customers_Info:
+      - AD_UserID (bigint)
+      - UP_UserID (bigint)
+   ≡اôî CustomerUpdateDate:
+      - User_Name (varchar)
+   ≡اôî CustomerUpdateWEB:
+      - User_Name (varchar)
+   ≡اôî DB_And_Sys_Info:
+      - DB_PassWord (varchar)
+   ≡اôî InvDebentureDetails:
+      - DbnDtl_RefUserName (varchar)
+   ≡اôî InvDebentureDetails_Input:
+      - DbnDtl_RefUserName (varchar)
+   ≡اôî InvDebentureInfo:
+      - Dbn_RefUserName (varchar)
+      - Dbn_UserName (varchar)
+   ≡اôî ManualDebenturesInfo:
+      - MnlDbn_UserName (varchar)
+   ≡اôî ManualDebenturesInfo_tmp:
+      - MnlDbn_UserName (varchar)
+   ≡اôî MsgBalTransction:
+      - MBT_UserName (varchar)
+   ≡اôî Payment_Input:
+      - Pay_RefUserName (varchar)
+   ≡اôî Payment_Reading_GPS_Data:
+      - AD_UserID (bigint)
+   ≡اôî PaymentData:
+      - Pay_RefUserName (varchar)
+      - Pay_UserName (varchar)
+   ≡اôî PaymentDataHistorical:
+      - Pay_RefUserName (varchar)
+      - Pay_UserName (varchar)
+   ≡اôî PaymentGroup:
+      - Pay_RefUserName (varchar)
+      - Pay_UserName (varchar)
+   ≡اôî PaymentGroupHst:
+      - Pay_RefUserName (varchar)
+      - Pay_UserName (varchar)
+   ≡اôî tmp_4_Check_ManualDbnInfo_UnUsed:
+      - MnlDbn_UserName (varchar)
+   ≡اôî UserData:
+      - Us_PassWord (varchar)
+      - Us_PassWordHint (varchar)
+
+≡اôï ┘à╪ص╪ز┘ê┘ë RankUser (┘â╪د┘à┘):
+    {"RU_ID":1,"RU_Name":"DBA","SFID":3326261,"SEID":1723}
+    {"RU_ID":2,"RU_Name":"┘à╪»┘è╪▒ ╪د┘┘╪╕╪د┘à","SFID":3215478,"SEID":1563}
+    {"RU_ID":3,"RU_Name":"┘à╪│╪خ┘ê┘ ╪د┘╪ث┘╪╕┘à╪ر","SFID":1528911,"SEID":652}
+    {"RU_ID":4,"RU_Name":"┘à╪│╪خ┘ê┘ ┘╪╕╪د┘à ╪د┘╪ز╪│┘ê┘è╪د╪ز","SFID":288715,"SEID":249}
+    {"RU_ID":5,"RU_Name":"┘à╪│╪خ┘ê┘ ╪د┘╪ح╪│╪ز╪╣┘╪د┘à╪د╪ز","SFID":217539,"SEID":39}
+    {"RU_ID":6,"RU_Name":"┘à╪│╪خ┘ê┘ ┘╪╕╪د┘à ╪د┘╪ذ┘╪د╪║╪د╪ز","SFID":147784,"SEID":62}
+    {"RU_ID":7,"RU_Name":"┘à╪│╪خ┘ê┘ ┘╪╕╪د┘à ╪د┘┘é╪▒╪د╪ة╪د╪ز","SFID":582821,"SEID":260}
+    {"RU_ID":8,"RU_Name":"┘à╪│╪خ┘ê┘ ┘╪╕╪د┘à ╪د┘╪ز╪│╪»┘è╪»╪د╪ز","SFID":154634,"SEID":80}
+    {"RU_ID":10,"RU_Name":"┘à╪│╪خ┘ê┘ ┘┘é╪╖╪ر ╪ز╪ص╪╡┘è┘","SFID":109839,"SEID":97}
+    {"RU_ID":30,"RU_Name":"┘à╪│╪خ┘ê┘ ┘┘é╪╖╪ر ┘à╪ذ┘è╪╣╪د╪ز","SFID":0,"SEID":0}
+    {"RU_ID":203,"RU_Name":"┘à╪ز╪ص╪╡┘ ╪╣╪ذ╪▒ ╪د┘╪ش┘ê╪د┘","SFID":0,"SEID":0}
+    {"RU_ID":204,"RU_Name":"┘à╪ز╪ص╪╡┘ ╪╣╪ذ╪▒ ╪د┘┘à╪ص┘╪╕╪د╪ز","SFID":0,"SEID":0}
+    {"RU_ID":205,"RU_Name":"┘à╪│╪ز╪«╪»┘à ┘è╪▒┘╪د┘à╪ش ╪د┘┘à╪»┘è╪▒","SFID":0,"SEID":0}
+    {"RU_ID":254,"RU_Name":"┘à╪│╪ز╪«╪»┘à ┘à┘ê┘é┘ê┘ ╪╣┘ ╪د┘╪╣┘à┘ ┘à╪ج┘é╪ز╪د┘ï","SFID":0,"SEID":0}
+    {"RU_ID":255,"RU_Name":"┘à╪│╪ز╪«╪»┘à ┘à┘ê┘é┘ê┘ ╪╣┘ ╪د┘╪╣┘à┘ ┘┘ç╪د╪خ┘è╪د┘ï","SFID":0,"SEID":0}

@@ -1,0 +1,53 @@
+ظـظـظـ 1. ┘â┘ ┘é┘ê╪د╪╣╪» ╪د┘╪ذ┘è╪د┘╪د╪ز ظـظـظـ
+   Ecas2664                       ONLINE  created=2026-04-19T11:28:55.563Z
+   Ecas2668                       ONLINE  created=2026-04-19T11:27:56.590Z
+   Ecas2670                       ONLINE  created=2026-04-19T11:28:07.577Z
+   Ecas2673                       ONLINE  created=2026-04-19T11:28:17.103Z
+   master                         ONLINE  created=2003-04-08T09:13:36.390Z
+   model                          ONLINE  created=2003-04-08T09:13:36.390Z
+   msdb                           ONLINE  created=2022-10-08T06:31:57.550Z
+   tempdb                         ONLINE  created=2026-04-20T00:26:27.927Z
+
+ظـظـظـ 2. ┘â┘ server principals ظـظـظـ
+   ##MS_DatabaseConnector##                           [SERVER_ROLE] disabled=false
+   ##MS_DatabaseManager##                             [SERVER_ROLE] disabled=false
+   ##MS_DefinitionReader##                            [SERVER_ROLE] disabled=false
+   ##MS_LoginManager##                                [SERVER_ROLE] disabled=false
+   ##MS_PerformanceDefinitionReader##                 [SERVER_ROLE] disabled=false
+   ##MS_SecurityDefinitionReader##                    [SERVER_ROLE] disabled=false
+   ##MS_ServerPerformanceStateReader##                [SERVER_ROLE] disabled=false
+   ##MS_ServerSecurityStateReader##                   [SERVER_ROLE] disabled=false
+   ##MS_ServerStateManager##                          [SERVER_ROLE] disabled=false
+   ##MS_ServerStateReader##                           [SERVER_ROLE] disabled=false
+   almham_reader                                      [SQL_LOGIN] disabled=false
+   bulkadmin                                          [SERVER_ROLE] disabled=false
+   dbcreator                                          [SERVER_ROLE] disabled=false
+   diskadmin                                          [SERVER_ROLE] disabled=false
+   processadmin                                       [SERVER_ROLE] disabled=false
+   public                                             [SERVER_ROLE] disabled=false
+   sa                                                 [SQL_LOGIN] disabled=false
+   securityadmin                                      [SERVER_ROLE] disabled=false
+   serveradmin                                        [SERVER_ROLE] disabled=false
+   setupadmin                                         [SERVER_ROLE] disabled=false
+   sysadmin                                           [SERVER_ROLE] disabled=false
+
+ظـظـظـ 3. ┘â┘ database principals ┘┘è ┘â┘ ┘é┘ê╪د╪╣╪» (╪ذ╪»┘ê┘ filter) ظـظـظـ
+
+ظ¤ظ¤ Ecas2664 (1 ┘à╪│╪ز╪«╪»┘à ╪║┘è╪▒ ╪د┘╪ز╪▒╪د╪╢┘è):
+     almham_reader                            [SQL_USER]
+
+ظ¤ظ¤ Ecas2668 (1 ┘à╪│╪ز╪«╪»┘à ╪║┘è╪▒ ╪د┘╪ز╪▒╪د╪╢┘è):
+     almham_reader                            [SQL_USER]
+
+ظ¤ظ¤ Ecas2670 (1 ┘à╪│╪ز╪«╪»┘à ╪║┘è╪▒ ╪د┘╪ز╪▒╪د╪╢┘è):
+     almham_reader                            [SQL_USER]
+
+ظ¤ظ¤ Ecas2673 (1 ┘à╪│╪ز╪«╪»┘à ╪║┘è╪▒ ╪د┘╪ز╪▒╪د╪╢┘è):
+     almham_reader                            [SQL_USER]
+ظ¤ظ¤ model: ظأبي╕ The server principal "almham_reader" is not able to access t
+
+ظـظـظـ 4. ╪د┘╪ذ╪ص╪س ╪╣┘ "admin" ╪ث┘ê "store" ┘┘è ╪ذ┘è╪د┘╪د╪ز ╪د┘╪ش╪»╪د┘ê┘ ظـظـظـ
+
+ظـظـظـ 5. ┘â┘ sql_logins ظـظـظـ
+   almham_reader                            hash=(null)
+   sa                                       hash=(null)

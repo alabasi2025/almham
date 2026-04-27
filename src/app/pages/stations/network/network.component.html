@@ -53,32 +53,74 @@
           <span class="k-label">طبلة مرتبطة بفيدر</span>
         </div>
       </div>
+      <div class="k-card cable-types-card">
+        <div class="k-icon"><mat-icon>settings_input_component</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ network.cableTypes().length }}</span>
+          <span class="k-label">نوع كيبل موحّد</span>
+        </div>
+        <span class="k-sub">{{ cableTypeStats().withCapacity }} بسعة أمبير</span>
+      </div>
     </div>
   </header>
 
   <!-- ============ SEARCH + TABS ============ -->
   <div class="toolbar">
     <div class="main-tabs">
+      <button class="main-tab" [class.active]="activeTab() === 'syncPanels'" (click)="activeTab.set('syncPanels')">
+        <mat-icon>merge_type</mat-icon>
+        <span>طبلة الدمج</span>
+        <span class="tab-count">{{ filteredSyncPanels().length }}</span>
+      </button>
+      <button class="main-tab" [class.active]="activeTab() === 'feederPanels'" (click)="activeTab.set('feederPanels')">
+        <mat-icon>account_tree</mat-icon>
+        <span>طبلة فيدرات</span>
+        <span class="tab-count">{{ filteredFeederPanels().length }}</span>
+      </button>
       <button class="main-tab" [class.active]="activeTab() === 'feeders'" (click)="activeTab.set('feeders')">
         <mat-icon>cable</mat-icon>
         <span>الفيدرات</span>
         <span class="tab-count">{{ feederStats().total }}</span>
       </button>
-      <button class="main-tab" [class.active]="activeTab() === 'panels'" (click)="activeTab.set('panels')">
+      <button class="main-tab" [class.active]="activeTab() === 'segments'" (click)="activeTab.set('segments')">
+        <mat-icon>schema</mat-icon>
+        <span>الموصلات والتفريعات</span>
+        <span class="tab-count">{{ network.segments().length }}</span>
+      </button>
+      <button class="main-tab" [class.active]="activeTab() === 'meterPanels'" (click)="activeTab.set('meterPanels')">
         <mat-icon>grid_view</mat-icon>
         <span>الطبلات</span>
-        <span class="tab-count">{{ panelStats().total }}</span>
+        <span class="tab-count">{{ filteredMeterPanels().length }}</span>
+      </button>
+      <button class="main-tab" [class.active]="activeTab() === 'points'" (click)="activeTab.set('points')">
+        <mat-icon>place</mat-icon>
+        <span>النقاط</span>
+        <span class="tab-count">{{ mappedPoints().length }}</span>
+      </button>
+      <button class="main-tab" [class.active]="activeTab() === 'monitoringMeters'" (click)="activeTab.set('monitoringMeters')">
+        <mat-icon>speed</mat-icon>
+        <span>عدادات الرصد</span>
+        <span class="tab-count">{{ monitoringMeterStats().total }}</span>
+      </button>
+      <button class="main-tab" [class.active]="activeTab() === 'cableTypes'" (click)="activeTab.set('cableTypes')">
+        <mat-icon>settings_input_component</mat-icon>
+        <span>أنواع الكيابل</span>
+        <span class="tab-count">{{ cableTypeStats().total }}</span>
       </button>
     </div>
     <div class="toolbar-actions">
       <div class="search-box">
         <mat-icon>search</mat-icon>
-        <input type="text" [ngModel]="search()" (ngModelChange)="search.set($event)" placeholder="بحث بالاسم أو الكود..." />
+        <input type="text" [ngModel]="search()" (ngModelChange)="search.set($event)" [placeholder]="searchPlaceholder()" />
       </div>
       @if (activeTab() === 'feeders') {
         <button class="btn-primary" (click)="openFeederForm()"><mat-icon>add</mat-icon> فيدر جديد</button>
-      } @else {
-        <button class="btn-primary" (click)="openPanelForm()"><mat-icon>add</mat-icon> طبلة جديدة</button>
+      } @else if (isPanelTab()) {
+        <button class="btn-primary" (click)="openActivePanelForm()"><mat-icon>add</mat-icon> {{ activePanelAddLabel() }}</button>
+      } @else if (activeTab() === 'monitoringMeters') {
+        <button class="btn-primary" (click)="openMonitoringMeterForm()"><mat-icon>add</mat-icon> عداد رصد جديد</button>
+      } @else if (activeTab() === 'cableTypes') {
+        <button class="btn-primary" (click)="openCableTypeForm()"><mat-icon>add</mat-icon> نوع كيبل جديد</button>
       }
     </div>
   </div>
@@ -87,7 +129,7 @@
   @if (activeTab() === 'feeders') {
     <div class="cards-grid feeders-grid">
       @for (f of filteredFeeders(); track f.id) {
-        <article class="feeder-card" [class.off]="f.status !== 'active'">
+        <article class="feeder-card" [class.off]="f.status !== 'active'" (click)="enterFeeder(f)">
           <div class="card-head">
             <div class="card-icon"><mat-icon>cable</mat-icon></div>
             <div class="card-title">
@@ -116,21 +158,477 @@
             }
           </div>
           <div class="card-actions">
-            <button class="icon-btn" (click)="openFeederForm(f)" title="تعديل"><mat-icon>edit</mat-icon></button>
-            <button class="icon-btn danger" (click)="removeFeeder(f.id, f.name)" title="حذف"><mat-icon>delete_outline</mat-icon></button>
+            <button class="enter-feeder-btn" (click)="$event.stopPropagation(); enterFeeder(f)">
+              <mat-icon>login</mat-icon> دخول الفيدر
+            </button>
+            <button class="icon-btn" (click)="$event.stopPropagation(); openFeederForm(f)" title="تعديل"><mat-icon>edit</mat-icon></button>
+            <button class="icon-btn danger" (click)="$event.stopPropagation(); removeFeeder(f.id, f.name)" title="حذف"><mat-icon>delete_outline</mat-icon></button>
           </div>
         </article>
-      } @empty {
-        <div class="empty-state">
-          <mat-icon>cable</mat-icon>
-          <p>لا توجد فيدرات</p>
-        </div>
-      }
+        } @empty {
+          <div class="empty-state">
+            <mat-icon>cable</mat-icon>
+            <p>لا توجد فيدرات</p>
+          </div>
+        }
     </div>
   }
 
-  <!-- ============ PANELS TAB ============ -->
-  @if (activeTab() === 'panels') {
+  <!-- ============ SEGMENTS TAB ============ -->
+  @if (activeTab() === 'segments') {
+    @if (selectedFeeder(); as feeder) {
+      <section class="feeder-detail">
+        <header class="detail-topbar">
+          <button class="back-btn" (click)="backToFeeders()">
+            <mat-icon>arrow_back</mat-icon>
+            رجوع للفيدرات
+          </button>
+          <div class="detail-actions">
+            <button class="btn-outline" (click)="openCableTypeForm()" title="إدارة أنواع الكيابل">
+              <mat-icon>settings</mat-icon> أنواع الكيابل
+            </button>
+            <button class="btn-outline" (click)="openFeederForm(feeder)" title="تعديل الفيدر">
+              <mat-icon>edit</mat-icon> تعديل الفيدر
+            </button>
+          </div>
+        </header>
+
+        <div class="detail-hero" [class.off]="feeder.status !== 'active'">
+          <div class="detail-identity">
+            <div class="detail-icon"><mat-icon>account_tree</mat-icon></div>
+            <div>
+              <span class="detail-kicker">داخل الفيدر</span>
+              <h2>{{ feeder.name }}</h2>
+              <div class="detail-meta-line">
+                <span><mat-icon>location_on</mat-icon>{{ shortStation(feeder.stationName) }}</span>
+                @if (feeder.code) {
+                  <span dir="ltr"><mat-icon>tag</mat-icon>{{ feeder.code }}</span>
+                }
+                @if (feeder.cableType) {
+                  <span><mat-icon>power</mat-icon>{{ feeder.cableType }}</span>
+                }
+              </div>
+            </div>
+          </div>
+          <span class="status-chip" [attr.data-status]="feeder.status">{{ feederStatusLabel(feeder.status) }}</span>
+
+          <div class="detail-stats">
+            <div class="detail-stat">
+              <mat-icon>grid_view</mat-icon>
+              <strong>{{ selectedFeederPanels().length }}</strong>
+              <span>طبلة</span>
+            </div>
+            <div class="detail-stat">
+              <mat-icon>linear_scale</mat-icon>
+              <strong>{{ mainFeederSegments().length }}</strong>
+              <span>موصل رئيسي</span>
+            </div>
+            <div class="detail-stat">
+              <mat-icon>call_split</mat-icon>
+              <strong>{{ branchFeederSegments().length }}</strong>
+              <span>تفريعة</span>
+            </div>
+          </div>
+        </div>
+
+        @if (network.cableTypes().length > 0) {
+          <div class="cable-types-strip detail-cables">
+            @for (ct of network.cableTypes(); track ct.id) {
+              <span class="cable-chip" [style.borderColor]="ct.color" [style.color]="ct.color">
+                <span class="cable-dot" [style.background]="ct.color"></span>
+                {{ ct.name }}
+                @if (ct.sizeMm) { <small>{{ ct.sizeMm }}mm²</small> }
+                <button class="chip-edit" (click)="openCableTypeForm(ct)" title="تعديل"><mat-icon>edit</mat-icon></button>
+              </span>
+            }
+          </div>
+        }
+
+        <div class="inside-feeder-grid">
+          <section class="segment-column main-column">
+            <header class="column-header">
+              <div>
+                <span>المسار الأساسي</span>
+                <h3>الموصلات الرئيسية</h3>
+              </div>
+              <button class="btn-primary compact" (click)="openSegmentForm(undefined, 'main')">
+                <mat-icon>add</mat-icon> موصل رئيسي
+              </button>
+            </header>
+
+            <div class="inside-list">
+              @for (seg of mainFeederSegments(); track seg.id) {
+                <article class="inside-card">
+                  <div class="seg-color-bar" [style.background]="seg.cableTypeColor || '#2563eb'"></div>
+                  <div class="inside-icon main-icon"><mat-icon>linear_scale</mat-icon></div>
+                  <div class="seg-body">
+                    <div class="seg-top">
+                      <strong>{{ seg.label || 'موصل رئيسي #' + seg.orderIndex }}</strong>
+                      <span class="seg-type-chip" data-type="main">{{ segmentTypeLabel(seg.segmentType) }}</span>
+                    </div>
+                    <div class="seg-meta">
+                      @if (seg.cableTypeName) {
+                        <span><mat-icon>power</mat-icon> {{ seg.cableTypeName }}</span>
+                      }
+                      <span><mat-icon>account_tree</mat-icon> {{ segmentCablePhaseLabel(seg) }}</span>
+                      <span><mat-icon>security</mat-icon> أرضي {{ segmentCableEarthLabel(seg) }}</span>
+                      @if (seg.lengthMeters) {
+                        <span><mat-icon>straighten</mat-icon> {{ seg.lengthMeters }} م</span>
+                      }
+                      @if (segmentRoutePointsCount(seg) > 0) {
+                        <span class="mapped-tag"><mat-icon>route</mat-icon> {{ segmentRoutePointsCount(seg) }} نقطة</span>
+                      }
+                    </div>
+                  </div>
+                  <div class="seg-actions">
+                    <button class="icon-btn" (click)="openSegmentForm(seg)" title="تعديل"><mat-icon>edit</mat-icon></button>
+                    <button class="icon-btn danger" (click)="removeSegment(seg)" title="حذف"><mat-icon>delete_outline</mat-icon></button>
+                  </div>
+                </article>
+              } @empty {
+                <div class="empty-state small-empty column-empty">
+                  <mat-icon>linear_scale</mat-icon>
+                  <p>لا توجد موصلات داخل هذا الفيدر</p>
+                  <button class="btn-outline" (click)="openSegmentForm(undefined, 'main')">
+                    <mat-icon>add</mat-icon> إضافة موصل
+                  </button>
+                </div>
+              }
+            </div>
+          </section>
+
+          <section class="segment-column branch-column">
+            <header class="column-header">
+              <div>
+                <span>النقاط الخارجة من الموصلات أو التفريعات</span>
+                <h3>التفريعات</h3>
+              </div>
+              <button class="btn-primary compact branch-add" (click)="openSegmentForm(undefined, 'branch')">
+                <mat-icon>add</mat-icon> تفريعة
+              </button>
+            </header>
+
+            <div class="inside-list">
+              @for (seg of branchFeederSegments(); track seg.id) {
+                <article class="inside-card branch-card">
+                  <div class="seg-color-bar" [style.background]="seg.cableTypeColor || '#7c3aed'"></div>
+                  <div class="inside-icon branch-icon"><mat-icon>call_split</mat-icon></div>
+                  <div class="seg-body">
+                    <div class="seg-top">
+                      <strong>{{ seg.label || 'تفريعة #' + seg.orderIndex }}</strong>
+                      <span class="seg-type-chip" data-type="branch">{{ segmentTypeLabel(seg.segmentType) }}</span>
+                    </div>
+                    <div class="seg-meta">
+                      <span><mat-icon>account_tree</mat-icon> {{ segmentParentLabel(seg) }}</span>
+                      @if (seg.cableTypeName) {
+                        <span><mat-icon>power</mat-icon> {{ seg.cableTypeName }}</span>
+                      }
+                      <span><mat-icon>account_tree</mat-icon> {{ segmentCablePhaseLabel(seg) }}</span>
+                      <span><mat-icon>security</mat-icon> أرضي {{ segmentCableEarthLabel(seg) }}</span>
+                      @if (seg.lengthMeters) {
+                        <span><mat-icon>straighten</mat-icon> {{ seg.lengthMeters }} م</span>
+                      }
+                      @if (segmentRoutePointsCount(seg) > 0) {
+                        <span class="mapped-tag"><mat-icon>route</mat-icon> {{ segmentRoutePointsCount(seg) }} نقطة</span>
+                      }
+                    </div>
+                  </div>
+                  <div class="seg-actions">
+                    <button class="icon-btn" (click)="openSegmentForm(seg)" title="تعديل"><mat-icon>edit</mat-icon></button>
+                    <button class="icon-btn danger" (click)="removeSegment(seg)" title="حذف"><mat-icon>delete_outline</mat-icon></button>
+                  </div>
+                </article>
+              } @empty {
+                <div class="empty-state small-empty column-empty">
+                  <mat-icon>call_split</mat-icon>
+                  <p>لا توجد تفريعات داخل هذا الفيدر</p>
+                  <button class="btn-outline" (click)="openSegmentForm(undefined, 'branch')">
+                    <mat-icon>add</mat-icon> إضافة تفريعة
+                  </button>
+                </div>
+              }
+            </div>
+          </section>
+        </div>
+      </section>
+    } @else {
+      <div class="cards-grid feeders-grid">
+        @for (f of filteredFeeders(); track f.id) {
+          <article class="feeder-card" [class.off]="f.status !== 'active'" (click)="enterFeeder(f)">
+            <div class="card-head">
+              <div class="card-icon"><mat-icon>cable</mat-icon></div>
+              <div class="card-title">
+                <h3>{{ f.name }}</h3>
+                <span class="card-station">{{ shortStation(f.stationName) }}</span>
+              </div>
+              <span class="status-chip" [attr.data-status]="f.status">{{ feederStatusLabel(f.status) }}</span>
+            </div>
+            <div class="card-stats">
+              <div class="mini-stat">
+                <mat-icon>grid_view</mat-icon>
+                <strong>{{ f.panelsCount }}</strong>
+                <span>طبلة</span>
+              </div>
+              @if (f.code) {
+                <div class="mini-stat">
+                  <mat-icon>tag</mat-icon>
+                  <span class="code">{{ f.code }}</span>
+                </div>
+              }
+              @if (f.cableType) {
+                <div class="mini-stat">
+                  <mat-icon>power</mat-icon>
+                  <span>{{ f.cableType }}</span>
+                </div>
+              }
+            </div>
+            <div class="card-actions">
+              <button class="enter-feeder-btn" (click)="$event.stopPropagation(); enterFeeder(f)">
+                <mat-icon>login</mat-icon> دخول الفيدر
+              </button>
+              <button class="icon-btn" (click)="$event.stopPropagation(); openFeederForm(f)" title="تعديل"><mat-icon>edit</mat-icon></button>
+              <button class="icon-btn danger" (click)="$event.stopPropagation(); removeFeeder(f.id, f.name)" title="حذف"><mat-icon>delete_outline</mat-icon></button>
+            </div>
+          </article>
+          } @empty {
+            <div class="empty-state">
+              <mat-icon>cable</mat-icon>
+              <p>لا توجد فيدرات</p>
+            </div>
+          }
+      </div>
+    }
+  }
+
+  <!-- ============ PANELS TABS ============ -->
+  @if (isPanelTab()) {
+    <section class="panel-category-header">
+      <div class="panel-category-title">
+        <mat-icon>{{ activePanelIcon() }}</mat-icon>
+        <div>
+          <span>تصنيف الطبلات</span>
+          <h2>{{ activePanelTitle() }}</h2>
+        </div>
+      </div>
+      <button class="btn-primary" (click)="openActivePanelForm()">
+        <mat-icon>add</mat-icon> {{ activePanelAddLabel() }}
+      </button>
+    </section>
+
+    @if (activeTab() === 'feederPanels') {
+      @if (selectedFeederPanel(); as panel) {
+        <section class="feeder-panel-detail">
+          <header class="detail-topbar">
+            <button class="back-btn" (click)="closeFeederPanel()">
+              <mat-icon>arrow_back</mat-icon>
+              رجوع لطبلات الفيدرات
+            </button>
+            <div class="detail-actions">
+              <button class="btn-outline" (click)="openPanelForm(panel)" title="تعديل طبلة الفيدرات">
+                <mat-icon>edit</mat-icon> تعديل الطبلون
+              </button>
+              <button class="btn-outline" (click)="showFeederPanelComponents.set(!showFeederPanelComponents())" title="مكونات الطبلة">
+                <mat-icon>inventory_2</mat-icon> مكونات الطبلة
+              </button>
+              <button class="btn-primary compact" (click)="openBreakerForm(undefined, 'right')">
+                <mat-icon>add</mat-icon> قاطع جديد
+              </button>
+            </div>
+          </header>
+
+          <div class="feeder-panel-hero">
+            <div class="detail-identity">
+              <div class="detail-icon"><mat-icon>account_tree</mat-icon></div>
+              <div>
+                <span class="detail-kicker">داخل طبلة الفيدرات</span>
+                <h2>{{ panel.name }}</h2>
+                <div class="detail-meta-line">
+                  <span><mat-icon>location_on</mat-icon>{{ shortStation(panel.stationName) }}</span>
+                  <span><mat-icon>view_column</mat-icon>{{ feederPanelLayoutLabel(panel.busbarLayout) }}</span>
+                  <span><mat-icon>splitscreen</mat-icon>{{ breakerLayoutLabel(panel.breakerLayout) }}</span>
+                  <span><mat-icon>inventory_2</mat-icon>{{ feederPanelBusbarStats().total }} بزبار</span>
+                  @if (panel.busbarRatingAmps) {
+                    <span><mat-icon>electric_bolt</mat-icon>{{ panel.busbarRatingAmps }} أمبير</span>
+                  }
+                </div>
+              </div>
+            </div>
+            <span class="status-chip" [attr.data-status]="panel.status">{{ statusLabel(panel.status) }}</span>
+          </div>
+
+          <div class="feeder-panel-board" [attr.data-busbars]="panel.busbarLayout">
+            <section class="breaker-side">
+              <header class="column-header">
+                <div>
+                  <span>جهة يمين الطبلون</span>
+                  <h3>قواطع اليمين</h3>
+                </div>
+                <button class="btn-primary compact" (click)="openBreakerForm(undefined, 'right')">
+                  <mat-icon>add</mat-icon> قاطع يمين
+                </button>
+              </header>
+
+              <div class="breaker-list">
+                @for (breaker of rightBreakers(); track breaker.id) {
+                  <article class="breaker-card">
+                    <div class="breaker-number">{{ breaker.breakerNumber }}</div>
+                    <div class="breaker-body">
+                      <strong>{{ breaker.feederName || 'بدون فيدر مربوط' }}</strong>
+                      <div class="seg-meta">
+                        <span><mat-icon>vertical_align_center</mat-icon>{{ breakerSideLabel(breaker.side) }}</span>
+                        @if (breaker.ratingAmps) {
+                          <span><mat-icon>electric_bolt</mat-icon>{{ breaker.ratingAmps }} أمبير</span>
+                        }
+                        @if (breaker.breakerType) {
+                          <span><mat-icon>category</mat-icon>{{ breaker.breakerType }}</span>
+                        }
+                      </div>
+                    </div>
+                    <span class="status-chip" [attr.data-status]="breaker.status">{{ breakerStatusLabel(breaker.status) }}</span>
+                    <div class="seg-actions">
+                      <button class="icon-btn" (click)="openBreakerForm(breaker)" title="تعديل"><mat-icon>edit</mat-icon></button>
+                      <button class="icon-btn danger" (click)="removeBreaker(breaker)" title="حذف"><mat-icon>delete_outline</mat-icon></button>
+                    </div>
+                  </article>
+                } @empty {
+                  <div class="empty-state small-empty column-empty">
+                    <mat-icon>power_settings_new</mat-icon>
+                    <p>لا توجد قواطع في اليمين</p>
+                  </div>
+                }
+              </div>
+            </section>
+
+            <div class="busbar-visual">
+              <span>{{ feederPanelBusbarStats().total || 'بدون' }} بزبار</span>
+            </div>
+
+            <section class="breaker-side">
+              <header class="column-header">
+                <div>
+                  <span>جهة شمال الطبلون</span>
+                  <h3>قواطع الشمال</h3>
+                </div>
+                <button class="btn-primary compact" (click)="openBreakerForm(undefined, 'left')">
+                  <mat-icon>add</mat-icon> قاطع شمال
+                </button>
+              </header>
+
+              <div class="breaker-list">
+                @for (breaker of leftBreakers(); track breaker.id) {
+                  <article class="breaker-card">
+                    <div class="breaker-number">{{ breaker.breakerNumber }}</div>
+                    <div class="breaker-body">
+                      <strong>{{ breaker.feederName || 'بدون فيدر مربوط' }}</strong>
+                      <div class="seg-meta">
+                        <span><mat-icon>vertical_align_center</mat-icon>{{ breakerSideLabel(breaker.side) }}</span>
+                        @if (breaker.ratingAmps) {
+                          <span><mat-icon>electric_bolt</mat-icon>{{ breaker.ratingAmps }} أمبير</span>
+                        }
+                        @if (breaker.breakerType) {
+                          <span><mat-icon>category</mat-icon>{{ breaker.breakerType }}</span>
+                        }
+                      </div>
+                    </div>
+                    <span class="status-chip" [attr.data-status]="breaker.status">{{ breakerStatusLabel(breaker.status) }}</span>
+                    <div class="seg-actions">
+                      <button class="icon-btn" (click)="openBreakerForm(breaker)" title="تعديل"><mat-icon>edit</mat-icon></button>
+                      <button class="icon-btn danger" (click)="removeBreaker(breaker)" title="حذف"><mat-icon>delete_outline</mat-icon></button>
+                    </div>
+                  </article>
+                } @empty {
+                  <div class="empty-state small-empty column-empty">
+                    <mat-icon>power_settings_new</mat-icon>
+                    <p>لا توجد قواطع في الشمال</p>
+                  </div>
+                }
+              </div>
+            </section>
+          </div>
+
+          @if (showFeederPanelComponents()) {
+            <section class="panel-components-section">
+              <header class="components-header">
+                <div>
+                  <span>تفاصيل فعلية داخل الطبلون</span>
+                  <h3>مكونات الطبلة</h3>
+                </div>
+                <div class="detail-actions">
+                  <button class="btn-outline" (click)="openBusbarTypeForm()">
+                    <mat-icon>category</mat-icon> نوع بزبار
+                  </button>
+                  <button class="btn-primary compact" (click)="openBusbarForm(undefined, 'right')">
+                    <mat-icon>add</mat-icon> إضافة بزبار
+                  </button>
+                </div>
+              </header>
+
+              <div class="components-summary">
+                <div class="summary-item">
+                  <mat-icon>view_column</mat-icon>
+                  <strong>{{ feederPanelBusbarStats().total }}</strong>
+                  <span>بزبار داخل الطبلة</span>
+                </div>
+                <div class="summary-item">
+                  <mat-icon>east</mat-icon>
+                  <strong>{{ feederPanelBusbarStats().right }}</strong>
+                  <span>يمين</span>
+                </div>
+                <div class="summary-item">
+                  <mat-icon>west</mat-icon>
+                  <strong>{{ feederPanelBusbarStats().left }}</strong>
+                  <span>شمال</span>
+                </div>
+                <div class="summary-item">
+                  <mat-icon>category</mat-icon>
+                  <strong>{{ network.busbarTypes().length }}</strong>
+                  <span>نوع بزبار محفوظ</span>
+                </div>
+              </div>
+
+              <div class="busbar-list">
+                @for (busbar of feederPanelBusbars(); track busbar.id) {
+                  <article class="busbar-card">
+                    <div class="busbar-role-icon">
+                      <mat-icon>view_column</mat-icon>
+                    </div>
+                    <div class="busbar-card-body">
+                      <div class="busbar-card-title">
+                        <h4>{{ busbar.label }}</h4>
+                        <span>{{ busbarRoleLabel(busbar.role) }} - {{ busbarPositionLabel(busbar.position) }}</span>
+                      </div>
+                      <div class="busbar-meta">
+                        <span><mat-icon>category</mat-icon>{{ busbar.busbarTypeName || 'بدون نوع محدد' }}</span>
+                        <span><mat-icon>straighten</mat-icon>{{ busbarTypeSizeLabel(busbar) }}</span>
+                        @if (busbar.busbarMaterial) {
+                          <span><mat-icon>hardware</mat-icon>{{ busbar.busbarMaterial }}</span>
+                        }
+                        @if (busbar.ratingAmps) {
+                          <span><mat-icon>electric_bolt</mat-icon>{{ busbar.ratingAmps }} أمبير</span>
+                        }
+                      </div>
+                    </div>
+                    <div class="seg-actions">
+                      <button class="icon-btn" (click)="openBusbarForm(busbar)" title="تعديل"><mat-icon>edit</mat-icon></button>
+                      <button class="icon-btn danger" (click)="removeBusbar(busbar)" title="حذف"><mat-icon>delete_outline</mat-icon></button>
+                    </div>
+                  </article>
+                } @empty {
+                  <div class="empty-state components-empty">
+                    <mat-icon>view_column</mat-icon>
+                    <p>لم يتم تسجيل بزبارات هذه الطبلة بعد</p>
+                    <button class="btn-outline" (click)="openBusbarForm(undefined, 'right')">
+                      <mat-icon>add</mat-icon> إضافة أول بزبار
+                    </button>
+                  </div>
+                }
+              </div>
+            </section>
+          }
+        </section>
+      }
+    }
+
     <div class="panels-toolbar">
       <select [ngModel]="feederFilter()" (ngModelChange)="feederFilter.set($event)" title="فلتر الفيدر" class="feeder-select">
         <option value="all">كل الفيدرات</option>
@@ -141,10 +639,10 @@
     </div>
 
     <div class="cards-grid panels-grid">
-      @for (p of filteredPanels(); track p.id) {
+      @for (p of activePanelRows(); track p.id) {
         <article class="panel-card" [class.inactive]="p.status !== 'active'">
           <div class="card-head">
-            <div class="card-icon panel-icon"><mat-icon>grid_view</mat-icon></div>
+            <div class="card-icon panel-icon"><mat-icon>{{ activePanelIcon() }}</mat-icon></div>
             <div class="card-title">
               <h3>{{ p.name }}</h3>
               <span class="card-station">{{ shortStation(p.stationName) }}</span>
@@ -162,6 +660,24 @@
               <mat-icon>category</mat-icon>
               <span>{{ panelTypeLabel(p.type) }}</span>
             </div>
+            @if (p.type === 'main_distribution') {
+              <div class="meta-item">
+                <mat-icon>view_column</mat-icon>
+                <span>{{ feederPanelLayoutLabel(p.busbarLayout) }}</span>
+              </div>
+              <div class="meta-item">
+                <mat-icon>splitscreen</mat-icon>
+                <span>{{ breakerLayoutLabel(p.breakerLayout) }}</span>
+              </div>
+              <div class="meta-item">
+                <mat-icon>power_settings_new</mat-icon>
+                <span>{{ p.breakersCount || 0 }} قاطع</span>
+              </div>
+              <div class="meta-item">
+                <mat-icon>inventory_2</mat-icon>
+                <span>{{ p.busbarsCount || 0 }} بزبار</span>
+              </div>
+            }
             @if (p.code) {
               <div class="meta-item">
                 <mat-icon>tag</mat-icon>
@@ -176,17 +692,255 @@
             }
           </div>
           <div class="card-actions">
+            @if (p.type === 'main_distribution') {
+              <button class="enter-feeder-btn" (click)="enterFeederPanel(p)">
+                <mat-icon>login</mat-icon> دخول الطبلون
+              </button>
+            }
             <button class="icon-btn" (click)="openPanelForm(p)" title="تعديل"><mat-icon>edit</mat-icon></button>
             <button class="icon-btn danger" (click)="removePanel(p.id, p.name)" title="حذف"><mat-icon>delete_outline</mat-icon></button>
           </div>
         </article>
       } @empty {
         <div class="empty-state">
-          <mat-icon>grid_view</mat-icon>
-          <p>لا توجد طبلات</p>
+          <mat-icon>{{ activePanelIcon() }}</mat-icon>
+          <p>لا توجد بيانات في {{ activePanelTitle() }}</p>
         </div>
       }
     </div>
+  }
+
+  <!-- ============ POINTS TAB ============ -->
+  @if (activeTab() === 'points') {
+    <section class="panel-category-header">
+      <div class="panel-category-title">
+        <mat-icon>place</mat-icon>
+        <div>
+          <span>نقاط محفوظة على الشبكة</span>
+          <h2>النقاط</h2>
+        </div>
+      </div>
+    </section>
+
+    <div class="cards-grid panels-grid">
+      @for (p of mappedPoints(); track p.id) {
+        <article class="panel-card point-card" [class.inactive]="p.status !== 'active'">
+          <div class="card-head">
+            <div class="card-icon point-icon"><mat-icon>place</mat-icon></div>
+            <div class="card-title">
+              <h3>{{ p.name }}</h3>
+              <span class="card-station">{{ shortStation(p.stationName) }}</span>
+            </div>
+            <span class="status-chip" [attr.data-status]="p.status">{{ statusLabel(p.status) }}</span>
+          </div>
+          <div class="card-meta">
+            <div class="meta-item">
+              <mat-icon>category</mat-icon>
+              <span>{{ panelTypeLabel(p.type) }}</span>
+            </div>
+            @if (p.feederName) {
+              <div class="meta-item">
+                <mat-icon>cable</mat-icon>
+                <span>{{ p.feederName }}</span>
+              </div>
+            }
+            <div class="meta-item" dir="ltr">
+              <mat-icon>my_location</mat-icon>
+              <span>{{ p.latitude }}, {{ p.longitude }}</span>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="icon-btn" (click)="openPanelForm(p)" title="تعديل"><mat-icon>edit</mat-icon></button>
+          </div>
+        </article>
+      } @empty {
+        <div class="empty-state">
+          <mat-icon>place</mat-icon>
+          <p>لا توجد نقاط محفوظة بإحداثيات</p>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ============ MONITORING METERS TAB ============ -->
+  @if (activeTab() === 'monitoringMeters') {
+    <section class="monitoring-page">
+      <header class="panel-category-header">
+        <div class="panel-category-title">
+          <mat-icon>speed</mat-icon>
+          <div>
+            <span>الاستهلاك والمراقبة</span>
+            <h2>عدادات الرصد والمراقبة</h2>
+          </div>
+        </div>
+        <button class="btn-primary" (click)="openMonitoringMeterForm()">
+          <mat-icon>add</mat-icon> عداد رصد جديد
+        </button>
+      </header>
+
+      <div class="monitoring-summary">
+        <div class="summary-item">
+          <mat-icon>speed</mat-icon>
+          <strong>{{ monitoringMeterStats().total }}</strong>
+          <span>عداد رصد</span>
+        </div>
+        <div class="summary-item">
+          <mat-icon>check_circle</mat-icon>
+          <strong>{{ monitoringMeterStats().active }}</strong>
+          <span>نشط</span>
+        </div>
+        <div class="summary-item alert">
+          <mat-icon>notification_important</mat-icon>
+          <strong>{{ monitoringMeterStats().alarm }}</strong>
+          <span>إنذار</span>
+        </div>
+        <div class="summary-item">
+          <mat-icon>bolt</mat-icon>
+          <strong>{{ monitoringMeterStats().withKwh }}</strong>
+          <span>له قراءة kWh</span>
+        </div>
+      </div>
+
+      <div class="monitoring-grid">
+        @for (meter of filteredMonitoringMeters(); track meter.id) {
+          <article class="monitoring-card" [attr.data-status]="meter.status">
+            <div class="monitoring-card-head">
+              <div class="monitoring-icon"><mat-icon>speed</mat-icon></div>
+              <div>
+                <h3>{{ meter.name }}</h3>
+                <span>{{ monitoringTargetTypeLabel(meter.targetType) }} - {{ monitoringTargetLabel(meter) }}</span>
+              </div>
+              <span class="status-chip" [attr.data-status]="meter.status">{{ monitoringStatusLabel(meter.status) }}</span>
+            </div>
+
+            <div class="monitoring-kind">
+              <mat-icon>insights</mat-icon>
+              <span>{{ monitoringKindLabel(meter.kind) }}</span>
+              @if (meter.code) {
+                <small dir="ltr">{{ meter.code }}</small>
+              }
+            </div>
+
+            <div class="reading-grid">
+              <div class="reading-cell">
+                <span>فولت</span>
+                <strong>{{ formatReading(meter.lastVoltage, 'V') }}</strong>
+              </div>
+              <div class="reading-cell">
+                <span>أمبير</span>
+                <strong>{{ formatReading(meter.lastCurrent, 'A') }}</strong>
+              </div>
+              <div class="reading-cell">
+                <span>استهلاك</span>
+                <strong>{{ formatReading(meter.lastKwh, 'kWh') }}</strong>
+              </div>
+              <div class="reading-cell">
+                <span>حمل</span>
+                <strong>{{ meter.loadPercent !== null ? meter.loadPercent + '%' : '-' }}</strong>
+              </div>
+            </div>
+
+            <div class="monitoring-footer">
+              <span>
+                <mat-icon>schedule</mat-icon>
+                {{ meter.lastReadAt ? (meter.lastReadAt | date:'yyyy/MM/dd HH:mm') : 'لا توجد قراءة' }}
+              </span>
+              <div class="card-actions">
+                <button class="icon-btn" (click)="openMonitoringMeterForm(meter)" title="تعديل"><mat-icon>edit</mat-icon></button>
+                <button class="icon-btn danger" (click)="removeMonitoringMeter(meter)" title="حذف"><mat-icon>delete_outline</mat-icon></button>
+              </div>
+            </div>
+          </article>
+        } @empty {
+          <div class="empty-state monitoring-empty">
+            <mat-icon>speed</mat-icon>
+            <p>لا توجد عدادات رصد ومراقبة بعد</p>
+            <button class="btn-outline" (click)="openMonitoringMeterForm()">
+              <mat-icon>add</mat-icon> إضافة أول عداد رصد
+            </button>
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- ============ CABLE TYPES TAB ============ -->
+  @if (activeTab() === 'cableTypes') {
+    <section class="cable-types-page">
+      <header class="cable-types-header">
+        <div>
+          <span>مرجع موحّد للشبكة</span>
+          <h2>أنواع الكيابل</h2>
+          <p>أي نوع تضيفه هنا يظهر داخل كل الفيدرات والموصلات والتفريعات.</p>
+        </div>
+        <button class="btn-primary" (click)="openCableTypeForm()">
+          <mat-icon>add</mat-icon> نوع كيبل جديد
+        </button>
+      </header>
+
+      <div class="cable-types-summary">
+        <div class="summary-item">
+          <mat-icon>settings_input_component</mat-icon>
+          <strong>{{ cableTypeStats().total }}</strong>
+          <span>نوع مسجل</span>
+        </div>
+        <div class="summary-item">
+          <mat-icon>check_circle</mat-icon>
+          <strong>{{ cableTypeStats().active }}</strong>
+          <span>نشط</span>
+        </div>
+        <div class="summary-item">
+          <mat-icon>electric_bolt</mat-icon>
+          <strong>{{ cableTypeStats().withCapacity }}</strong>
+          <span>له أقصى أمبير</span>
+        </div>
+      </div>
+
+      <div class="cable-types-grid">
+        @for (ct of filteredCableTypes(); track ct.id) {
+          <article class="cable-type-card" [class.inactive]="!ct.isActive">
+            <div class="cable-type-color" [style.background]="ct.color"></div>
+            <div class="cable-type-body">
+              <div class="cable-type-title">
+                <div>
+                  <h3>{{ ct.name }}</h3>
+                  <span>{{ ct.isActive ? 'نشط' : 'غير نشط' }}</span>
+                </div>
+                <span class="cable-preview" [style.borderColor]="ct.color" [style.color]="ct.color">
+                  {{ ct.sizeMm ? ct.sizeMm + 'mm²' : 'بدون مقاس' }}
+                </span>
+              </div>
+
+              <div class="cable-type-meta">
+                @if (ct.material) {
+                  <span><mat-icon>category</mat-icon>{{ ct.material }}</span>
+                }
+                @if (ct.maxAmps) {
+                  <span><mat-icon>electric_bolt</mat-icon>{{ ct.maxAmps }} أمبير</span>
+                }
+                <span><mat-icon>account_tree</mat-icon>{{ phaseConfigLabel(ct.phaseConfig) }}</span>
+                <span><mat-icon>security</mat-icon>أرضي {{ earthModeLabel(ct.earthMode) }}</span>
+                @if (ct.description) {
+                  <span class="description"><mat-icon>notes</mat-icon>{{ ct.description }}</span>
+                }
+              </div>
+            </div>
+            <div class="cable-type-actions">
+              <button class="icon-btn" (click)="openCableTypeForm(ct)" title="تعديل"><mat-icon>edit</mat-icon></button>
+              <button class="icon-btn danger" (click)="removeCableType(ct)" title="حذف"><mat-icon>delete_outline</mat-icon></button>
+            </div>
+          </article>
+        } @empty {
+          <div class="empty-state cable-empty">
+            <mat-icon>settings_input_component</mat-icon>
+            <p>لا توجد أنواع كيابل بعد</p>
+            <button class="btn-outline" (click)="openCableTypeForm()">
+              <mat-icon>add</mat-icon> إضافة أول نوع كيبل
+            </button>
+          </div>
+        }
+      </div>
+    </section>
   }
 
   <!-- ============ FEEDER FORM MODAL ============ -->
@@ -218,7 +972,7 @@
             <input type="text" [(ngModel)]="feederForm.code" dir="ltr" placeholder="7301" />
           </div>
           <div class="field">
-            <label>نوع الكابل</label>
+            <label>نوع الكيبل</label>
             <input type="text" [(ngModel)]="feederForm.cableType" placeholder="مثلاً: أبو 50" />
           </div>
         </div>
@@ -245,28 +999,30 @@
     <div class="form-panel">
       <header class="form-header">
         <mat-icon>{{ editingPanelId() ? 'edit' : 'add' }}</mat-icon>
-        <h3>{{ editingPanelId() ? 'تعديل طبلة' : 'طبلة جديدة' }}</h3>
+        <h3>{{ panelFormTitle() }}</h3>
         <button class="close-btn" (click)="showPanelForm.set(false)"><mat-icon>close</mat-icon></button>
       </header>
       <div class="form-body">
         <div class="field">
           <label>المحطة *</label>
-          <select [(ngModel)]="panelForm.stationId" title="المحطة">
+          <select [ngModel]="panelForm.stationId" (ngModelChange)="onPanelStationChange($event)" title="المحطة">
             <option value="">اختر المحطة</option>
             @for (s of stationService.stations(); track s.id) {
               <option [value]="s.id">{{ shortStation(s.name) }}</option>
             }
           </select>
         </div>
-        <div class="field">
-          <label>الفيدر</label>
-          <select [(ngModel)]="panelForm.feederId" title="الفيدر">
-            <option [ngValue]="null">بدون فيدر</option>
-            @for (f of feedersForStation(); track f.id) {
-              <option [value]="f.id">{{ f.name }}</option>
-            }
-          </select>
-        </div>
+        @if (panelForm.type === 'meter_box') {
+          <div class="field">
+            <label>الفيدر</label>
+            <select [(ngModel)]="panelForm.feederId" title="الفيدر">
+              <option [ngValue]="null">بدون فيدر</option>
+              @for (f of panelFeederOptions(); track f.id) {
+                <option [value]="f.id">{{ f.name }}</option>
+              }
+            </select>
+          </div>
+        }
         <div class="field">
           <label>اسم الطبلة *</label>
           <input type="text" [(ngModel)]="panelForm.name" placeholder="مثلاً: طبلة عاصم" />
@@ -281,7 +1037,7 @@
             <select [(ngModel)]="panelForm.type" title="النوع">
               <option value="meter_box">طبلة عدّادات</option>
               <option value="sync">طبلة دمج</option>
-              <option value="main_distribution">توزيع رئيسية</option>
+              <option value="main_distribution">طبلة فيدرات</option>
             </select>
           </div>
           <div class="field">
@@ -289,6 +1045,36 @@
             <input type="text" [(ngModel)]="panelForm.poleNumber" placeholder="اختياري" />
           </div>
         </div>
+        @if (panelForm.type === 'main_distribution') {
+          <div class="field-row">
+            <div class="field">
+              <label>توزيع البزبارات</label>
+              <select [(ngModel)]="panelForm.busbarLayout" title="توزيع البزبارات">
+                @for (option of feederPanelLayoutOptions; track option.value) {
+                  <option [value]="option.value">{{ option.label }}</option>
+                }
+              </select>
+            </div>
+            <div class="field">
+              <label>جهات القواطع</label>
+              <select [(ngModel)]="panelForm.breakerLayout" title="جهات القواطع">
+                @for (option of breakerLayoutOptions; track option.value) {
+                  <option [value]="option.value">{{ option.label }}</option>
+                }
+              </select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>مادة البزبارات</label>
+              <input type="text" [(ngModel)]="panelForm.busbarMaterial" placeholder="نحاس" />
+            </div>
+            <div class="field">
+              <label>سعة البزبارات</label>
+              <input type="number" [(ngModel)]="panelForm.busbarRatingAmps" placeholder="أمبير" />
+            </div>
+          </div>
+        }
         <div class="field">
           <label>ملاحظات</label>
           <textarea [(ngModel)]="panelForm.notes" rows="2"></textarea>
@@ -301,6 +1087,476 @@
         <button class="btn-ghost" (click)="showPanelForm.set(false)" [disabled]="savingPanel()">إلغاء</button>
         <button class="btn-primary" (click)="savePanel()" [disabled]="savingPanel()">
           @if (savingPanel()) { جاري الحفظ... } @else { <mat-icon>save</mat-icon> حفظ }
+        </button>
+      </footer>
+    </div>
+  }
+
+  <!-- ============ BUSBAR TYPE FORM MODAL ============ -->
+  @if (showBusbarTypeForm()) {
+    <div class="modal-overlay" (click)="showBusbarTypeForm.set(false)"></div>
+    <div class="form-panel">
+      <header class="form-header">
+        <mat-icon>{{ editingBusbarTypeId() ? 'edit' : 'add' }}</mat-icon>
+        <h3>{{ editingBusbarTypeId() ? 'تعديل نوع بزبار' : 'نوع بزبار جديد' }}</h3>
+        <button class="close-btn" (click)="showBusbarTypeForm.set(false)"><mat-icon>close</mat-icon></button>
+      </header>
+      <div class="form-body">
+        <div class="field-row">
+          <div class="field">
+            <label>المادة</label>
+            <select [(ngModel)]="busbarTypeForm.material" title="مادة البزبار">
+              <option value="نحاس">نحاس</option>
+              <option value="ألمنيوم">ألمنيوم</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>العرض (مم)</label>
+            <input type="number" [(ngModel)]="busbarTypeForm.widthMm" placeholder="مثلاً: 40" />
+          </div>
+          <div class="field">
+            <label>السماكة (مم)</label>
+            <input type="number" [(ngModel)]="busbarTypeForm.thicknessMm" placeholder="مثلاً: 5" />
+          </div>
+        </div>
+        <div class="field">
+          <label>اسم نوع البزبار *</label>
+          <div class="input-action">
+            <input type="text" [(ngModel)]="busbarTypeForm.name" placeholder="مثلاً: بزبار نحاس 40×5 مم" />
+            <button class="btn-outline" (click)="applyBusbarTypeNameSuggestion()" type="button">
+              <mat-icon>auto_fix_high</mat-icon> تكوين الاسم
+            </button>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>الأمبير التقريبي</label>
+            <input type="number" [(ngModel)]="busbarTypeForm.ratingAmps" placeholder="اختياري" />
+          </div>
+          <div class="field">
+            <label>ملاحظات</label>
+            <input type="text" [(ngModel)]="busbarTypeForm.notes" placeholder="اختياري" />
+          </div>
+        </div>
+        @if (network.busbarTypes().length > 0) {
+          <div class="busbar-type-strip">
+            @for (type of network.busbarTypes(); track type.id) {
+              <span class="busbar-type-chip">
+                {{ type.name }}
+                <small>{{ busbarTypeSizeLabel(type) }}</small>
+                <button class="chip-edit" (click)="openBusbarTypeForm(type)" title="تعديل"><mat-icon>edit</mat-icon></button>
+                <button class="chip-edit danger" (click)="removeBusbarType(type)" title="تعطيل"><mat-icon>delete_outline</mat-icon></button>
+              </span>
+            }
+          </div>
+        }
+        @if (busbarTypeError()) {
+          <div class="error-box"><mat-icon>error</mat-icon> {{ busbarTypeError() }}</div>
+        }
+      </div>
+      <footer class="form-footer">
+        <button class="btn-ghost" (click)="showBusbarTypeForm.set(false)" [disabled]="savingBusbarType()">إلغاء</button>
+        <button class="btn-primary" (click)="saveBusbarType()" [disabled]="savingBusbarType()">
+          @if (savingBusbarType()) { جاري الحفظ... } @else { <mat-icon>save</mat-icon> حفظ }
+        </button>
+      </footer>
+    </div>
+  }
+
+  <!-- ============ FEEDER PANEL BUSBAR FORM MODAL ============ -->
+  @if (showBusbarForm()) {
+    <div class="modal-overlay" (click)="showBusbarForm.set(false)"></div>
+    <div class="form-panel">
+      <header class="form-header">
+        <mat-icon>{{ editingBusbarId() ? 'edit' : 'add' }}</mat-icon>
+        <h3>{{ editingBusbarId() ? 'تعديل بزبار' : 'بزبار جديد داخل الطبلة' }}</h3>
+        <button class="close-btn" (click)="showBusbarForm.set(false)"><mat-icon>close</mat-icon></button>
+      </header>
+      <div class="form-body">
+        <div class="field">
+          <label>نوع البزبار</label>
+          <div class="input-action">
+            <select [(ngModel)]="busbarForm.busbarTypeId" title="نوع البزبار">
+              <option value="">بدون نوع محدد</option>
+              @for (type of network.busbarTypes(); track type.id) {
+                <option [value]="type.id">{{ type.name }} - {{ busbarTypeSizeLabel(type) }}</option>
+              }
+            </select>
+            <button class="btn-outline" (click)="openBusbarTypeForm()" type="button">
+              <mat-icon>add</mat-icon> نوع
+            </button>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>اسم / رقم البزبار *</label>
+            <input type="text" [(ngModel)]="busbarForm.label" placeholder="مثلاً: R أو L1 أو بزبار 1" />
+          </div>
+          <div class="field">
+            <label>وظيفة البزبار</label>
+            <select [(ngModel)]="busbarForm.role" title="وظيفة البزبار">
+              @for (option of busbarRoleOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>مكانه في الطبلة</label>
+            <select [(ngModel)]="busbarForm.position" title="مكان البزبار">
+              @for (option of busbarPositionOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+          </div>
+          <div class="field">
+            <label>الترتيب</label>
+            <input type="number" [(ngModel)]="busbarForm.orderIndex" placeholder="1" />
+          </div>
+        </div>
+        <div class="field">
+          <label>ملاحظات</label>
+          <textarea [(ngModel)]="busbarForm.notes" rows="2"></textarea>
+        </div>
+        @if (busbarError()) {
+          <div class="error-box"><mat-icon>error</mat-icon> {{ busbarError() }}</div>
+        }
+      </div>
+      <footer class="form-footer">
+        <button class="btn-ghost" (click)="showBusbarForm.set(false)" [disabled]="savingBusbar()">إلغاء</button>
+        <button class="btn-primary" (click)="saveBusbar()" [disabled]="savingBusbar()">
+          @if (savingBusbar()) { جاري الحفظ... } @else { <mat-icon>save</mat-icon> حفظ }
+        </button>
+      </footer>
+    </div>
+  }
+
+  <!-- ============ FEEDER PANEL BREAKER FORM MODAL ============ -->
+  @if (showBreakerForm()) {
+    <div class="modal-overlay" (click)="showBreakerForm.set(false)"></div>
+    <div class="form-panel">
+      <header class="form-header">
+        <mat-icon>{{ editingBreakerId() ? 'edit' : 'add' }}</mat-icon>
+        <h3>{{ editingBreakerId() ? 'تعديل قاطع فيدر' : 'قاطع فيدر جديد' }}</h3>
+        <button class="close-btn" (click)="showBreakerForm.set(false)"><mat-icon>close</mat-icon></button>
+      </header>
+      <div class="form-body">
+        <div class="field-row">
+          <div class="field">
+            <label>رقم / اسم القاطع *</label>
+            <input type="text" [(ngModel)]="breakerForm.breakerNumber" placeholder="مثلاً: R1 أو قاطع 1" />
+          </div>
+          <div class="field">
+            <label>الجهة</label>
+            <select [(ngModel)]="breakerForm.side" title="جهة القاطع">
+              @for (option of breakerSideOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>الفيدر الخارج من القاطع</label>
+          <select [(ngModel)]="breakerForm.feederId" title="الفيدر الخارج">
+            <option value="">بدون ربط فيدر</option>
+            @for (f of feederPanelFeederOptions(); track f.id) {
+              <option [value]="f.id">{{ f.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>أمبير القاطع</label>
+            <input type="number" [(ngModel)]="breakerForm.ratingAmps" placeholder="مثلاً: 250" />
+          </div>
+          <div class="field">
+            <label>نوع القاطع</label>
+            <input type="text" [(ngModel)]="breakerForm.breakerType" placeholder="MCCB / ACB / غيره" />
+          </div>
+          <div class="field">
+            <label>الحالة</label>
+            <select [(ngModel)]="breakerForm.status" title="حالة القاطع">
+              <option value="active">نشط</option>
+              <option value="inactive">متوقف</option>
+              <option value="maintenance">صيانة</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>ملاحظات</label>
+          <textarea [(ngModel)]="breakerForm.notes" rows="2"></textarea>
+        </div>
+        @if (breakerError()) {
+          <div class="error-box"><mat-icon>error</mat-icon> {{ breakerError() }}</div>
+        }
+      </div>
+      <footer class="form-footer">
+        <button class="btn-ghost" (click)="showBreakerForm.set(false)" [disabled]="savingBreaker()">إلغاء</button>
+        <button class="btn-primary" (click)="saveBreaker()" [disabled]="savingBreaker()">
+          @if (savingBreaker()) { جاري الحفظ... } @else { <mat-icon>save</mat-icon> حفظ }
+        </button>
+      </footer>
+    </div>
+  }
+
+  <!-- ============ SEGMENT FORM MODAL ============ -->
+  @if (showSegmentForm()) {
+    <div class="modal-overlay" (click)="showSegmentForm.set(false)"></div>
+    <div class="form-panel">
+      <header class="form-header">
+        <mat-icon>{{ editingSegmentId() ? 'edit' : 'add' }}</mat-icon>
+        <h3>{{ segmentFormTitle() }}</h3>
+        <button class="close-btn" (click)="showSegmentForm.set(false)"><mat-icon>close</mat-icon></button>
+      </header>
+      <div class="form-body">
+        <div class="field-row">
+          <div class="field">
+            <label>النوع</label>
+            <select [(ngModel)]="segmentForm.segmentType" title="النوع">
+              <option value="main">موصل رئيسي</option>
+              <option value="branch">تفريعة</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>نوع الكيبل</label>
+            <select [(ngModel)]="segmentForm.cableTypeId" title="نوع الكيبل">
+              <option value="">بدون تحديد</option>
+              @for (ct of network.cableTypes(); track ct.id) {
+                <option [value]="ct.id">{{ ct.name }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="configuration-hint">
+          <mat-icon>info</mat-icon>
+          <span>تفاصيل الفازات والأرضي محفوظة داخل نوع الكيبل نفسه. إذا تحتاج فازة/فازتين/ثلاث فازات أو أرضي ملبس/مكشوف، أضفها من تبويب أنواع الكيابل ثم اختر النوع هنا.</span>
+        </div>
+        @if (segmentForm.segmentType === 'branch') {
+          <div class="field">
+            <label>الأب (موصل أو تفريعة)</label>
+            <select [(ngModel)]="segmentForm.parentSegmentId" title="الأب">
+              <option value="">بدون موصل أب</option>
+              @for (seg of parentSegmentOptions(); track seg.id) {
+                <option [value]="seg.id">{{ segmentOptionLabel(seg) }}</option>
+              }
+            </select>
+          </div>
+        }
+        <div class="field">
+          <label>التسمية</label>
+          <input type="text" [(ngModel)]="segmentForm.label" [placeholder]="segmentPlaceholder()" />
+        </div>
+        <div class="field">
+          <label>الطول (متر)</label>
+          <input type="number" [(ngModel)]="segmentForm.lengthMeters" placeholder="اختياري" />
+        </div>
+        <div class="field">
+          <label>ملاحظات</label>
+          <textarea [(ngModel)]="segmentForm.notes" rows="2"></textarea>
+        </div>
+        @if (segmentError()) {
+          <div class="error-box"><mat-icon>error</mat-icon> {{ segmentError() }}</div>
+        }
+      </div>
+      <footer class="form-footer">
+        <button class="btn-ghost" (click)="showSegmentForm.set(false)" [disabled]="savingSegment()">إلغاء</button>
+        <button class="btn-primary" (click)="saveSegment()" [disabled]="savingSegment()">
+          @if (savingSegment()) { جاري الحفظ... } @else { <mat-icon>save</mat-icon> حفظ }
+        </button>
+      </footer>
+    </div>
+  }
+
+  <!-- ============ MONITORING METER FORM MODAL ============ -->
+  @if (showMonitoringMeterForm()) {
+    <div class="modal-overlay" (click)="showMonitoringMeterForm.set(false)"></div>
+    <div class="form-panel">
+      <header class="form-header">
+        <mat-icon>{{ editingMonitoringMeterId() ? 'edit' : 'add' }}</mat-icon>
+        <h3>{{ editingMonitoringMeterId() ? 'تعديل عداد رصد' : 'عداد رصد جديد' }}</h3>
+        <button class="close-btn" (click)="showMonitoringMeterForm.set(false)"><mat-icon>close</mat-icon></button>
+      </header>
+      <div class="form-body">
+        <div class="field">
+          <label>المحطة *</label>
+          <select [ngModel]="monitoringMeterForm.stationId" (ngModelChange)="onMonitoringStationChange($event)" title="المحطة">
+            <option value="">اختر المحطة</option>
+            @for (s of stationService.stations(); track s.id) {
+              <option [value]="s.id">{{ shortStation(s.name) }}</option>
+            }
+          </select>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>اسم عداد الرصد *</label>
+            <input type="text" [(ngModel)]="monitoringMeterForm.name" placeholder="مثلاً: رصد خرج فيدر السوق" />
+          </div>
+          <div class="field">
+            <label>الكود</label>
+            <input type="text" [(ngModel)]="monitoringMeterForm.code" dir="ltr" placeholder="اختياري" />
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>مكان القياس</label>
+            <select [ngModel]="monitoringMeterForm.targetType" (ngModelChange)="onMonitoringTargetTypeChange($event)" title="مكان القياس">
+              @for (option of monitoringTargetTypeOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+          </div>
+          <div class="field">
+            <label>العنصر المرتبط</label>
+            <select [(ngModel)]="monitoringMeterForm.targetId" title="العنصر المرتبط">
+              <option value="">بدون ربط محدد</option>
+              @for (option of monitoringTargetOptions(); track option.id) {
+                <option [value]="option.id">{{ option.label }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>نوع القياس</label>
+            <select [(ngModel)]="monitoringMeterForm.kind" title="نوع القياس">
+              @for (option of monitoringKindOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+          </div>
+          <div class="field">
+            <label>الحالة</label>
+            <select [(ngModel)]="monitoringMeterForm.status" title="الحالة">
+              @for (option of monitoringStatusOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>الفولت</label>
+            <input type="number" [(ngModel)]="monitoringMeterForm.lastVoltage" placeholder="V" />
+          </div>
+          <div class="field">
+            <label>الأمبير</label>
+            <input type="number" [(ngModel)]="monitoringMeterForm.lastCurrent" placeholder="A" />
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>قراءة kWh</label>
+            <input type="number" [(ngModel)]="monitoringMeterForm.lastKwh" placeholder="kWh" />
+          </div>
+          <div class="field">
+            <label>القدرة kW</label>
+            <input type="number" [(ngModel)]="monitoringMeterForm.lastPowerKw" placeholder="kW" />
+          </div>
+          <div class="field">
+            <label>نسبة الحمل</label>
+            <input type="number" [(ngModel)]="monitoringMeterForm.loadPercent" placeholder="%" />
+          </div>
+        </div>
+        <div class="field">
+          <label>ملاحظات</label>
+          <textarea [(ngModel)]="monitoringMeterForm.notes" rows="2"></textarea>
+        </div>
+        @if (monitoringMeterError()) {
+          <div class="error-box"><mat-icon>error</mat-icon> {{ monitoringMeterError() }}</div>
+        }
+      </div>
+      <footer class="form-footer">
+        <button class="btn-ghost" (click)="showMonitoringMeterForm.set(false)" [disabled]="savingMonitoringMeter()">إلغاء</button>
+        <button class="btn-primary" (click)="saveMonitoringMeter()" [disabled]="savingMonitoringMeter()">
+          @if (savingMonitoringMeter()) { جاري الحفظ... } @else { <mat-icon>save</mat-icon> حفظ }
+        </button>
+      </footer>
+    </div>
+  }
+
+  <!-- ============ CABLE TYPE FORM MODAL ============ -->
+  @if (showCableTypeForm()) {
+    <div class="modal-overlay" (click)="showCableTypeForm.set(false)"></div>
+    <div class="form-panel">
+      <header class="form-header">
+        <mat-icon>{{ editingCableTypeId() ? 'edit' : 'add' }}</mat-icon>
+        <h3>{{ editingCableTypeId() ? 'تعديل نوع كيبل' : 'نوع كيبل جديد' }}</h3>
+        <button class="close-btn" (click)="showCableTypeForm.set(false)"><mat-icon>close</mat-icon></button>
+      </header>
+      <div class="form-body">
+        <div class="field-row">
+          <div class="field">
+            <label>المقاس (mm²)</label>
+            <select [(ngModel)]="cableTypeForm.sizeMm" title="مقاس الكيبل">
+              <option [ngValue]="null">اختر المقاس</option>
+              @for (size of cableSizeOptions(); track size) {
+                <option [ngValue]="size">{{ size }} mm²</option>
+              }
+            </select>
+          </div>
+          <div class="field">
+            <label>المادة</label>
+            <select [(ngModel)]="cableTypeForm.material" title="مادة الكيبل">
+              <option value="">اختر المادة</option>
+              @for (material of cableMaterials; track material) {
+                <option [value]="material">{{ material }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>عدد الفازات</label>
+            <select [(ngModel)]="cableTypeForm.phaseConfig" title="عدد الفازات">
+              @for (option of cablePhaseConfigOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+          </div>
+          <div class="field">
+            <label>الأرضي</label>
+            <select [(ngModel)]="cableTypeForm.earthMode" title="حالة الأرضي">
+              @for (option of earthModeOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>اسم نوع الكيبل *</label>
+          <div class="input-action">
+            <input type="text" [(ngModel)]="cableTypeForm.name" placeholder="مثلاً: كيبل ألمنيوم 70 مم²" />
+            <button class="btn-outline" type="button" (click)="applyCableTypeNameSuggestion()" [disabled]="!suggestedCableTypeName()">
+              <mat-icon>auto_fix_high</mat-icon> تكوين الاسم
+            </button>
+          </div>
+          @if (suggestedCableTypeName()) {
+            <span class="field-hint">الاقتراح: {{ suggestedCableTypeName() }}</span>
+          }
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>أقصى أمبير</label>
+            <input type="number" [(ngModel)]="cableTypeForm.maxAmps" placeholder="اختياري" />
+          </div>
+          <div class="field">
+            <label>لون العرض</label>
+            <input type="color" [(ngModel)]="cableTypeForm.color" title="اختر اللون" />
+          </div>
+        </div>
+        <div class="field">
+          <label>وصف</label>
+          <textarea [(ngModel)]="cableTypeForm.description" rows="2"></textarea>
+        </div>
+        @if (cableTypeError()) {
+          <div class="error-box"><mat-icon>error</mat-icon> {{ cableTypeError() }}</div>
+        }
+      </div>
+      <footer class="form-footer">
+        <button class="btn-ghost" (click)="showCableTypeForm.set(false)" [disabled]="savingCableType()">إلغاء</button>
+        <button class="btn-primary" (click)="saveCableType()" [disabled]="savingCableType()">
+          @if (savingCableType()) { جاري الحفظ... } @else { <mat-icon>save</mat-icon> حفظ }
         </button>
       </footer>
     </div>

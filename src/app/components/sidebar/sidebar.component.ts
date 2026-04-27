@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ElementRef, OnDestroy, AfterViewInit, Renderer2, effect } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -8,25 +8,42 @@ import { StationService } from '../../services/station.service';
 import { EmployeeService } from '../../services/employee.service';
 import { TaskService } from '../../services/task.service';
 import { AuthService } from '../../services/auth.service';
+import { SidebarLayoutService } from '../../services/sidebar-layout.service';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
   imports: [RouterModule, RouterLink, RouterLinkActive, CommonModule],
   template: `
-    <!-- Mobile Menu Toggle -->
-    <button class="mobile-menu-toggle" (click)="toggleSidebar()" [class.active]="isSidebarOpen()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="3" y1="12" x2="21" y2="12"></line>
-        <line x1="3" y1="6" x2="21" y2="6"></line>
-        <line x1="3" y1="18" x2="21" y2="18"></line>
-      </svg>
+    <!-- Mobile Menu Toggle — Animated Hamburger / X -->
+    <button
+      class="mobile-menu-toggle"
+      [class.active]="isSidebarOpen()"
+      (click)="toggleSidebar()"
+      aria-label="القائمة">
+      <div class="hamburger-box">
+        <span class="hamburger-bar bar-top"></span>
+        <span class="hamburger-bar bar-mid"></span>
+        <span class="hamburger-bar bar-bot"></span>
+      </div>
     </button>
 
     <!-- Overlay for mobile -->
-    <div class="sidebar-overlay" [class.active]="isSidebarOpen()" (click)="closeSidebar()"></div>
+    <div
+      class="sidebar-overlay"
+      [class.active]="isSidebarOpen()"
+      (click)="closeSidebar()">
+    </div>
 
-    <aside class="sidebar" [class.mobile-open]="isSidebarOpen()"  (click)="onSidebarClick($event)">
+    <aside
+      class="sidebar"
+      [class.collapsed]="isSidebarCollapsed()"
+      [class.mobile-open]="isSidebarOpen()"
+      [class.mobile-animating]="isMobileAnimating()"
+      (click)="onSidebarClick($event)"
+      (touchstart)="onTouchStart($event)"
+      (touchmove)="onTouchMove($event)"
+      (touchend)="onTouchEnd($event)">
       <!-- Brand Header -->
       <div class="brand-header">
         <div class="brand-logo">
@@ -40,11 +57,21 @@ import { AuthService } from '../../services/auth.service';
           <h3>أنظمة العباسي</h3>
           <span>المتخصصة</span>
         </div>
+        <button
+          type="button"
+          class="sidebar-collapse-toggle"
+          (click)="toggleSidebarCollapse($event)"
+          [attr.aria-label]="isSidebarCollapsed() ? 'فتح القائمة الجانبية' : 'طي القائمة الجانبية'"
+          [attr.title]="isSidebarCollapsed() ? 'فتح القائمة' : 'طي القائمة'">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
       </div>
 
       <!-- Navigation -->
       <nav class="main-nav">
-        <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
+        <a routerLink="/dashboard" routerLinkActive="active" class="nav-item mob-nav-item">
           <div class="nav-icon dashboard">
             <svg viewBox="0 0 24 24" fill="none">
               <rect x="3" y="3" width="7" height="7" rx="1" fill="currentColor"/>
@@ -60,7 +87,7 @@ import { AuthService } from '../../services/auth.service';
         <div class="nav-group" [class.open]="isStationsOpen() || stationsRouteActive()">
           <button
             type="button"
-            class="nav-item nav-group-toggle"
+            class="nav-item nav-group-toggle mob-nav-item"
             [class.active]="stationsRouteActive()"
             (click)="toggleStations($event)">
             <div class="nav-icon stations">
@@ -77,17 +104,21 @@ import { AuthService } from '../../services/auth.service';
           </button>
 
           <div class="subnav">
-            <a routerLink="/stations" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="subnav-item">
+            <a routerLink="/stations" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="subnav-item mob-nav-item">
               <span class="sub-dot"></span>
               <span>قائمة المحطات</span>
             </a>
-            <a routerLink="/stations/generators" routerLinkActive="active" class="subnav-item">
+            <a routerLink="/stations/generators" routerLinkActive="active" class="subnav-item mob-nav-item">
               <span class="sub-dot"></span>
               <span>المولدات</span>
             </a>
-            <a routerLink="/stations/network" routerLinkActive="active" class="subnav-item">
+            <a routerLink="/stations/network" routerLinkActive="active" class="subnav-item mob-nav-item">
               <span class="sub-dot"></span>
               <span>الطبلات والشبكة</span>
+            </a>
+            <a routerLink="/stations/network-map" routerLinkActive="active" class="subnav-item mob-nav-item">
+              <span class="sub-dot"></span>
+              <span>خريطة الشبكة</span>
             </a>
           </div>
         </div>
@@ -96,7 +127,7 @@ import { AuthService } from '../../services/auth.service';
         <div class="nav-group" [class.open]="isEmployeesOpen() || employeesRouteActive()">
           <button
             type="button"
-            class="nav-item nav-group-toggle"
+            class="nav-item nav-group-toggle mob-nav-item"
             [class.active]="employeesRouteActive()"
             (click)="toggleEmployees($event)">
             <div class="nav-icon employees">
@@ -115,18 +146,18 @@ import { AuthService } from '../../services/auth.service';
           </button>
 
           <div class="subnav">
-            <a routerLink="/employees" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="subnav-item">
+            <a routerLink="/employees" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="subnav-item mob-nav-item">
               <span class="sub-dot"></span>
               <span>الموظفين</span>
             </a>
-            <a routerLink="/employees/attendance" routerLinkActive="active" class="subnav-item">
+            <a routerLink="/employees/attendance" routerLinkActive="active" class="subnav-item mob-nav-item">
               <span class="sub-dot"></span>
               <span>الحضور والوردية</span>
             </a>
           </div>
         </div>
 
-        <a routerLink="/tasks" routerLinkActive="active" class="nav-item">
+        <a routerLink="/tasks" routerLinkActive="active" class="nav-item mob-nav-item">
           <div class="nav-icon tasks">
             <svg viewBox="0 0 24 24" fill="none">
               <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
@@ -141,7 +172,7 @@ import { AuthService } from '../../services/auth.service';
           }
         </a>
 
-        <a routerLink="/fuel" routerLinkActive="active" class="nav-item">
+        <a routerLink="/fuel" routerLinkActive="active" class="nav-item mob-nav-item">
           <div class="nav-icon fuel">
             <svg viewBox="0 0 24 24" fill="none">
               <path d="M3 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
@@ -154,7 +185,7 @@ import { AuthService } from '../../services/auth.service';
           <span>إدارة الديزل</span>
         </a>
 
-        <a routerLink="/maps" routerLinkActive="active" class="nav-item">
+        <a routerLink="/maps" routerLinkActive="active" class="nav-item mob-nav-item">
           <div class="nav-icon maps">
             <svg viewBox="0 0 24 24" fill="none">
               <path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3V6z" stroke="currentColor" stroke-width="1.5" fill="currentColor" fill-opacity="0.1" stroke-linejoin="round"/>
@@ -170,7 +201,7 @@ import { AuthService } from '../../services/auth.service';
         <div class="nav-group" [class.open]="isSuppliersOpen() || suppliersRouteActive()">
           <button
             type="button"
-            class="nav-item nav-group-toggle"
+            class="nav-item nav-group-toggle mob-nav-item"
             [class.active]="suppliersRouteActive()"
             (click)="toggleSuppliers($event)">
             <div class="nav-icon suppliers">
@@ -188,7 +219,7 @@ import { AuthService } from '../../services/auth.service';
           </button>
 
           <div class="subnav">
-            <a routerLink="/suppliers/fuel" routerLinkActive="active" class="subnav-item">
+            <a routerLink="/suppliers/fuel" routerLinkActive="active" class="subnav-item mob-nav-item">
               <span class="sub-dot"></span>
               <span>موردي الديزل</span>
             </a>
@@ -196,7 +227,7 @@ import { AuthService } from '../../services/auth.service';
         </div>
 
         <!-- Treasury -->
-        <a routerLink="/treasury" routerLinkActive="active" class="nav-item">
+        <a routerLink="/treasury" routerLinkActive="active" class="nav-item mob-nav-item">
           <div class="nav-icon treasury-nav">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
               <path d="M12 2L2 7l10 5 10-5-10-5z" fill="currentColor" fill-opacity="0.2"/>
@@ -209,7 +240,7 @@ import { AuthService } from '../../services/auth.service';
 
         <!-- Users management (admin/accountant only) -->
         @if (authService.canManageUsers()) {
-          <a routerLink="/users" routerLinkActive="active" class="nav-item">
+          <a routerLink="/users" routerLinkActive="active" class="nav-item mob-nav-item">
             <div class="nav-icon users-nav">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" fill="currentColor" fill-opacity="0.15"/>
@@ -261,6 +292,15 @@ import { AuthService } from '../../services/auth.service';
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
       box-shadow: -4px 0 24px rgba(0, 0, 0, 0.3);
       backdrop-filter: blur(10px);
+      transition:
+        width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .sidebar.collapsed {
+      width: 88px;
     }
 
     .sidebar::before {
@@ -287,8 +327,51 @@ import { AuthService } from '../../services/auth.service';
       z-index: 1;
     }
 
+    .sidebar-collapse-toggle {
+      width: 34px;
+      height: 34px;
+      border: 1px solid rgba(139, 92, 246, 0.22);
+      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.62);
+      color: #c4b5fd;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin-right: auto;
+      transition: all 0.2s ease;
+      position: relative;
+      z-index: 2;
+      flex-shrink: 0;
+    }
+
+    .sidebar-collapse-toggle:hover {
+      background: rgba(139, 92, 246, 0.2);
+      border-color: rgba(196, 181, 253, 0.45);
+      color: #f8fafc;
+    }
+
+    .sidebar-collapse-toggle svg {
+      width: 18px;
+      height: 18px;
+      transition: transform 0.25s ease;
+    }
+
+    .sidebar.collapsed .sidebar-collapse-toggle {
+      position: absolute;
+      left: 50%;
+      bottom: 12px;
+      margin-right: 0;
+      transform: translateX(-50%);
+    }
+
+    .sidebar.collapsed .sidebar-collapse-toggle svg {
+      transform: rotate(180deg);
+    }
+
     .brand-logo {
       position: relative;
+      flex-shrink: 0;
     }
 
     .logo-bg {
@@ -363,6 +446,22 @@ import { AuthService } from '../../services/auth.service';
       letter-spacing: 0.02em;
     }
 
+    .sidebar.collapsed .brand-header {
+      justify-content: center;
+      padding: 18px 12px 58px;
+      gap: 0;
+    }
+
+    .sidebar.collapsed .brand-text {
+      display: none;
+    }
+
+    .sidebar.collapsed .logo-bg {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+    }
+
     /* Main Navigation */
     .main-nav {
       flex: 1;
@@ -387,6 +486,31 @@ import { AuthService } from '../../services/auth.service';
       position: relative;
       border: 1px solid transparent;
       overflow: hidden;
+    }
+
+    .nav-item span,
+    .profile-info,
+    .count-badge,
+    .alert-badge,
+    .new-badge,
+    .chevron {
+      transition: opacity 0.2s ease;
+    }
+
+    .sidebar.collapsed .nav-item {
+      justify-content: center;
+      gap: 0;
+      padding: 12px;
+      margin: 6px 14px;
+      min-height: 48px;
+    }
+
+    .sidebar.collapsed .nav-item span,
+    .sidebar.collapsed .count-badge,
+    .sidebar.collapsed .alert-badge,
+    .sidebar.collapsed .new-badge,
+    .sidebar.collapsed .chevron {
+      display: none;
     }
 
     .nav-item::before {
@@ -566,13 +690,17 @@ import { AuthService } from '../../services/auth.service';
       cursor: pointer;
     }
 
+    .sidebar.collapsed .nav-group-toggle {
+      width: auto;
+    }
+
     .nav-group-toggle .chevron {
       width: 14px;
       height: 14px;
       margin-right: 4px;
       color: #94a3b8;
       transition: transform 0.3s ease;
-      transform: rotate(-90deg); /* pointing down by default (RTL) */
+      transform: rotate(-90deg);
     }
 
     .nav-group-toggle:not(:has(.count-badge)) .chevron {
@@ -596,6 +724,12 @@ import { AuthService } from '../../services/auth.service';
       max-height: 400px;
       padding-top: 4px;
       padding-bottom: 6px;
+    }
+
+    .sidebar.collapsed .subnav {
+      max-height: 0 !important;
+      padding-top: 0;
+      padding-bottom: 0;
     }
 
     .subnav-item {
@@ -874,7 +1008,20 @@ import { AuthService } from '../../services/auth.service';
       height: 18px;
     }
 
-    /* RTL Support - Already applied by default */
+    .sidebar.collapsed .user-profile {
+      padding: 14px 10px;
+    }
+
+    .sidebar.collapsed .profile-card {
+      justify-content: center;
+      padding: 10px;
+      gap: 0;
+    }
+
+    .sidebar.collapsed .profile-info,
+    .sidebar.collapsed .profile-menu {
+      display: none;
+    }
 
     /* Scrollbar */
     .main-nav::-webkit-scrollbar {
@@ -898,63 +1045,147 @@ import { AuthService } from '../../services/auth.service';
                   0 0 8px rgba(139, 92, 246, 0.3);
     }
 
-    /* Mobile Menu Toggle */
+    /* ===================================================
+       MOBILE MENU TOGGLE — Animated Hamburger → X
+       =================================================== */
     .mobile-menu-toggle {
       display: none;
       position: fixed;
       top: 16px;
       right: 16px;
       z-index: 1100;
-      width: 48px;
-      height: 48px;
+      width: 50px;
+      height: 50px;
       border: none;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 12px;
+      background: rgba(15, 22, 41, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 14px;
       cursor: pointer;
-      box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
-      transition: all 0.3s ease;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-
-      svg {
-        width: 24px;
-        height: 24px;
-        color: white;
-        transition: transform 0.3s ease;
-      }
-
-      &:active {
-        transform: scale(0.95);
-      }
-
-      &.active svg {
-        transform: rotate(90deg);
-      }
+      box-shadow:
+        0 4px 20px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(139, 92, 246, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      align-items: center;
+      justify-content: center;
+      padding: 0;
     }
 
-    /* Sidebar Overlay for mobile */
+    .mobile-menu-toggle::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.4), rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.4));
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .mobile-menu-toggle:active {
+      transform: scale(0.92);
+    }
+
+    .mobile-menu-toggle.active {
+      background: rgba(139, 92, 246, 0.2);
+      box-shadow:
+        0 4px 24px rgba(139, 92, 246, 0.35),
+        0 0 0 1px rgba(139, 92, 246, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .mobile-menu-toggle.active::before {
+      opacity: 1;
+      animation: toggle-glow-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes toggle-glow-pulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    /* Hamburger bars container */
+    .hamburger-box {
+      width: 22px;
+      height: 16px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .hamburger-bar {
+      display: block;
+      width: 100%;
+      height: 2px;
+      background: #e2e8f0;
+      border-radius: 2px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-origin: center center;
+    }
+
+    /* Hamburger → X animation */
+    .mobile-menu-toggle.active .bar-top {
+      transform: translateY(7px) rotate(45deg);
+      background: #c4b5fd;
+    }
+
+    .mobile-menu-toggle.active .bar-mid {
+      opacity: 0;
+      transform: scaleX(0);
+    }
+
+    .mobile-menu-toggle.active .bar-bot {
+      transform: translateY(-7px) rotate(-45deg);
+      background: #c4b5fd;
+    }
+
+    /* ===================================================
+       SIDEBAR OVERLAY — Blur + Fade
+       =================================================== */
     .sidebar-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(10, 14, 39, 0.8);
-      backdrop-filter: blur(4px);
-      z-index: 999;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 1000;
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
       pointer-events: none;
+    }
 
-      &.active {
+    .sidebar-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* ===================================================
+       MOBILE NAV ITEM STAGGER ANIMATION
+       =================================================== */
+    @keyframes navItemSlideIn {
+      from {
+        opacity: 0;
+        transform: translateX(20px);
+      }
+      to {
         opacity: 1;
-        pointer-events: all;
+        transform: translateX(0);
       }
     }
 
-    /* Responsive Design */
+    /* ===================================================
+       RESPONSIVE — MOBILE ONLY
+       =================================================== */
     @media (max-width: 1024px) {
       .mobile-menu-toggle {
         display: flex;
-        align-items: center;
-        justify-content: center;
+      }
+
+      .sidebar-collapse-toggle {
+        display: none;
       }
 
       .sidebar-overlay {
@@ -962,19 +1193,138 @@ import { AuthService } from '../../services/auth.service';
       }
 
       .sidebar {
+        width: 300px;
         transform: translateX(100%);
+        transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
         z-index: 1001;
-        box-shadow: -8px 0 32px rgba(0, 0, 0, 0.5);
-
-        &.mobile-open {
-          transform: translateX(0);
-        }
+        box-shadow: -8px 0 40px rgba(0, 0, 0, 0.5);
+        will-change: transform;
       }
+
+      .sidebar.collapsed {
+        width: 300px;
+      }
+
+      .sidebar.collapsed .brand-header {
+        justify-content: flex-start;
+        padding: 28px 20px;
+        gap: 14px;
+      }
+
+      .sidebar.collapsed .brand-text,
+      .sidebar.collapsed .nav-item span {
+        display: block;
+      }
+
+      .sidebar.collapsed .count-badge,
+      .sidebar.collapsed .alert-badge {
+        display: flex;
+      }
+
+      .sidebar.collapsed .new-badge {
+        display: inline-block;
+      }
+
+      .sidebar.collapsed .chevron {
+        display: block;
+      }
+
+      .sidebar.collapsed .nav-item {
+        justify-content: flex-start;
+        gap: 14px;
+        padding: 14px 20px;
+        margin: 4px 16px;
+        min-height: auto;
+      }
+
+      .sidebar.collapsed .nav-group-toggle {
+        width: calc(100% - 32px);
+      }
+
+      .sidebar.collapsed .nav-group.open .subnav {
+        max-height: 400px !important;
+        padding-top: 4px;
+        padding-bottom: 6px;
+      }
+
+      .sidebar.collapsed .profile-card {
+        justify-content: flex-start;
+        gap: 14px;
+      }
+
+      .sidebar.collapsed .profile-info {
+        display: block;
+      }
+
+      .sidebar.collapsed .profile-menu {
+        display: flex;
+      }
+
+      /* Disable transition during swipe so sidebar follows finger */
+      .sidebar.mobile-animating {
+        transition: none !important;
+      }
+
+      .sidebar.mobile-open {
+        transform: translateX(0);
+      }
+
+      /* Stagger entrance animation for nav items when sidebar opens */
+      .sidebar.mobile-open .mob-nav-item {
+        animation: navItemSlideIn 0.35s cubic-bezier(0.32, 0.72, 0, 1) both;
+      }
+
+      .sidebar.mobile-open .main-nav > .mob-nav-item:nth-child(1),
+      .sidebar.mobile-open .main-nav > .nav-group:nth-child(1) .mob-nav-item {
+        animation-delay: 0.06s;
+      }
+      .sidebar.mobile-open .main-nav > .mob-nav-item:nth-child(2),
+      .sidebar.mobile-open .main-nav > .nav-group:nth-child(2) .nav-group-toggle {
+        animation-delay: 0.1s;
+      }
+      .sidebar.mobile-open .main-nav > .mob-nav-item:nth-child(3),
+      .sidebar.mobile-open .main-nav > .nav-group:nth-child(3) .nav-group-toggle {
+        animation-delay: 0.14s;
+      }
+      .sidebar.mobile-open .main-nav > .mob-nav-item:nth-child(4),
+      .sidebar.mobile-open .main-nav > .nav-group:nth-child(4) .nav-group-toggle {
+        animation-delay: 0.18s;
+      }
+      .sidebar.mobile-open .main-nav > .mob-nav-item:nth-child(5),
+      .sidebar.mobile-open .main-nav > .nav-group:nth-child(5) .nav-group-toggle {
+        animation-delay: 0.22s;
+      }
+      .sidebar.mobile-open .main-nav > .mob-nav-item:nth-child(6),
+      .sidebar.mobile-open .main-nav > .nav-group:nth-child(6) .nav-group-toggle {
+        animation-delay: 0.26s;
+      }
+      .sidebar.mobile-open .main-nav > .mob-nav-item:nth-child(7),
+      .sidebar.mobile-open .main-nav > .nav-group:nth-child(7) .nav-group-toggle {
+        animation-delay: 0.30s;
+      }
+      .sidebar.mobile-open .main-nav > .mob-nav-item:nth-child(8),
+      .sidebar.mobile-open .main-nav > .nav-group:nth-child(8) .nav-group-toggle {
+        animation-delay: 0.34s;
+      }
+      .sidebar.mobile-open .main-nav > .mob-nav-item:nth-child(9),
+      .sidebar.mobile-open .main-nav > .nav-group:nth-child(9) .nav-group-toggle {
+        animation-delay: 0.38s;
+      }
+      .sidebar.mobile-open .main-nav > .mob-nav-item:nth-child(10),
+      .sidebar.mobile-open .main-nav > .nav-group:nth-child(10) .nav-group-toggle {
+        animation-delay: 0.42s;
+      }
+
+      /* Subnav items also stagger */
+      .sidebar.mobile-open .subnav .mob-nav-item:nth-child(1) { animation-delay: 0.08s; }
+      .sidebar.mobile-open .subnav .mob-nav-item:nth-child(2) { animation-delay: 0.12s; }
+      .sidebar.mobile-open .subnav .mob-nav-item:nth-child(3) { animation-delay: 0.16s; }
+      .sidebar.mobile-open .subnav .mob-nav-item:nth-child(4) { animation-delay: 0.20s; }
     }
 
     @media (max-width: 768px) {
       .sidebar {
-        width: 280px;
+        width: 290px;
       }
 
       .brand-header {
@@ -982,12 +1332,12 @@ import { AuthService } from '../../services/auth.service';
       }
 
       .logo-bg {
-        width: 48px;
-        height: 48px;
+        width: 44px;
+        height: 44px;
       }
 
       .brand-text h3 {
-        font-size: 18px;
+        font-size: 17px;
       }
 
       .brand-text span {
@@ -995,19 +1345,20 @@ import { AuthService } from '../../services/auth.service';
       }
 
       .nav-item {
-        padding: 12px 16px;
-        margin: 3px 12px;
+        padding: 11px 14px;
+        margin: 3px 10px;
         font-size: 13px;
+        gap: 10px;
       }
 
       .nav-icon {
-        width: 36px;
-        height: 36px;
+        width: 34px;
+        height: 34px;
       }
 
       .nav-icon svg {
-        width: 18px;
-        height: 18px;
+        width: 17px;
+        height: 17px;
       }
 
       .count-badge, .alert-badge {
@@ -1018,17 +1369,17 @@ import { AuthService } from '../../services/auth.service';
       }
 
       .user-profile {
-        padding: 16px;
+        padding: 14px;
       }
 
       .profile-card {
-        padding: 12px;
+        padding: 10px;
       }
 
       .avatar-bg {
-        width: 40px;
-        height: 40px;
-        font-size: 15px;
+        width: 38px;
+        height: 38px;
+        font-size: 14px;
       }
 
       .profile-name {
@@ -1042,46 +1393,88 @@ import { AuthService } from '../../services/auth.service';
 
     @media (max-width: 480px) {
       .sidebar {
-        width: 260px;
+        width: 280px;
       }
 
       .mobile-menu-toggle {
-        width: 44px;
-        height: 44px;
+        width: 46px;
+        height: 46px;
         top: 12px;
         right: 12px;
+        border-radius: 12px;
+      }
 
-        svg {
-          width: 22px;
-          height: 22px;
-        }
+      .hamburger-box {
+        width: 20px;
+        height: 14px;
+      }
+
+      .mobile-menu-toggle.active .bar-top {
+        transform: translateY(6px) rotate(45deg);
+      }
+
+      .mobile-menu-toggle.active .bar-bot {
+        transform: translateY(-6px) rotate(-45deg);
       }
 
       .nav-item {
-        padding: 10px 14px;
-        margin: 2px 10px;
+        padding: 10px 12px;
+        margin: 2px 8px;
         font-size: 12px;
-        gap: 10px;
+        gap: 8px;
+        border-radius: 10px;
       }
 
       .nav-icon {
-        width: 32px;
-        height: 32px;
+        width: 30px;
+        height: 30px;
+      }
+
+      .nav-icon svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .brand-header {
+        padding: 16px 12px;
+      }
+
+      .subnav {
+        padding-right: 24px;
+        padding-left: 8px;
+      }
+
+      .subnav-item {
+        padding: 8px 10px;
+        font-size: 12px;
       }
     }
   `]
 })
-export class SidebarComponent {
+export class SidebarComponent implements AfterViewInit, OnDestroy {
   stationService = inject(StationService);
   employeeService = inject(EmployeeService);
   taskService = inject(TaskService);
   authService = inject(AuthService);
+  private sidebarLayout = inject(SidebarLayoutService);
   private router = inject(Router);
+  private el = inject(ElementRef);
+  private renderer = inject(Renderer2);
 
   isSidebarOpen = signal(false);
   isSuppliersOpen = signal(false);
   isStationsOpen = signal(false);
   isEmployeesOpen = signal(false);
+  isMobileAnimating = signal(false);
+  isSidebarCollapsed = this.sidebarLayout.isCollapsed;
+
+  // Touch gesture state
+  private touchStartX = 0;
+  private touchStartY = 0;
+  private touchCurrentX = 0;
+  private isSwiping = false;
+  private sidebarEl: HTMLElement | null = null;
+  private readonly SWIPE_THRESHOLD = 80;
 
   userDisplayName = computed(() => {
     const user = this.authService.user();
@@ -1099,6 +1492,32 @@ export class SidebarComponent {
     const role = this.authService.user()?.role;
     return this.authService.roleLabel(role);
   });
+
+  // Body scroll lock effect
+  private sidebarOpenEffect = effect(() => {
+    const isOpen = this.isSidebarOpen();
+    if (typeof document !== 'undefined') {
+      if (isOpen) {
+        this.renderer.setStyle(document.body, 'overflow', 'hidden');
+        this.renderer.setStyle(document.body, 'touch-action', 'none');
+      } else {
+        this.renderer.removeStyle(document.body, 'overflow');
+        this.renderer.removeStyle(document.body, 'touch-action');
+      }
+    }
+  });
+
+  ngAfterViewInit() {
+    this.sidebarEl = this.el.nativeElement.querySelector('.sidebar');
+  }
+
+  ngOnDestroy() {
+    // Restore body scroll on destroy
+    if (typeof document !== 'undefined') {
+      this.renderer.removeStyle(document.body, 'overflow');
+      this.renderer.removeStyle(document.body, 'touch-action');
+    }
+  }
 
   async logout() {
     if (!confirm('هل تريد تسجيل الخروج؟')) return;
@@ -1128,23 +1547,46 @@ export class SidebarComponent {
     this.isSidebarOpen.set(!this.isSidebarOpen());
   }
 
+  toggleSidebarCollapse(event: Event) {
+    event.stopPropagation();
+    this.sidebarLayout.toggleCollapsed();
+  }
+
   closeSidebar() {
     this.isSidebarOpen.set(false);
   }
 
   toggleSuppliers(event: Event) {
     event.stopPropagation();
+    if (this.expandCollapsedSidebar()) {
+      this.isSuppliersOpen.set(true);
+      return;
+    }
     this.isSuppliersOpen.set(!this.isSuppliersOpen());
   }
 
   toggleStations(event: Event) {
     event.stopPropagation();
+    if (this.expandCollapsedSidebar()) {
+      this.isStationsOpen.set(true);
+      return;
+    }
     this.isStationsOpen.set(!this.isStationsOpen());
   }
 
   toggleEmployees(event: Event) {
     event.stopPropagation();
+    if (this.expandCollapsedSidebar()) {
+      this.isEmployeesOpen.set(true);
+      return;
+    }
     this.isEmployeesOpen.set(!this.isEmployeesOpen());
+  }
+
+  private expandCollapsedSidebar(): boolean {
+    if (!this.isSidebarCollapsed()) return false;
+    this.sidebarLayout.setCollapsed(false);
+    return true;
   }
 
   onSidebarClick(event: Event) {
@@ -1152,5 +1594,71 @@ export class SidebarComponent {
     if (target.closest('a')) {
       this.closeSidebar();
     }
+  }
+
+  // =============================================
+  // SWIPE-TO-CLOSE TOUCH GESTURE HANDLING
+  // RTL: sidebar is on the RIGHT, swipe RIGHT to close
+  // =============================================
+
+  onTouchStart(event: TouchEvent) {
+    if (!this.isSidebarOpen()) return;
+    const touch = event.touches[0];
+    this.touchStartX = touch.clientX;
+    this.touchStartY = touch.clientY;
+    this.touchCurrentX = touch.clientX;
+    this.isSwiping = false;
+  }
+
+  onTouchMove(event: TouchEvent) {
+    if (!this.isSidebarOpen() || !this.sidebarEl) return;
+    const touch = event.touches[0];
+    const deltaX = touch.clientX - this.touchStartX;
+    const deltaY = touch.clientY - this.touchStartY;
+
+    // Determine if this is a horizontal swipe (not vertical scroll)
+    if (!this.isSwiping) {
+      if (Math.abs(deltaX) > 10 && Math.abs(deltaX) > Math.abs(deltaY)) {
+        this.isSwiping = true;
+        // Disable CSS transition while following finger
+        this.isMobileAnimating.set(true);
+      } else {
+        return;
+      }
+    }
+
+    this.touchCurrentX = touch.clientX;
+
+    // RTL: positive deltaX = swipe right = close direction
+    // Only allow swiping in the close direction (right in RTL)
+    const swipeDistance = Math.max(0, deltaX);
+
+    // Move sidebar with finger
+    this.sidebarEl.style.transform = `translateX(${swipeDistance}px)`;
+
+    // Prevent page scroll during horizontal swipe
+    event.preventDefault();
+  }
+
+  onTouchEnd(_event: TouchEvent) {
+    if (!this.isSwiping || !this.sidebarEl) {
+      this.isSwiping = false;
+      return;
+    }
+
+    const deltaX = this.touchCurrentX - this.touchStartX;
+    const swipeDistance = Math.max(0, deltaX);
+
+    // Re-enable CSS transition
+    this.isMobileAnimating.set(false);
+
+    if (swipeDistance > this.SWIPE_THRESHOLD) {
+      // Close sidebar
+      this.closeSidebar();
+    }
+
+    // Clear inline transform — let CSS class handle it
+    this.sidebarEl.style.transform = '';
+    this.isSwiping = false;
   }
 }

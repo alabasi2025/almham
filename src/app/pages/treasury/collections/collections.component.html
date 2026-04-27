@@ -1,0 +1,368 @@
+<div class="collections-page">
+
+  <!-- ============ HERO ============ -->
+  <header class="page-hero">
+    <div class="hero-bg-grid"></div>
+    <div class="hero-bg-orb orb-1"></div>
+
+    <div class="hero-top">
+      <div class="hero-title">
+        <a routerLink="/treasury" class="back-btn" title="رجوع">
+          <mat-icon>arrow_back</mat-icon>
+        </a>
+        <div class="hero-icon">
+          <mat-icon>add_card</mat-icon>
+        </div>
+        <div class="hero-text">
+          <h1>التحصيل اليومي</h1>
+          <p>تسجيل تحصيلات المتحصلين من حسابات أنظمة الفوترة مع ترحيلها إلى صندوق المحطة</p>
+        </div>
+      </div>
+
+      <div class="hero-actions">
+        <button class="btn-primary" (click)="openForm()">
+          <mat-icon>add</mat-icon>
+          <span>تحصيلات المتحصلين</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="hero-kpis">
+      <div class="k-card">
+        <div class="k-icon"><mat-icon>receipt_long</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ totalsForFiltered().count }}</span>
+          <span class="k-label">سند</span>
+        </div>
+      </div>
+      <div class="k-card big">
+        <div class="k-icon"><mat-icon>payments</mat-icon></div>
+        <div class="k-content">
+          <span class="k-value">{{ treasury.formatMoney(totalsForFiltered().total) }}</span>
+          <span class="k-label">إجمالي المحصّل</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ TOOLBAR ============ -->
+  <div class="toolbar">
+    <div class="search-box">
+      <mat-icon>search</mat-icon>
+      <input
+        type="text"
+        placeholder="ابحث في الوصف، الصندوق، المحصّل..."
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)"
+      />
+      @if (searchQuery()) {
+        <button class="search-clear" (click)="searchQuery.set('')">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+
+    <div class="filter-group">
+      <label class="filter-label">المحطة:</label>
+      <select [ngModel]="stationFilter()" (ngModelChange)="stationFilter.set($event)" title="محطة">
+        <option value="all">كل المحطات</option>
+        @for (s of stationService.stations(); track s.id) {
+          <option [value]="s.id">{{ treasury.shortStation(s.name) }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label class="filter-label">الدفع:</label>
+      <select [ngModel]="paymentFilter()" (ngModelChange)="paymentFilter.set($event)" title="طريقة الدفع">
+        <option value="all">الكل</option>
+        <option value="cash">نقدي</option>
+        <option value="wallet">محفظة</option>
+        <option value="hexcell">Hexcell</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- ============ TABLE ============ -->
+  @if (filtered().length > 0) {
+    <div class="table-wrap">
+      <table class="collections-table">
+        <thead>
+          <tr>
+            <th>التاريخ</th>
+            <th>المحطة</th>
+            <th>القناة</th>
+            <th>النظام</th>
+            <th>الحساب</th>
+            <th>الصندوق / المحفظة</th>
+            <th>المحصّل</th>
+            <th class="num">المبلغ</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of filtered(); track c.id) {
+            <tr>
+              <td class="date-cell">{{ formatDate(c.occurredAt) }}</td>
+              <td>{{ treasury.shortStation(c.stationName) }}</td>
+              <td>
+                <span class="payment-chip" [attr.data-method]="c.paymentMethod">
+                  <mat-icon>{{ paymentIcon(c.paymentMethod) }}</mat-icon>
+                  {{ treasury.paymentMethodLabel(c.paymentMethod) }}
+                </span>
+              </td>
+              <td>
+                @if (c.billingSystemName) {
+                  <span
+                    class="billing-chip"
+                    [style.background]="(c.billingSystemColor || '#64748b') + '22'"
+                    [style.color]="c.billingSystemColor || '#64748b'"
+                  >
+                    @if (c.billingSystemIcon) { <mat-icon>{{ c.billingSystemIcon }}</mat-icon> }
+                    {{ c.billingSystemName }}
+                  </span>
+                } @else {
+                  <span class="muted">—</span>
+                }
+              </td>
+              <td>
+                @if (c.billingAccountName) {
+                  <span class="account-chip-mini">
+                    <mat-icon>account_tree</mat-icon>
+                    {{ c.billingAccountName }}
+                  </span>
+                } @else {
+                  <span class="muted">—</span>
+                }
+              </td>
+              <td>{{ c.cashboxName || '—' }}</td>
+              <td class="collector">{{ c.collectorName || c.collectorUsername || '—' }}</td>
+              <td class="num amount">{{ treasury.formatMoney(c.amount, c.currency) }}</td>
+              <td>
+                @if (auth.isAdmin() || auth.user()?.id === c.collectorUserId) {
+                  <button class="icon-btn danger" (click)="remove(c.id)" title="حذف">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <div class="empty-state">
+      <div class="empty-icon"><mat-icon>receipt_long</mat-icon></div>
+      @if (treasury.collections().length === 0) {
+        <h3>لا توجد تحصيلات بعد</h3>
+        <p>ابدأ بتسجيل أوّل تحصيل يومي</p>
+      } @else {
+        <h3>لا توجد نتائج مطابقة</h3>
+        <p>جرّب تعديل البحث أو الفلاتر</p>
+      }
+      <button class="btn-primary" (click)="openForm()">
+        <mat-icon>add_card</mat-icon> تحصيل يوم جديد
+      </button>
+    </div>
+  }
+</div>
+
+<!-- ============ FORM MODAL (Daily Batch Entry) ============ -->
+@if (showForm()) {
+  <div class="modal-overlay" (click)="closeForm()"></div>
+  <div class="form-panel">
+    <header class="form-header">
+      <div class="form-title">
+        <mat-icon>add_card</mat-icon>
+        <h3>تحصيلات المتحصلين — نظام فوترة</h3>
+      </div>
+      <button class="close-btn" (click)="closeForm()" title="إغلاق">
+        <mat-icon>close</mat-icon>
+      </button>
+    </header>
+
+    <div class="form-body">
+      <div class="top-row">
+        <div class="field">
+          <label>التاريخ</label>
+          <input
+            type="date"
+            [ngModel]="formDate()"
+            (ngModelChange)="formDate.set($event)"
+            dir="ltr"
+            title="تاريخ التحصيل"
+          />
+        </div>
+
+        <div class="field">
+          <label>المحطة *</label>
+          <select
+            [ngModel]="formStationId()"
+            (ngModelChange)="onStationChange($event)"
+            title="المحطة"
+            required
+          >
+            <option value="">اختر المحطة</option>
+            @for (s of allowedStations(); track s.id) {
+              <option [value]="s.id">{{ treasury.shortStation(s.name) }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="field">
+          <label>نظام الفوترة *</label>
+          <select
+            [ngModel]="formBillingSystemId()"
+            (ngModelChange)="onBillingSystemChange($event)"
+            title="نظام الفوترة"
+            required
+          >
+            <option value="">اختر النظام</option>
+            @for (bs of availableBillingSystems(); track bs.id) {
+              <option [value]="bs.id">{{ bs.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="field">
+          <label>حساب التحصيل *</label>
+          <select
+            [ngModel]="formBillingAccountId()"
+            (ngModelChange)="formBillingAccountId.set($event)"
+            title="حساب التحصيل"
+            required
+          >
+            <option value="">اختر حساب التحصيل</option>
+            @for (account of availableCollectionAccounts(); track account.id) {
+              <option [value]="account.id">{{ account.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="field">
+          <label>صندوق الاستلام *</label>
+          <select
+            [ngModel]="formCashboxId()"
+            (ngModelChange)="formCashboxId.set($event)"
+            title="صندوق الاستلام"
+            required
+          >
+            <option value="">اختر الصندوق</option>
+            @for (box of stationCashboxes(); track box.id) {
+              <option [value]="box.id">{{ box.name }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      @if (!formStationId()) {
+        <div class="hint-box">
+          <mat-icon>info</mat-icon>
+          <span>اختر المحطة لإظهار أنظمة الفوترة والمتحصلين</span>
+        </div>
+      } @else if (collectorRows().length === 0) {
+        <div class="hint-box">
+          <mat-icon>groups</mat-icon>
+          <span>لا يوجد متحصلون نشطون لهذه المحطة</span>
+        </div>
+      } @else {
+        <div class="channels-section">
+          <div class="channels-title">
+            <mat-icon>groups</mat-icon>
+            <span>المتحصلون</span>
+            <small>(أدخل المبلغ أمام كل متحصل، اتركه فارغاً إن لم يوجد)</small>
+          </div>
+
+          <div class="channels-list">
+            @for (row of collectorRows(); track row.collector.id; let idx = $index) {
+              <div class="channel-row" [class.has-value]="isNonZero(row.amount)" data-method="cash">
+                <div class="ch-icon">
+                  <span>{{ collectorInitial(row.collector.name) }}</span>
+                </div>
+
+                <div class="ch-info">
+                  <div class="ch-title">{{ row.collector.name }}</div>
+                  <div class="ch-sub">{{ row.collector.role }}</div>
+                </div>
+
+                <div class="ch-amount">
+                  <input
+                    type="number"
+                    min="0"
+                    step="any"
+                    dir="ltr"
+                    placeholder="0"
+                    [ngModel]="row.amount"
+                    (ngModelChange)="setAmount(idx, $event)"
+                  />
+                  <span class="currency">ريال</span>
+                </div>
+
+                <div class="ch-note">
+                  <input
+                    type="text"
+                    placeholder="ملاحظة"
+                    [ngModel]="row.notes"
+                    (ngModelChange)="setNotes(idx, $event)"
+                  />
+                </div>
+              </div>
+            }
+          </div>
+
+          <div class="total-strip">
+            <div class="total-label">
+              <mat-icon>functions</mat-icon>
+              <span>إجمالي تحصيل المتحصلين</span>
+              <small>({{ activeCollectorRows().length }} متحصل)</small>
+            </div>
+            <div class="total-value">
+              {{ treasury.formatMoney(formTotal()) }}
+            </div>
+          </div>
+
+          <div class="general-note">
+            <label>ملاحظة عامة</label>
+            <input
+              type="text"
+              placeholder="اختياري"
+              [ngModel]="formNotes()"
+              (ngModelChange)="formNotes.set($event)"
+            />
+          </div>
+        </div>
+      }
+
+      @if (errorMsg()) {
+        <div class="error-box">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ errorMsg() }}</span>
+        </div>
+      }
+
+      @if (successMsg()) {
+        <div class="success-box">
+          <mat-icon>check_circle</mat-icon>
+          <span>{{ successMsg() }}</span>
+        </div>
+      }
+    </div>
+
+    <footer class="form-footer">
+      <button type="button" class="btn-ghost" (click)="closeForm()" [disabled]="saving()">إلغاء</button>
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="save()"
+        [disabled]="saving() || activeCollectorRows().length === 0 || !formStationId()"
+      >
+        @if (saving()) {
+          <span>جاري الحفظ...</span>
+        } @else {
+          <mat-icon>save</mat-icon>
+          <span>حفظ تحصيلات المتحصلين ({{ activeCollectorRows().length }})</span>
+        }
+      </button>
+    </footer>
+  </div>
+}

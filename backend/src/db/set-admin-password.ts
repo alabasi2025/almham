@@ -5,9 +5,14 @@ import { users } from './schema.js';
 import { hashPassword } from '../lib/password.js';
 
 const USERNAME = process.argv[2] ?? 'admin';
-const NEW_PASSWORD = process.argv[3] ?? '1';
+const NEW_PASSWORD = process.argv[3];
 
 async function main() {
+  if (!NEW_PASSWORD) {
+    console.error('❌ أدخل كلمة السر الجديدة كوسيط ثالث');
+    process.exit(1);
+  }
+
   const hash = await hashPassword(NEW_PASSWORD);
   const [updated] = await db
     .update(users)
@@ -20,7 +25,7 @@ async function main() {
     process.exit(1);
   }
 
-  console.log(`✅ تم تغيير كلمة سر "${updated.username}" إلى: "${NEW_PASSWORD}"`);
+  console.log(`✅ تم تغيير كلمة سر "${updated.username}"`);
   console.log(`   mustChangePassword = false`);
   process.exit(0);
 }

@@ -5,6 +5,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map, startWith } from 'rxjs/operators';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { AuthService } from './services/auth.service';
+import { SidebarLayoutService } from './services/sidebar-layout.service';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +13,7 @@ import { AuthService } from './services/auth.service';
   imports: [CommonModule, RouterOutlet, SidebarComponent],
   template: `
     @if (showShell()) {
-      <div class="app-layout">
+      <div class="app-layout" [class.sidebar-collapsed]="sidebarCollapsed()">
         <app-sidebar />
         <main class="main-content">
           <router-outlet />
@@ -30,12 +31,18 @@ import { AuthService } from './services/auth.service';
 
     .main-content {
       flex: 1;
+      min-width: 0;
+      width: 100%;
       margin-right: 280px;
       padding: 0;
       background: linear-gradient(135deg, #f8f9fc 0%, #f1f3f9 100%);
       overflow-x: hidden;
       transition: margin-right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
+    }
+
+    .app-layout.sidebar-collapsed .main-content {
+      margin-right: 88px;
     }
 
     .main-content::before {
@@ -51,7 +58,8 @@ import { AuthService } from './services/auth.service';
     }
 
     @media (max-width: 1024px) {
-      .main-content {
+      .main-content,
+      .app-layout.sidebar-collapsed .main-content {
         margin-right: 0;
         padding-top: 0;
       }
@@ -77,6 +85,9 @@ import { AuthService } from './services/auth.service';
 export class AppComponent implements OnInit {
   private router = inject(Router);
   private auth = inject(AuthService);
+  private sidebarLayout = inject(SidebarLayoutService);
+
+  sidebarCollapsed = this.sidebarLayout.isCollapsed;
 
   private currentUrl = toSignal(
     this.router.events.pipe(
@@ -89,7 +100,7 @@ export class AppComponent implements OnInit {
 
   showShell = computed(() => {
     const url = this.currentUrl() ?? '';
-    return !url.startsWith('/login') && this.auth.isAuthenticated();
+    return !url.startsWith('/login') && !url.startsWith('/change-password') && this.auth.isAuthenticated();
   });
 
   async ngOnInit() {

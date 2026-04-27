@@ -1,0 +1,71 @@
+<main class="billing-shell">
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">نظام الفوترة المستقل</p>
+      <h1>الفوترة والتحصيل</h1>
+    </div>
+    <button type="button" class="refresh-btn" (click)="loadStations()" [disabled]="loading()">
+      تحديث
+    </button>
+  </header>
+
+  <section class="summary-band">
+    <article>
+      <span>المحطات</span>
+      <strong>{{ stations().length }}</strong>
+    </article>
+    <article>
+      <span>المشتركون</span>
+      <strong>{{ totalCustomers().toLocaleString('ar-YE') }}</strong>
+    </article>
+    <article>
+      <span>مصدر البيانات</span>
+      <strong>PostgreSQL</strong>
+    </article>
+  </section>
+
+  @if (error()) {
+    <div class="status error">{{ error() }}</div>
+  } @else if (loading()) {
+    <div class="status">جاري تحميل بيانات الفوترة...</div>
+  }
+
+  <section class="work-area">
+    <aside class="stations-panel">
+      <h2>المحطات</h2>
+      <div class="station-list">
+        @for (station of stations(); track station.id) {
+          <button
+            type="button"
+            [class.active]="selectedStationId() === station.id"
+            (click)="setStation(station.id)"
+          >
+            <span>{{ station.name }}</span>
+            <small>{{ station.customersCount.toLocaleString('ar-YE') }} مشترك</small>
+          </button>
+        }
+      </div>
+    </aside>
+
+    <section class="station-detail">
+      @if (selectedStation(); as station) {
+        <div class="detail-head">
+          <div>
+            <p>{{ station.ecasDb }}</p>
+            <h2>{{ station.name }}</h2>
+          </div>
+          <span class="station-code">{{ station.code }}</span>
+        </div>
+
+        <div class="action-grid">
+          <button type="button">المشتركون</button>
+          <button type="button">الفترات</button>
+          <button type="button">التسديدات</button>
+          <button type="button">التقارير</button>
+        </div>
+      } @else {
+        <div class="empty-state">لا توجد محطة محددة</div>
+      }
+    </section>
+  </section>
+</main>

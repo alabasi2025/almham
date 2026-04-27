@@ -1,0 +1,2 @@
+# Generated sidecar binaries live here.
+# Run: powershell -NoProfile -ExecutionPolicy Bypass -File ..\scripts\publish-tauri-sidecar.ps1
